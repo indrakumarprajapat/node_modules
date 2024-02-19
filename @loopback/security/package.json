@@ -1,0 +1,56 @@
+{
+  "name": "@loopback/security",
+  "description": "A LoopBack component for security support.",
+  "version": "0.8.10",
+  "keywords": [
+    "LoopBack",
+    "Security"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "IBM Corp. and LoopBack contributors",
+  "copyright.owner": "IBM Corp. and LoopBack contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loopbackio/loopback-next.git",
+    "directory": "packages/security"
+  },
+  "engines": {
+    "node": "14 || 16 || 18 || 19"
+  },
+  "scripts": {
+    "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
+    "build": "lb-tsc",
+    "clean": "lb-clean loopback-security*.tgz dist package *.tsbuildinfo",
+    "integration": "lb-mocha \"dist/__tests__/integration/**/*.js\"",
+    "pretest": "npm run build",
+    "test": "lb-mocha \"dist/__tests__/**/*.js\"",
+    "unit": "lb-mocha \"dist/__tests__/unit/**/*.js\"",
+    "verify": "npm pack && tar xf loopback-security*.tgz && tree package && npm run clean"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "peerDependencies": {
+    "@loopback/core": "^4.0.10"
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "tslib": "^2.5.0"
+  },
+  "devDependencies": {
+    "@loopback/build": "^9.0.10",
+    "@loopback/core": "^4.0.10",
+    "@loopback/testlab": "^5.0.10",
+    "@types/debug": "^4.1.7",
+    "@types/node": "^14.18.42"
+  },
+  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+}

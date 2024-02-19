@@ -1,0 +1,51 @@
+{
+  "name": "@loopback/build",
+  "description": "A set of common scripts and default configurations to build LoopBack 4 or other TypeScript modules",
+  "version": "9.0.10",
+  "license": "MIT",
+  "bin": {
+    "lb-tsc": "./bin/compile-package.js",
+    "lb-ttsc": "./bin/compile-package.js",
+    "lb-eslint": "./bin/run-eslint.js",
+    "lb-prettier": "./bin/run-prettier.js",
+    "lb-mocha": "./bin/run-mocha.js",
+    "lb-nyc": "./bin/run-nyc.js",
+    "lb-clean": "./bin/run-clean.js"
+  },
+  "main": "index.js",
+  "author": "IBM Corp. and LoopBack contributors",
+  "copyright.owner": "IBM Corp. and LoopBack contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loopbackio/loopback-next.git",
+    "directory": "packages/build"
+  },
+  "engines": {
+    "node": "14 || 16 || 18 || 19"
+  },
+  "scripts": {
+    "test": "npm run mocha",
+    "mocha": "node bin/run-mocha --timeout 30000 \"test/integration/*.js\" \"test/unit/*.js\""
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@loopback/eslint-config": "^13.0.10",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^14.18.42",
+    "cross-spawn": "^7.0.3",
+    "debug": "^4.3.4",
+    "eslint": "^8.38.0",
+    "fs-extra": "^11.1.1",
+    "glob": "^10.0.0",
+    "lodash": "^4.17.21",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.8.7",
+    "rimraf": "^5.0.0",
+    "source-map-support": "^0.5.21",
+    "typescript": "~4.9.5"
+  },
+  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+}
