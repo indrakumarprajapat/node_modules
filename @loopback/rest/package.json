@@ -1,0 +1,90 @@
+{
+  "name": "@loopback/rest",
+  "version": "8.0.0",
+  "description": "Expose controllers as REST endpoints and route REST API requests to controller methods",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "^10.16 || 12 || 14"
+  },
+  "scripts": {
+    "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
+    "build": "lb-tsc",
+    "clean": "lb-clean loopback-rest*.tgz dist *.tsbuildinfo package",
+    "pretest": "npm run build",
+    "integration": "lb-mocha \"dist/__tests__/integration/**/*.js\"",
+    "test": "lb-mocha \"dist/__tests__/**/*.js\"",
+    "unit": "lb-mocha \"dist/__tests__/unit/**/*.js\"",
+    "verify": "npm pack && tar xf loopback-rest*.tgz && tree package && npm run clean"
+  },
+  "author": "IBM Corp.",
+  "copyright.owner": "IBM Corp.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@loopback/core": "^2.11.0"
+  },
+  "dependencies": {
+    "@loopback/express": "^2.1.0",
+    "@loopback/http-server": "^2.3.0",
+    "@loopback/openapi-v3": "^5.0.0",
+    "@openapi-contrib/openapi-schema-to-json-schema": "^3.0.4",
+    "@types/body-parser": "^1.19.0",
+    "@types/cors": "^2.8.7",
+    "@types/express": "^4.17.8",
+    "@types/express-serve-static-core": "^4.17.13",
+    "@types/http-errors": "^1.8.0",
+    "@types/on-finished": "^2.3.1",
+    "@types/serve-static": "1.13.5",
+    "@types/type-is": "^1.6.3",
+    "ajv": "^6.12.5",
+    "ajv-errors": "^1.0.1",
+    "ajv-keywords": "^3.5.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "debug": "^4.2.0",
+    "express": "^4.17.1",
+    "http-errors": "^1.8.0",
+    "js-yaml": "^3.14.0",
+    "json-schema-compare": "^0.2.2",
+    "lodash": "^4.17.20",
+    "on-finished": "^2.3.0",
+    "path-to-regexp": "^6.2.0",
+    "qs": "^6.9.4",
+    "strong-error-handler": "^3.5.0",
+    "tslib": "^2.0.2",
+    "type-is": "^1.6.18",
+    "validator": "^13.1.17"
+  },
+  "devDependencies": {
+    "@loopback/build": "^6.2.5",
+    "@loopback/core": "^2.11.0",
+    "@loopback/eslint-config": "^10.0.1",
+    "@loopback/openapi-spec-builder": "^3.0.0",
+    "@loopback/repository": "^3.1.0",
+    "@loopback/testlab": "^3.2.7",
+    "@types/debug": "^4.1.5",
+    "@types/js-yaml": "^3.12.5",
+    "@types/json-schema-compare": "^0.2.0",
+    "@types/lodash": "^4.14.161",
+    "@types/multer": "^1.4.4",
+    "@types/node": "^10.17.35",
+    "@types/on-finished": "^2.3.1",
+    "@types/qs": "^6.9.5",
+    "multer": "^1.4.2"
+  },
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback-next.git",
+    "directory": "packages/rest"
+  },
+  "gitHead": "390f2794d10eea3d969ae417963af815ce1bc417"
+}
