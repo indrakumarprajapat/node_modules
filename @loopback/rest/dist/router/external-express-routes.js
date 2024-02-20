@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -32,7 +32,7 @@ class ExternalExpressRoutes {
     mountRouter(basePath, router, spec = { paths: {} }) {
         this._externalRoutes.use(basePath, router);
         spec = rebaseOpenApiSpec(spec, basePath);
-        (0, router_spec_1.assignRouterSpec)(this._specForExternalRoutes, spec);
+        router_spec_1.assignRouterSpec(this._specForExternalRoutes, spec);
     }
     find(request) {
         return new ExternalRoute(this._externalRoutes, this._staticRoutes, request.method, request.url, {
@@ -58,10 +58,10 @@ class ExternalRoute {
         // no-op
     }
     async invokeHandler({ request, response }, args) {
-        let handled = await (0, express_1.executeExpressRequestHandler)(this._externalRouter, request, response);
+        let handled = await express_1.executeExpressRequestHandler(this._externalRouter, request, response);
         if (handled)
             return;
-        handled = await (0, express_1.executeExpressRequestHandler)(this._staticAssets, request, response);
+        handled = await express_1.executeExpressRequestHandler(this._staticAssets, request, response);
         if (handled)
             return;
         // Express router called next, which means no route was matched

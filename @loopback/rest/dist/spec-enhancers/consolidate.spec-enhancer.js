@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@ const openapi_v3_1 = require("@loopback/openapi-v3");
 const debug_1 = tslib_1.__importDefault(require("debug"));
 const json_schema_compare_1 = tslib_1.__importDefault(require("json-schema-compare"));
 const lodash_1 = tslib_1.__importDefault(require("lodash"));
-const debug = (0, debug_1.default)('loopback:openapi:spec-enhancer:consolidate');
+const debug = debug_1.default('loopback:openapi:spec-enhancer:consolidate');
 /**
  * This enhancer consolidates schemas into `/components/schemas` and replaces
  * instances of said schema with a $ref pointer.
@@ -96,7 +96,7 @@ let ConsolidationEnhancer = class ConsolidationEnhancer {
             let title = schemaObj.title;
             let refSchema = this.getRefSchema(title, spec);
             while (refSchema &&
-                !(0, json_schema_compare_1.default)(schemaObj, refSchema, {
+                !json_schema_compare_1.default(schemaObj, refSchema, {
                     ignore: ['description'],
                 })) {
                 title = `${schemaObj.title}${instanceNo++}`;
@@ -125,7 +125,7 @@ let ConsolidationEnhancer = class ConsolidationEnhancer {
     }
     ifConsolidationCandidate(schema) {
         // use title to discriminate references
-        return (0, openapi_v3_1.isSchemaObject)(schema) && schema.properties && schema.title
+        return openapi_v3_1.isSchemaObject(schema) && schema.properties && schema.title
             ? schema
             : undefined;
     }
@@ -134,8 +134,8 @@ let ConsolidationEnhancer = class ConsolidationEnhancer {
     }
 };
 ConsolidationEnhancer = tslib_1.__decorate([
-    (0, core_1.injectable)(openapi_v3_1.asSpecEnhancer, { scope: core_1.BindingScope.SINGLETON }),
-    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_CONFIG, { optional: true })),
+    core_1.injectable(openapi_v3_1.asSpecEnhancer, { scope: core_1.BindingScope.SINGLETON }),
+    tslib_1.__param(0, core_1.inject(core_1.CoreBindings.APPLICATION_CONFIG, { optional: true })),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], ConsolidationEnhancer);
 exports.ConsolidationEnhancer = ConsolidationEnhancer;

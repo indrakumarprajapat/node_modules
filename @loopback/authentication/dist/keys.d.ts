@@ -1,6 +1,6 @@
 import { BindingKey, MetadataAccessor } from '@loopback/core';
-import { Middleware } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
+import { Middleware } from '@loopback/rest';
 import { AuthenticationComponent } from './authentication.component';
 import { AuthenticateFn, AuthenticationMetadata, AuthenticationStrategy, UserProfileFactory } from './types';
 /**

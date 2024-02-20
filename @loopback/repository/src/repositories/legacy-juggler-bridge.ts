@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -36,7 +36,6 @@ import {
   createHasManyRepositoryFactory,
   createHasManyThroughRepositoryFactory,
   createHasOneRepositoryFactory,
-  createReferencesManyAccessor,
   HasManyDefinition,
   HasManyRepositoryFactory,
   HasManyThroughRepositoryFactory,
@@ -44,8 +43,6 @@ import {
   HasOneRepositoryFactory,
   includeRelatedModels,
   InclusionResolver,
-  ReferencesManyAccessor,
-  ReferencesManyDefinition,
 } from '../relations';
 import {IsolationLevel, Transaction} from '../transaction';
 import {isTypeResolver, resolveType} from '../type-resolver';
@@ -170,7 +167,7 @@ export class DefaultCrudRepository<
 
   /**
    * Creates a legacy persisted model class, attaches it to the datasource and
-   * returns it. This method can be overridden in sub-classes to acess methods
+   * returns it. This method can be overriden in sub-classes to acess methods
    * and properties in the generated model class.
    * @param entityClass - LB4 Entity constructor
    */
@@ -243,11 +240,11 @@ export class DefaultCrudRepository<
     ForeignKeyType,
   >(
     relationName: string,
-    targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
   ): HasManyRepositoryFactory<Target, ForeignKeyType> {
     return this.createHasManyRepositoryFactoryFor(
       relationName,
-      targetRepositoryGetter,
+      targetRepoGetter,
     );
   }
 
@@ -285,12 +282,12 @@ export class DefaultCrudRepository<
     ForeignKeyType,
   >(
     relationName: string,
-    targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
   ): HasManyRepositoryFactory<Target, ForeignKeyType> {
     const meta = this.entityClass.definition.relations[relationName];
     return createHasManyRepositoryFactory<Target, TargetID, ForeignKeyType>(
       meta as HasManyDefinition,
-      targetRepositoryGetter,
+      targetRepoGetter,
     );
   }
 
@@ -332,12 +329,8 @@ export class DefaultCrudRepository<
     ForeignKeyType,
   >(
     relationName: string,
-    targetRepositoryGetter:
-      | Getter<EntityCrudRepository<Target, TargetID>>
-      | {
-          [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-        },
-    throughRepositoryGetter: Getter<EntityCrudRepository<Through, ThroughID>>,
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
+    throughRepoGetter: Getter<EntityCrudRepository<Through, ThroughID>>,
   ): HasManyThroughRepositoryFactory<
     Target,
     TargetID,
@@ -351,11 +344,7 @@ export class DefaultCrudRepository<
       Through,
       ThroughID,
       ForeignKeyType
-    >(
-      meta as HasManyDefinition,
-      targetRepositoryGetter,
-      throughRepositoryGetter,
-    );
+    >(meta as HasManyDefinition, targetRepoGetter, throughRepoGetter);
   }
 
   /**
@@ -369,16 +358,9 @@ export class DefaultCrudRepository<
    */
   protected _createBelongsToAccessorFor<Target extends Entity, TargetId>(
     relationName: string,
-    targetRepositoryGetter:
-      | Getter<EntityCrudRepository<Target, TargetId>>
-      | {
-          [repoType: string]: Getter<EntityCrudRepository<Target, TargetId>>;
-        },
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
   ): BelongsToAccessor<Target, ID> {
-    return this.createBelongsToAccessorFor(
-      relationName,
-      targetRepositoryGetter,
-    );
+    return this.createBelongsToAccessorFor(relationName, targetRepoGetter);
   }
 
   /**
@@ -389,16 +371,12 @@ export class DefaultCrudRepository<
    */
   protected createBelongsToAccessorFor<Target extends Entity, TargetId>(
     relationName: string,
-    targetRepositoryGetter:
-      | Getter<EntityCrudRepository<Target, TargetId>>
-      | {
-          [repoType: string]: Getter<EntityCrudRepository<Target, TargetId>>;
-        },
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
   ): BelongsToAccessor<Target, ID> {
     const meta = this.entityClass.definition.relations[relationName];
     return createBelongsToAccessor<Target, TargetId, T, ID>(
       meta as BelongsToDefinition,
-      targetRepositoryGetter,
+      targetRepoGetter,
       this,
     );
   }
@@ -416,15 +394,11 @@ export class DefaultCrudRepository<
     ForeignKeyType,
   >(
     relationName: string,
-    targetRepositoryGetter:
-      | Getter<EntityCrudRepository<Target, TargetID>>
-      | {
-          [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-        },
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
   ): HasOneRepositoryFactory<Target, ForeignKeyType> {
     return this.createHasOneRepositoryFactoryFor(
       relationName,
-      targetRepositoryGetter,
+      targetRepoGetter,
     );
   }
 
@@ -440,66 +414,28 @@ export class DefaultCrudRepository<
     ForeignKeyType,
   >(
     relationName: string,
-    targetRepositoryGetter:
-      | Getter<EntityCrudRepository<Target, TargetID>>
-      | {
-          [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-        },
+    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>,
   ): HasOneRepositoryFactory<Target, ForeignKeyType> {
     const meta = this.entityClass.definition.relations[relationName];
     return createHasOneRepositoryFactory<Target, TargetID, ForeignKeyType>(
       meta as HasOneDefinition,
-      targetRepositoryGetter,
-    );
-  }
-
-  /**
-   * @deprecated
-   * Function to create a references many accessor
-   *
-   * Use `this.createReferencesManyAccessorFor()` instead
-   *
-   * @param relationName - Name of the relation defined on the source model
-   * @param targetRepo - Target repository instance
-   */
-  protected _createReferencesManyAccessorFor<Target extends Entity, TargetId>(
-    relationName: string,
-    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
-  ): ReferencesManyAccessor<Target, ID> {
-    return this.createReferencesManyAccessorFor(relationName, targetRepoGetter);
-  }
-
-  /**
-   * Function to create a references many accessor
-   *
-   * @param relationName - Name of the relation defined on the source model
-   * @param targetRepo - Target repository instance
-   */
-  protected createReferencesManyAccessorFor<Target extends Entity, TargetId>(
-    relationName: string,
-    targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>,
-  ): ReferencesManyAccessor<Target, ID> {
-    const meta = this.entityClass.definition.relations[relationName];
-    return createReferencesManyAccessor<Target, TargetId, T, ID>(
-      meta as ReferencesManyDefinition,
       targetRepoGetter,
-      this,
     );
   }
 
   async create(entity: DataObject<T>, options?: Options): Promise<T> {
     // perform persist hook
-    const data = this.entityToData(entity, options);
+    const data = await this.entityToData(entity, options);
     const model = await ensurePromise(this.modelClass.create(data, options));
     return this.toEntity(model);
   }
 
   async createAll(entities: DataObject<T>[], options?: Options): Promise<T[]> {
     // perform persist hook
-    const data = entities.map(e => this.entityToData(e, options));
-    const models = await ensurePromise(
-      this.modelClass.createAll(data, options),
+    const data = await Promise.all(
+      entities.map(e => this.entityToData(e, options)),
     );
+    const models = await ensurePromise(this.modelClass.create(data, options));
     return this.toEntities(models);
   }
 
@@ -570,7 +506,7 @@ export class DefaultCrudRepository<
 
   async delete(entity: T, options?: Options): Promise<void> {
     // perform persist hook
-    this.entityToData(entity, options);
+    await this.entityToData(entity, options);
     return this.deleteById(entity.getId(), options);
   }
 
@@ -580,7 +516,7 @@ export class DefaultCrudRepository<
     options?: Options,
   ): Promise<Count> {
     where = where ?? {};
-    const persistedData = this.entityToData(data, options);
+    const persistedData = await this.entityToData(data, options);
     const result = await ensurePromise(
       this.modelClass.updateAll(where, persistedData, options),
     );
@@ -610,7 +546,7 @@ export class DefaultCrudRepository<
     options?: Options,
   ): Promise<void> {
     try {
-      const payload = this.entityToData(data, options);
+      const payload = await this.entityToData(data, options);
       await ensurePromise(this.modelClass.replaceById(id, payload, options));
     } catch (err) {
       if (err.statusCode === 404) {
@@ -782,10 +718,10 @@ export class DefaultCrudRepository<
    * @param entity The entity passed from CRUD operations' caller.
    * @param options
    */
-  protected entityToData<R extends T>(
+  protected async entityToData<R extends T>(
     entity: R | DataObject<R>,
     options = {},
-  ): legacy.ModelData<legacy.PersistedModel> {
+  ): Promise<legacy.ModelData<legacy.PersistedModel>> {
     return this.ensurePersistable(entity, options);
   }
 

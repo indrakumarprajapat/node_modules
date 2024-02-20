@@ -1,10 +1,9 @@
 {
 	"name": "default-require-extensions",
-	"version": "3.0.1",
+	"version": "3.0.0",
 	"description": "Node's default require extensions as a separate module",
 	"license": "MIT",
 	"repository": "avajs/default-require-extensions",
-	"funding": "https://github.com/sponsors/sindresorhus",
 	"main": "js.js",
 	"engines": {
 		"node": ">=8"
@@ -34,10 +33,5 @@
 		"exclude": [
 			"fixture"
 		]
-	},
-	"xo": {
-		"rules": {
-			"import/extensions": "off"
-		}
 	}
 }

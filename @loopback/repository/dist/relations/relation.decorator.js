@@ -1,10 +1,10 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.referencesOne = exports.embedsMany = exports.embedsOne = exports.getModelRelations = exports.relation = exports.RELATIONS_KEY = void 0;
+exports.referencesMany = exports.referencesOne = exports.embedsMany = exports.embedsOne = exports.getModelRelations = exports.relation = exports.RELATIONS_KEY = void 0;
 const core_1 = require("@loopback/core");
 const decorators_1 = require("../decorators");
 const relation_types_1 = require("./relation.types");
@@ -73,4 +73,16 @@ function referencesOne(definition) {
     });
 }
 exports.referencesOne = referencesOne;
+/**
+ * Decorator for referencesMany
+ * @param definition
+ * @returns A property decorator
+ */
+function referencesMany(definition) {
+    const rel = Object.assign({ type: relation_types_1.RelationType.referencesMany }, definition);
+    return core_1.PropertyDecoratorFactory.createDecorator(exports.RELATIONS_KEY, rel, {
+        decoratorName: '@referencesMany',
+    });
+}
+exports.referencesMany = referencesMany;
 //# sourceMappingURL=relation.decorator.js.map

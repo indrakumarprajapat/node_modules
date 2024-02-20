@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -93,13 +93,13 @@ let AuthenticateActionProvider = class AuthenticateActionProvider {
         throw error;
     }
 };
-AuthenticateActionProvider = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject.getter(keys_1.AuthenticationBindings.STRATEGY)),
-    tslib_1.__param(1, core_1.inject.setter(security_1.SecurityBindings.USER)),
-    tslib_1.__param(2, core_1.inject.setter(keys_1.AuthenticationBindings.AUTHENTICATION_REDIRECT_URL)),
-    tslib_1.__param(3, core_1.inject.setter(keys_1.AuthenticationBindings.AUTHENTICATION_REDIRECT_STATUS)),
-    tslib_1.__param(4, (0, core_1.config)({ fromBinding: keys_1.AuthenticationBindings.COMPONENT })),
-    tslib_1.__metadata("design:paramtypes", [Function, Function, Function, Function, Object])
+AuthenticateActionProvider = (0, tslib_1.__decorate)([
+    (0, tslib_1.__param)(0, core_1.inject.getter(keys_1.AuthenticationBindings.STRATEGY)),
+    (0, tslib_1.__param)(1, core_1.inject.setter(security_1.SecurityBindings.USER)),
+    (0, tslib_1.__param)(2, core_1.inject.setter(keys_1.AuthenticationBindings.AUTHENTICATION_REDIRECT_URL)),
+    (0, tslib_1.__param)(3, core_1.inject.setter(keys_1.AuthenticationBindings.AUTHENTICATION_REDIRECT_STATUS)),
+    (0, tslib_1.__param)(4, (0, core_1.config)({ fromBinding: keys_1.AuthenticationBindings.COMPONENT })),
+    (0, tslib_1.__metadata)("design:paramtypes", [Function, Function, Function, Function, Object])
 ], AuthenticateActionProvider);
 exports.AuthenticateActionProvider = AuthenticateActionProvider;
 let AuthenticationMiddlewareProvider = class AuthenticationMiddlewareProvider {
@@ -122,13 +122,13 @@ let AuthenticationMiddlewareProvider = class AuthenticationMiddlewareProvider {
         };
     }
 };
-AuthenticationMiddlewareProvider = tslib_1.__decorate([
+AuthenticationMiddlewareProvider = (0, tslib_1.__decorate)([
     (0, core_1.injectable)((0, rest_1.asMiddleware)({
         group: rest_1.RestMiddlewareGroups.AUTHENTICATION,
         upstreamGroups: [rest_1.RestMiddlewareGroups.FIND_ROUTE],
     })),
-    tslib_1.__param(0, (0, core_1.inject)(keys_1.AuthenticationBindings.AUTH_ACTION)),
-    tslib_1.__metadata("design:paramtypes", [Function])
+    (0, tslib_1.__param)(0, (0, core_1.inject)(keys_1.AuthenticationBindings.AUTH_ACTION)),
+    (0, tslib_1.__metadata)("design:paramtypes", [Function])
 ], AuthenticationMiddlewareProvider);
 exports.AuthenticationMiddlewareProvider = AuthenticationMiddlewareProvider;
 //# sourceMappingURL=auth-action.provider.js.map

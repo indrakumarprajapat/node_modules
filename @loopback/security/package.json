@@ -1,23 +1,11 @@
 {
   "name": "@loopback/security",
+  "version": "0.3.7",
   "description": "A LoopBack component for security support.",
-  "version": "0.8.10",
-  "keywords": [
-    "LoopBack",
-    "Security"
-  ],
-  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "IBM Corp. and LoopBack contributors",
-  "copyright.owner": "IBM Corp. and LoopBack contributors",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/loopbackio/loopback-next.git",
-    "directory": "packages/security"
-  },
   "engines": {
-    "node": "14 || 16 || 18 || 19"
+    "node": "^10.16 || 12 || 14 || 15"
   },
   "scripts": {
     "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
@@ -29,28 +17,40 @@
     "unit": "lb-mocha \"dist/__tests__/unit/**/*.js\"",
     "verify": "npm pack && tar xf loopback-security*.tgz && tree package && npm run clean"
   },
+  "author": "IBM Corp.",
+  "copyright.owner": "IBM Corp.",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@loopback/core": "^2.14.1"
+  },
+  "dependencies": {
+    "debug": "^4.3.1",
+    "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@loopback/build": "^6.2.9",
+    "@loopback/core": "^2.14.1",
+    "@loopback/testlab": "^3.2.12",
+    "@types/debug": "^4.1.5",
+    "@types/node": "^10.17.35"
+  },
+  "keywords": [
+    "LoopBack",
+    "Security"
+  ],
   "files": [
     "README.md",
     "dist",
     "src",
     "!*/__tests__"
   ],
-  "peerDependencies": {
-    "@loopback/core": "^4.0.10"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback-next.git",
+    "directory": "packages/security"
   },
-  "dependencies": {
-    "debug": "^4.3.4",
-    "tslib": "^2.5.0"
-  },
-  "devDependencies": {
-    "@loopback/build": "^9.0.10",
-    "@loopback/core": "^4.0.10",
-    "@loopback/testlab": "^5.0.10",
-    "@types/debug": "^4.1.7",
-    "@types/node": "^14.18.42"
-  },
-  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+  "gitHead": "0fcf97fa1e87457de85f8f1b6b5cbf9f4f0bd640"
 }

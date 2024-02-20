@@ -4,6 +4,7 @@
 // This file is licensed under the Artistic License 2.0.
 // License text available at https://opensource.org/licenses/Artistic-2.0
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.logPersistent = exports.setPersistentLogging = exports.consoleEnabled = exports.loadGlobalize = exports.formatCurrency = exports.formatDate = exports.formatNumber = exports.silly = exports.input = exports.verbose = exports.prompt = exports.data = exports.help = exports.log = exports.info = exports.warn = exports.debug = exports.informational = exports.notice = exports.warning = exports.error = exports.critical = exports.alert = exports.emergency = exports.rfc5424 = exports.packMessage = exports.formatJson = exports.formatMessage = exports.setAppLanguages = exports.setDefaultLanguage = exports.STRONGLOOP_GLB = exports.m = exports.t = exports.n = exports.d = exports.c = exports.setRootDir = void 0;
 //tslint:disable:no-any
 const assert = require("assert");
 const debugModule = require("debug");
@@ -21,14 +22,14 @@ const memoize = require('lodash/memoize');
 const pathUtil = require('path');
 const util = require('util');
 var helper_2 = require("./helper");
-exports.setRootDir = helper_2.setRootDir;
+Object.defineProperty(exports, "setRootDir", { enumerable: true, get: function () { return helper_2.setRootDir; } });
 exports.c = formatCurrency;
 exports.d = formatDate;
 exports.n = formatNumber;
 exports.t = formatMessage;
 exports.m = formatMessage;
 var config_2 = require("./config");
-exports.STRONGLOOP_GLB = config_2.STRONGLOOP_GLB;
+Object.defineProperty(exports, "STRONGLOOP_GLB", { enumerable: true, get: function () { return config_2.STRONGLOOP_GLB; } });
 /**
  * StrongLoop Defaults
  */

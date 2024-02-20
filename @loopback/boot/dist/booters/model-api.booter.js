@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019. All Rights Reserved.
+// Copyright IBM Corp. 2019. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,8 +8,8 @@ exports.RestDefaults = exports.ModelApiBooter = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
 const model_api_builder_1 = require("@loopback/model-api-builder");
-const debug_1 = tslib_1.__importDefault(require("debug"));
-const path = tslib_1.__importStar(require("path"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const path = (0, tslib_1.__importStar)(require("path"));
 const keys_1 = require("../keys");
 const types_1 = require("../types");
 const base_artifact_booter_1 = require("./base-artifact.booter");
@@ -71,14 +71,14 @@ let ModelApiBooter = class ModelApiBooter extends base_artifact_booter_1.BaseArt
         return builder;
     }
 };
-ModelApiBooter = tslib_1.__decorate([
+ModelApiBooter = (0, tslib_1.__decorate)([
     (0, types_1.booter)('modelApi'),
     (0, core_1.extensionPoint)(model_api_builder_1.MODEL_API_BUILDER_PLUGINS),
-    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
-    tslib_1.__param(2, (0, core_1.extensions)()),
-    tslib_1.__param(3, (0, core_1.config)()),
-    tslib_1.__metadata("design:paramtypes", [Object, String, Function, Object])
+    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
+    (0, tslib_1.__param)(2, (0, core_1.extensions)()),
+    (0, tslib_1.__param)(3, (0, core_1.config)()),
+    (0, tslib_1.__metadata)("design:paramtypes", [Object, String, Function, Object])
 ], ModelApiBooter);
 exports.ModelApiBooter = ModelApiBooter;
 /**

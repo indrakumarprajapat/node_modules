@@ -79,7 +79,7 @@ Now you run the scripts, such as:
     }
     ```
 
-  - Set options explicitly for the script
+  - Set options explicity for the script
 
     ```sh
     lb-tsc -p tsconfig.json --target es2017 --outDir dist
@@ -93,15 +93,6 @@ Now you run the scripts, such as:
     | Option             | Description                                                                                       |
     | ------------------ | ------------------------------------------------------------------------------------------------- |
     | `--copy-resources` | Copy all non-typescript files from `src` and `test` to `outDir`, preserving their relative paths. |
-
-  - Using [`ttypescript`](https://github.com/cevek/ttypescript)
-
-    ### Stability: ⚠️Experimental⚠️
-
-    If you would like to use `ttypescript` and its available plugins, you can
-    substitute `lb-tsc` with `lb-ttsc`, or pass the option
-    `lb-tsc --use-ttypescript`. If `ttypescript` is not installed, the default
-    TypeScript compiler `tsc` will be used instead.
 
 4.  Run builds
 
@@ -165,7 +156,7 @@ configured to log failed requests, it will print a log also for requests where
 the failure was expected and intentional. The solution is to configure your REST
 server to suppress error messages for that specific error code only. Our
 `@loopback/testlab` module is providing a helper
-[`createUnexpectedHttpErrorLogger`](https://github.com/loopbackio/loopback-next/tree/master/packages/testlab#createUnexpectedHttpErrorLogger)
+[`createUnexpectedHttpErrorLogger`](https://github.com/strongloop/loopback-next/tree/master/packages/testlab#createUnexpectedHttpErrorLogger)
 that makes this task super easy.
 
 Alternatively, it's also possible to disable detection of console logs by
@@ -173,8 +164,8 @@ calling `lb-mocha` with `--allow-console-logs` argument.
 
 ## Contributions
 
-- [Guidelines](https://github.com/loopbackio/loopback-next/blob/master/docs/CONTRIBUTING.md)
-- [Join the team](https://github.com/loopbackio/loopback-next/issues/110)
+- [Guidelines](https://github.com/strongloop/loopback-next/blob/master/docs/CONTRIBUTING.md)
+- [Join the team](https://github.com/strongloop/loopback-next/issues/110)
 
 ## Tests
 
@@ -183,7 +174,7 @@ run `npm test` from the root folder.
 ## Contributors
 
 See
-[all contributors](https://github.com/loopbackio/loopback-next/graphs/contributors).
+[all contributors](https://github.com/strongloop/loopback-next/graphs/contributors).
 
 ## License
 

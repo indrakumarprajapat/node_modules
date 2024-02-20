@@ -93,11 +93,11 @@ declare class AppStream extends Service {
    */
   createEntitlement(callback?: (err: AWSError, data: AppStream.Types.CreateEntitlementResult) => void): Request<AppStream.Types.CreateEntitlementResult, AWSError>;
   /**
-   * Creates a fleet. A fleet consists of streaming instances that your users access for their applications and desktops.
+   * Creates a fleet. A fleet consists of streaming instances that run a specified image when using Always-On or On-Demand.
    */
   createFleet(params: AppStream.Types.CreateFleetRequest, callback?: (err: AWSError, data: AppStream.Types.CreateFleetResult) => void): Request<AppStream.Types.CreateFleetResult, AWSError>;
   /**
-   * Creates a fleet. A fleet consists of streaming instances that your users access for their applications and desktops.
+   * Creates a fleet. A fleet consists of streaming instances that run a specified image when using Always-On or On-Demand.
    */
   createFleet(callback?: (err: AWSError, data: AppStream.Types.CreateFleetResult) => void): Request<AppStream.Types.CreateFleetResult, AWSError>;
   /**
@@ -509,11 +509,11 @@ declare class AppStream extends Service {
    */
   updateEntitlement(callback?: (err: AWSError, data: AppStream.Types.UpdateEntitlementResult) => void): Request<AppStream.Types.UpdateEntitlementResult, AWSError>;
   /**
-   * Updates the specified fleet. If the fleet is in the STOPPED state, you can update any attribute except the fleet name. If the fleet is in the RUNNING state, you can update the following based on the fleet type:   Always-On and On-Demand fleet types You can update the DisplayName, ComputeCapacity, ImageARN, ImageName, IdleDisconnectTimeoutInSeconds, and DisconnectTimeoutInSeconds attributes.   Elastic fleet type You can update the DisplayName, IdleDisconnectTimeoutInSeconds, DisconnectTimeoutInSeconds, MaxConcurrentSessions, SessionScriptS3Location and UsbDeviceFilterStrings attributes.   If the fleet is in the STARTING or STOPPED state, you can't update it.
+   * Updates the specified fleet. If the fleet is in the STOPPED state, you can update any attribute except the fleet name. If the fleet is in the RUNNING state, you can update the following based on the fleet type:   Always-On and On-Demand fleet types You can update the DisplayName, ComputeCapacity, ImageARN, ImageName, IdleDisconnectTimeoutInSeconds, and DisconnectTimeoutInSeconds attributes.   Elastic fleet type You can update the DisplayName, IdleDisconnectTimeoutInSeconds, DisconnectTimeoutInSeconds, MaxConcurrentSessions, and UsbDeviceFilterStrings attributes.   If the fleet is in the STARTING or STOPPED state, you can't update it.
    */
   updateFleet(params: AppStream.Types.UpdateFleetRequest, callback?: (err: AWSError, data: AppStream.Types.UpdateFleetResult) => void): Request<AppStream.Types.UpdateFleetResult, AWSError>;
   /**
-   * Updates the specified fleet. If the fleet is in the STOPPED state, you can update any attribute except the fleet name. If the fleet is in the RUNNING state, you can update the following based on the fleet type:   Always-On and On-Demand fleet types You can update the DisplayName, ComputeCapacity, ImageARN, ImageName, IdleDisconnectTimeoutInSeconds, and DisconnectTimeoutInSeconds attributes.   Elastic fleet type You can update the DisplayName, IdleDisconnectTimeoutInSeconds, DisconnectTimeoutInSeconds, MaxConcurrentSessions, SessionScriptS3Location and UsbDeviceFilterStrings attributes.   If the fleet is in the STARTING or STOPPED state, you can't update it.
+   * Updates the specified fleet. If the fleet is in the STOPPED state, you can update any attribute except the fleet name. If the fleet is in the RUNNING state, you can update the following based on the fleet type:   Always-On and On-Demand fleet types You can update the DisplayName, ComputeCapacity, ImageARN, ImageName, IdleDisconnectTimeoutInSeconds, and DisconnectTimeoutInSeconds attributes.   Elastic fleet type You can update the DisplayName, IdleDisconnectTimeoutInSeconds, DisconnectTimeoutInSeconds, MaxConcurrentSessions, and UsbDeviceFilterStrings attributes.   If the fleet is in the STARTING or STOPPED state, you can't update it.
    */
   updateFleet(callback?: (err: AWSError, data: AppStream.Types.UpdateFleetResult) => void): Request<AppStream.Types.UpdateFleetResult, AWSError>;
   /**
@@ -744,7 +744,7 @@ declare namespace AppStream {
   }
   export interface AssociateFleetResult {
   }
-  export type AuthenticationType = "API"|"SAML"|"USERPOOL"|"AWS_AD"|string;
+  export type AuthenticationType = "API"|"SAML"|"USERPOOL"|string;
   export type AwsAccountId = string;
   export type AwsAccountIdList = AwsAccountId[];
   export interface BatchAssociateUserStackRequest {
@@ -773,17 +773,6 @@ declare namespace AppStream {
   }
   export type Boolean = boolean;
   export type BooleanObject = boolean;
-  export interface CertificateBasedAuthProperties {
-    /**
-     * The status of the certificate-based authentication properties.
-     */
-    Status?: CertificateBasedAuthStatus;
-    /**
-     * The ARN of the AWS Certificate Manager Private CA resource.
-     */
-    CertificateAuthorityArn?: Arn;
-  }
-  export type CertificateBasedAuthStatus = "DISABLED"|"ENABLED"|"ENABLED_NO_DIRECTORY_LOGIN_FALLBACK"|string;
   export interface ComputeCapacity {
     /**
      * The desired number of streaming instances.
@@ -926,10 +915,6 @@ declare namespace AppStream {
      * The credentials for the service account used by the fleet or image builder to connect to the directory.
      */
     ServiceAccountCredentials?: ServiceAccountCredentials;
-    /**
-     * The certificate-based authentication properties used to authenticate SAML 2.0 Identity Provider (IdP) user identities to Active Directory domain-joined streaming instances. Fallback is turned on by default when certificate-based authentication is Enabled . Fallback allows users to log in using their AD domain password if certificate-based authentication is unsuccessful, or to unlock a desktop lock screen. Enabled_no_directory_login_fallback enables certificate-based authentication, but does not allow users to log in using their AD domain password. Users will be disconnected to re-authenticate using certificates.
-     */
-    CertificateBasedAuthProperties?: CertificateBasedAuthProperties;
   }
   export interface CreateDirectoryConfigResult {
     /**
@@ -979,7 +964,7 @@ declare namespace AppStream {
      */
     ImageArn?: Arn;
     /**
-     * The instance type to use when launching fleet instances. The following instance types are available:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.standard.xlarge   stream.standard.2xlarge   stream.compute.large   stream.compute.xlarge   stream.compute.2xlarge   stream.compute.4xlarge   stream.compute.8xlarge   stream.memory.large   stream.memory.xlarge   stream.memory.2xlarge   stream.memory.4xlarge   stream.memory.8xlarge   stream.memory.z1d.large   stream.memory.z1d.xlarge   stream.memory.z1d.2xlarge   stream.memory.z1d.3xlarge   stream.memory.z1d.6xlarge   stream.memory.z1d.12xlarge   stream.graphics-design.large   stream.graphics-design.xlarge   stream.graphics-design.2xlarge   stream.graphics-design.4xlarge   stream.graphics-desktop.2xlarge   stream.graphics.g4dn.xlarge   stream.graphics.g4dn.2xlarge   stream.graphics.g4dn.4xlarge   stream.graphics.g4dn.8xlarge   stream.graphics.g4dn.12xlarge   stream.graphics.g4dn.16xlarge   stream.graphics-pro.4xlarge   stream.graphics-pro.8xlarge   stream.graphics-pro.16xlarge   The following instance types are available for Elastic fleets:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.standard.xlarge   stream.standard.2xlarge  
+     * The instance type to use when launching fleet instances. The following instance types are available:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.compute.large   stream.compute.xlarge   stream.compute.2xlarge   stream.compute.4xlarge   stream.compute.8xlarge   stream.memory.large   stream.memory.xlarge   stream.memory.2xlarge   stream.memory.4xlarge   stream.memory.8xlarge   stream.memory.z1d.large   stream.memory.z1d.xlarge   stream.memory.z1d.2xlarge   stream.memory.z1d.3xlarge   stream.memory.z1d.6xlarge   stream.memory.z1d.12xlarge   stream.graphics-design.large   stream.graphics-design.xlarge   stream.graphics-design.2xlarge   stream.graphics-design.4xlarge   stream.graphics-desktop.2xlarge   stream.graphics.g4dn.xlarge   stream.graphics.g4dn.2xlarge   stream.graphics.g4dn.4xlarge   stream.graphics.g4dn.8xlarge   stream.graphics.g4dn.12xlarge   stream.graphics.g4dn.16xlarge   stream.graphics-pro.4xlarge   stream.graphics-pro.8xlarge   stream.graphics-pro.16xlarge   The following instance types are available for Elastic fleets:   stream.standard.small   stream.standard.medium  
      */
     InstanceType: String;
     /**
@@ -1046,10 +1031,6 @@ declare namespace AppStream {
      * The USB device filter strings that specify which USB devices a user can redirect to the fleet streaming session, when using the Windows native client. This is allowed but not required for Elastic fleets.
      */
     UsbDeviceFilterStrings?: UsbDeviceFilterStrings;
-    /**
-     * The S3 location of the session scripts configuration zip file. This only applies to Elastic fleets.
-     */
-    SessionScriptS3Location?: S3Location;
   }
   export interface CreateFleetResult {
     /**
@@ -1182,10 +1163,6 @@ declare namespace AppStream {
      * The domains where AppStream 2.0 streaming sessions can be embedded in an iframe. You must approve the domains that you want to host embedded AppStream 2.0 streaming sessions. 
      */
     EmbedHostDomains?: EmbedHostDomains;
-    /**
-     * The streaming protocol you want your stack to prefer. This can be UDP or TCP. Currently, UDP is only supported in the Windows native client.
-     */
-    StreamingExperienceSettings?: StreamingExperienceSettings;
   }
   export interface CreateStackResult {
     /**
@@ -1789,10 +1766,6 @@ declare namespace AppStream {
      * The time the directory configuration was created.
      */
     CreatedTime?: Timestamp;
-    /**
-     * The certificate-based authentication properties used to authenticate SAML 2.0 Identity Provider (IdP) user identities to Active Directory domain-joined streaming instances. Fallback is turned on by default when certificate-based authentication is Enabled . Fallback allows users to log in using their AD domain password if certificate-based authentication is unsuccessful, or to unlock a desktop lock screen. Enabled_no_directory_login_fallback enables certificate-based authentication, but does not allow users to log in using their AD domain password. Users will be disconnected to re-authenticate using certificates.
-     */
-    CertificateBasedAuthProperties?: CertificateBasedAuthProperties;
   }
   export type DirectoryConfigList = DirectoryConfig[];
   export type DirectoryName = string;
@@ -2027,12 +2000,8 @@ declare namespace AppStream {
      * The USB device filter strings associated with the fleet.
      */
     UsbDeviceFilterStrings?: UsbDeviceFilterStrings;
-    /**
-     * The S3 location of the session scripts configuration zip file. This only applies to Elastic fleets.
-     */
-    SessionScriptS3Location?: S3Location;
   }
-  export type FleetAttribute = "VPC_CONFIGURATION"|"VPC_CONFIGURATION_SECURITY_GROUP_IDS"|"DOMAIN_JOIN_INFO"|"IAM_ROLE_ARN"|"USB_DEVICE_FILTER_STRINGS"|"SESSION_SCRIPT_S3_LOCATION"|string;
+  export type FleetAttribute = "VPC_CONFIGURATION"|"VPC_CONFIGURATION_SECURITY_GROUP_IDS"|"DOMAIN_JOIN_INFO"|"IAM_ROLE_ARN"|"USB_DEVICE_FILTER_STRINGS"|string;
   export type FleetAttributes = FleetAttribute[];
   export interface FleetError {
     /**
@@ -2338,7 +2307,6 @@ declare namespace AppStream {
   export type Permission = "ENABLED"|"DISABLED"|string;
   export type PlatformType = "WINDOWS"|"WINDOWS_SERVER_2016"|"WINDOWS_SERVER_2019"|"AMAZON_LINUX2"|string;
   export type Platforms = PlatformType[];
-  export type PreferredProtocol = "TCP"|"UDP"|string;
   export type RedirectURL = string;
   export type RegionName = string;
   export interface ResourceError {
@@ -2508,12 +2476,8 @@ declare namespace AppStream {
      * The domains where AppStream 2.0 streaming sessions can be embedded in an iframe. You must approve the domains that you want to host embedded AppStream 2.0 streaming sessions.
      */
     EmbedHostDomains?: EmbedHostDomains;
-    /**
-     * The streaming protocol you want your stack to prefer. This can be UDP or TCP. Currently, UDP is only supported in the Windows native client.
-     */
-    StreamingExperienceSettings?: StreamingExperienceSettings;
   }
-  export type StackAttribute = "STORAGE_CONNECTORS"|"STORAGE_CONNECTOR_HOMEFOLDERS"|"STORAGE_CONNECTOR_GOOGLE_DRIVE"|"STORAGE_CONNECTOR_ONE_DRIVE"|"REDIRECT_URL"|"FEEDBACK_URL"|"THEME_NAME"|"USER_SETTINGS"|"EMBED_HOST_DOMAINS"|"IAM_ROLE_ARN"|"ACCESS_ENDPOINTS"|"STREAMING_EXPERIENCE_SETTINGS"|string;
+  export type StackAttribute = "STORAGE_CONNECTORS"|"STORAGE_CONNECTOR_HOMEFOLDERS"|"STORAGE_CONNECTOR_GOOGLE_DRIVE"|"STORAGE_CONNECTOR_ONE_DRIVE"|"REDIRECT_URL"|"FEEDBACK_URL"|"THEME_NAME"|"USER_SETTINGS"|"EMBED_HOST_DOMAINS"|"IAM_ROLE_ARN"|"ACCESS_ENDPOINTS"|string;
   export type StackAttributes = StackAttribute[];
   export interface StackError {
     /**
@@ -2589,12 +2553,6 @@ declare namespace AppStream {
   export type StorageConnectorList = StorageConnector[];
   export type StorageConnectorType = "HOMEFOLDERS"|"GOOGLE_DRIVE"|"ONE_DRIVE"|string;
   export type StreamView = "APP"|"DESKTOP"|string;
-  export interface StreamingExperienceSettings {
-    /**
-     * The preferred protocol that you want to use while streaming your application.
-     */
-    PreferredProtocol?: PreferredProtocol;
-  }
   export type StreamingUrlUserId = string;
   export type String = string;
   export type StringList = String[];
@@ -2682,10 +2640,6 @@ declare namespace AppStream {
      * The credentials for the service account used by the fleet or image builder to connect to the directory.
      */
     ServiceAccountCredentials?: ServiceAccountCredentials;
-    /**
-     * The certificate-based authentication properties used to authenticate SAML 2.0 Identity Provider (IdP) user identities to Active Directory domain-joined streaming instances. Fallback is turned on by default when certificate-based authentication is Enabled . Fallback allows users to log in using their AD domain password if certificate-based authentication is unsuccessful, or to unlock a desktop lock screen. Enabled_no_directory_login_fallback enables certificate-based authentication, but does not allow users to log in using their AD domain password. Users will be disconnected to re-authenticate using certificates.
-     */
-    CertificateBasedAuthProperties?: CertificateBasedAuthProperties;
   }
   export interface UpdateDirectoryConfigResult {
     /**
@@ -2735,7 +2689,7 @@ declare namespace AppStream {
      */
     Name?: String;
     /**
-     * The instance type to use when launching fleet instances. The following instance types are available:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.standard.xlarge   stream.standard.2xlarge   stream.compute.large   stream.compute.xlarge   stream.compute.2xlarge   stream.compute.4xlarge   stream.compute.8xlarge   stream.memory.large   stream.memory.xlarge   stream.memory.2xlarge   stream.memory.4xlarge   stream.memory.8xlarge   stream.memory.z1d.large   stream.memory.z1d.xlarge   stream.memory.z1d.2xlarge   stream.memory.z1d.3xlarge   stream.memory.z1d.6xlarge   stream.memory.z1d.12xlarge   stream.graphics-design.large   stream.graphics-design.xlarge   stream.graphics-design.2xlarge   stream.graphics-design.4xlarge   stream.graphics-desktop.2xlarge   stream.graphics.g4dn.xlarge   stream.graphics.g4dn.2xlarge   stream.graphics.g4dn.4xlarge   stream.graphics.g4dn.8xlarge   stream.graphics.g4dn.12xlarge   stream.graphics.g4dn.16xlarge   stream.graphics-pro.4xlarge   stream.graphics-pro.8xlarge   stream.graphics-pro.16xlarge   The following instance types are available for Elastic fleets:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.standard.xlarge   stream.standard.2xlarge  
+     * The instance type to use when launching fleet instances. The following instance types are available:   stream.standard.small   stream.standard.medium   stream.standard.large   stream.compute.large   stream.compute.xlarge   stream.compute.2xlarge   stream.compute.4xlarge   stream.compute.8xlarge   stream.memory.large   stream.memory.xlarge   stream.memory.2xlarge   stream.memory.4xlarge   stream.memory.8xlarge   stream.memory.z1d.large   stream.memory.z1d.xlarge   stream.memory.z1d.2xlarge   stream.memory.z1d.3xlarge   stream.memory.z1d.6xlarge   stream.memory.z1d.12xlarge   stream.graphics-design.large   stream.graphics-design.xlarge   stream.graphics-design.2xlarge   stream.graphics-design.4xlarge   stream.graphics-desktop.2xlarge   stream.graphics.g4dn.xlarge   stream.graphics.g4dn.2xlarge   stream.graphics.g4dn.4xlarge   stream.graphics.g4dn.8xlarge   stream.graphics.g4dn.12xlarge   stream.graphics.g4dn.16xlarge   stream.graphics-pro.4xlarge   stream.graphics-pro.8xlarge   stream.graphics-pro.16xlarge   The following instance types are available for Elastic fleets:   stream.standard.small   stream.standard.medium  
      */
     InstanceType?: String;
     /**
@@ -2802,10 +2756,6 @@ declare namespace AppStream {
      * The USB device filter strings that specify which USB devices a user can redirect to the fleet streaming session, when using the Windows native client. This is allowed but not required for Elastic fleets.
      */
     UsbDeviceFilterStrings?: UsbDeviceFilterStrings;
-    /**
-     * The S3 location of the session scripts configuration zip file. This only applies to Elastic fleets. 
-     */
-    SessionScriptS3Location?: S3Location;
   }
   export interface UpdateFleetResult {
     /**
@@ -2878,10 +2828,6 @@ declare namespace AppStream {
      * The domains where AppStream 2.0 streaming sessions can be embedded in an iframe. You must approve the domains that you want to host embedded AppStream 2.0 streaming sessions. 
      */
     EmbedHostDomains?: EmbedHostDomains;
-    /**
-     * The streaming protocol you want your stack to prefer. This can be UDP or TCP. Currently, UDP is only supported in the Windows native client.
-     */
-    StreamingExperienceSettings?: StreamingExperienceSettings;
   }
   export interface UpdateStackResult {
     /**

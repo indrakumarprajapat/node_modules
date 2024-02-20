@@ -4,11 +4,11 @@ import { ValueOrPromise } from './value-promise';
 /**
  * Return value for a method invocation
  */
-export type InvocationResult = any;
+export declare type InvocationResult = any;
 /**
  * Array of arguments for a method invocation
  */
-export type InvocationArgs = any[];
+export declare type InvocationArgs = any[];
 /**
  * An interface to represent the caller of the invocation
  */
@@ -69,7 +69,7 @@ export declare class InvocationContext extends Context {
 /**
  * Options to control invocations
  */
-export type InvocationOptions = {
+export declare type InvocationOptions = {
     /**
      * Skip dependency injection on method parameters
      */

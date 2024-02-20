@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -18,17 +18,19 @@ let UserRepository = class UserRepository extends repository_1.DefaultCrudReposi
         this.registerInclusionResolver('userCredentials', this.userCredentials.inclusionResolver);
     }
     async findCredentials(userId) {
-        return this.userCredentials(userId)
-            .get()
-            .catch(err => {
-            if (err.code === 'ENTITY_NOT_FOUND')
+        try {
+            return await this.userCredentials(userId).get();
+        }
+        catch (err) {
+            if (err.code === 'ENTITY_NOT_FOUND') {
                 return undefined;
+            }
             throw err;
-        });
+        }
     }
 };
 UserRepository = tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(`datasources.${keys_1.UserServiceBindings.DATASOURCE_NAME}`)),
+    tslib_1.__param(0, core_1.inject(`datasources.${keys_1.UserServiceBindings.DATASOURCE_NAME}`)),
     tslib_1.__param(1, repository_1.repository.getter('UserCredentialsRepository')),
     tslib_1.__metadata("design:paramtypes", [repository_1.juggler.DataSource, Function])
 ], UserRepository);

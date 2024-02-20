@@ -1,7 +1,7 @@
 {
   "name": "@loopback/repository-json-schema",
   "description": "Converts TS classes into JSON Schemas using TypeScript's reflection API",
-  "version": "6.1.4",
+  "version": "3.4.1",
   "keywords": [
     "LoopBack",
     "TypeScript",
@@ -10,15 +10,15 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "IBM Corp. and LoopBack contributors",
-  "copyright.owner": "IBM Corp. and LoopBack contributors",
+  "author": "IBM Corp.",
+  "copyright.owner": "IBM Corp.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/loopbackio/loopback-next.git",
+    "url": "https://github.com/strongloop/loopback-next.git",
     "directory": "packages/repository-json-schema"
   },
   "engines": {
-    "node": "14 || 16 || 18 || 19"
+    "node": "^10.16 || 12 || 14 || 16"
   },
   "scripts": {
     "build": "lb-tsc",
@@ -37,23 +37,23 @@
     "!*/__tests__"
   ],
   "peerDependencies": {
-    "@loopback/core": "^4.0.10",
-    "@loopback/repository": "^5.1.5"
+    "@loopback/core": "^2.16.1",
+    "@loopback/repository": "^3.7.0"
   },
   "dependencies": {
-    "@types/json-schema": "^7.0.11",
-    "debug": "^4.3.4",
-    "tslib": "^2.5.0"
+    "@types/json-schema": "^7.0.7",
+    "debug": "^4.3.1",
+    "tslib": "^2.2.0"
   },
   "devDependencies": {
-    "@loopback/build": "^9.0.10",
-    "@loopback/core": "^4.0.10",
-    "@loopback/eslint-config": "^13.0.10",
-    "@loopback/repository": "^5.1.5",
-    "@loopback/testlab": "^5.0.10",
-    "@types/debug": "^4.1.7",
-    "@types/node": "^14.18.42",
-    "ajv-formats": "^2.1.1"
+    "@loopback/build": "^6.4.1",
+    "@loopback/core": "^2.16.1",
+    "@loopback/eslint-config": "^10.2.1",
+    "@loopback/repository": "^3.7.0",
+    "@loopback/testlab": "^3.4.1",
+    "@types/debug": "^4.1.5",
+    "@types/node": "^10.17.60",
+    "ajv": "^6.12.6"
   },
-  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+  "gitHead": "2a3b684ec76fa299d80b099abbf101358538cb75"
 }

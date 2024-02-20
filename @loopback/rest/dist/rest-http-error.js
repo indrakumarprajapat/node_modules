@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -18,8 +18,7 @@ var RestHttpErrors;
     }
     RestHttpErrors.invalidData = invalidData;
     function unsupportedMediaType(contentType, allowedTypes = []) {
-        const msg = (allowedTypes === null || allowedTypes === void 0 ? void 0 : allowedTypes.length)
-            ? `Content-type ${contentType} does not match [${allowedTypes}].`
+        const msg = (allowedTypes === null || allowedTypes === void 0 ? void 0 : allowedTypes.length) ? `Content-type ${contentType} does not match [${allowedTypes}].`
             : `Content-type ${contentType} is not supported.`;
         return Object.assign(new http_errors_1.default.UnsupportedMediaType(msg), {
             code: 'UNSUPPORTED_MEDIA_TYPE',

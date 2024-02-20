@@ -52,11 +52,11 @@ declare class IVS extends Service {
    */
   createStreamKey(callback?: (err: AWSError, data: IVS.Types.CreateStreamKeyResponse) => void): Request<IVS.Types.CreateStreamKeyResponse, AWSError>;
   /**
-   * Deletes the specified channel and its associated stream keys. If you try to delete a live channel, you will get an error (409 ConflictException). To delete a channel that is live, call StopStream, wait for the Amazon EventBridge "Stream End" event (to verify that the stream's state is no longer Live), then call DeleteChannel. (See  Using EventBridge with Amazon IVS.) 
+   * Deletes the specified channel and its associated stream keys. If you try to delete a live channel, you will get an error (409 ConflictException). To delete a channel that is live, call StopStream, wait for the Amazon EventBridge "Stream End" event (to verify that the stream's state was changed from Live to Offline), then call DeleteChannel. (See  Using EventBridge with Amazon IVS.) 
    */
   deleteChannel(params: IVS.Types.DeleteChannelRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
-   * Deletes the specified channel and its associated stream keys. If you try to delete a live channel, you will get an error (409 ConflictException). To delete a channel that is live, call StopStream, wait for the Amazon EventBridge "Stream End" event (to verify that the stream's state is no longer Live), then call DeleteChannel. (See  Using EventBridge with Amazon IVS.) 
+   * Deletes the specified channel and its associated stream keys. If you try to delete a live channel, you will get an error (409 ConflictException). To delete a channel that is live, call StopStream, wait for the Amazon EventBridge "Stream End" event (to verify that the stream's state was changed from Live to Offline), then call DeleteChannel. (See  Using EventBridge with Amazon IVS.) 
    */
   deleteChannel(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
@@ -228,11 +228,11 @@ declare class IVS extends Service {
    */
   untagResource(callback?: (err: AWSError, data: IVS.Types.UntagResourceResponse) => void): Request<IVS.Types.UntagResourceResponse, AWSError>;
   /**
-   * Updates a channel's configuration. Live channels cannot be updated. You must stop the ongoing stream, update the channel, and restart the stream for the changes to take effect.
+   * Updates a channel's configuration. This does not affect an ongoing stream of this channel. You must stop and restart the stream for the changes to take effect.
    */
   updateChannel(params: IVS.Types.UpdateChannelRequest, callback?: (err: AWSError, data: IVS.Types.UpdateChannelResponse) => void): Request<IVS.Types.UpdateChannelResponse, AWSError>;
   /**
-   * Updates a channel's configuration. Live channels cannot be updated. You must stop the ongoing stream, update the channel, and restart the stream for the changes to take effect.
+   * Updates a channel's configuration. This does not affect an ongoing stream of this channel. You must stop and restart the stream for the changes to take effect.
    */
   updateChannel(callback?: (err: AWSError, data: IVS.Types.UpdateChannelResponse) => void): Request<IVS.Types.UpdateChannelResponse, AWSError>;
 }
@@ -288,7 +288,7 @@ declare namespace IVS {
   }
   export interface BatchGetStreamKeyRequest {
     /**
-     * Array of ARNs, one per stream key.
+     * Array of ARNs, one per channel.
      */
     arns: StreamKeyArnList;
   }
@@ -317,10 +317,6 @@ declare namespace IVS {
      */
     ingestEndpoint?: IngestEndpoint;
     /**
-     * Whether the channel allows insecure RTMP ingest. Default: false.
-     */
-    insecureIngest?: InsecureIngest;
-    /**
      * Channel latency mode. Use NORMAL to broadcast and deliver live video up to Full HD. Use LOW for near-real-time interaction with viewers. Default: LOW. (Note: In the Amazon IVS console, LOW and NORMAL correspond to Ultra-low and Standard, respectively.)
      */
     latencyMode?: ChannelLatencyMode;
@@ -333,19 +329,15 @@ declare namespace IVS {
      */
     playbackUrl?: PlaybackURL;
     /**
-     * Optional transcode preset for the channel. This is selectable only for ADVANCED_HD and ADVANCED_SD channel types. For those channel types, the default preset is HIGHER_BANDWIDTH_DELIVERY. For other channel types (BASIC and STANDARD), preset is the empty string ("").
-     */
-    preset?: TranscodePreset;
-    /**
      * Recording-configuration ARN. A value other than an empty string indicates that recording is enabled. Default: "" (empty string, recording is disabled).
      */
     recordingConfigurationArn?: ChannelRecordingConfigurationArn;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
     /**
-     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable input resolution or bitrate, the stream probably will disconnect immediately. Some types generate multiple qualities (renditions) from the original input; this automatically gives viewers the best experience for their devices and network conditions. Some types provide transcoded video; transcoding allows higher playback quality across a range of download speeds. Default: STANDARD. Valid values:    BASIC: Video is transmuxed: Amazon IVS delivers the original input quality to viewers. The viewer’s video-quality choice is limited to the original input. Input resolution can be up to 1080p and bitrate can be up to 1.5 Mbps for 480p and up to 3.5 Mbps for resolutions between 480p and 1080p. Original audio is passed through.    STANDARD: Video is transcoded: multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Transcoding allows higher playback quality across a range of download speeds. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through. This is the default when you create a channel.    ADVANCED_SD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at SD quality (480p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.    ADVANCED_HD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at HD quality (720p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.   Optional transcode presets (available for the ADVANCED types) allow you to trade off available download bandwidth and video quality, to optimize the viewing experience. There are two presets:    Constrained bandwidth delivery uses a lower bitrate for each quality level. Use it if you have low download bandwidth and/or simple video content (e.g., talking heads)    Higher bandwidth delivery uses a higher bitrate for each quality level. Use it if you have high download bandwidth and/or complex video content (e.g., flashes and quick scene changes).  
+     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable resolution or bitrate, the stream probably will disconnect immediately. Default: STANDARD. Valid values:    STANDARD: Multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through.    BASIC: Amazon IVS delivers the original input to viewers. The viewer’s video-quality choice is limited to the original input. Resolution can be up to 480p and bitrate can be up to 1.5 Mbps.  
      */
     type?: ChannelType;
   }
@@ -365,10 +357,6 @@ declare namespace IVS {
      */
     authorized?: IsAuthorized;
     /**
-     * Whether the channel allows insecure RTMP ingest. Default: false.
-     */
-    insecureIngest?: InsecureIngest;
-    /**
      * Channel latency mode. Use NORMAL to broadcast and deliver live video up to Full HD. Use LOW for near-real-time interaction with viewers. Default: LOW. (Note: In the Amazon IVS console, LOW and NORMAL correspond to Ultra-low and Standard, respectively.)
      */
     latencyMode?: ChannelLatencyMode;
@@ -377,33 +365,21 @@ declare namespace IVS {
      */
     name?: ChannelName;
     /**
-     * Optional transcode preset for the channel. This is selectable only for ADVANCED_HD and ADVANCED_SD channel types. For those channel types, the default preset is HIGHER_BANDWIDTH_DELIVERY. For other channel types (BASIC and STANDARD), preset is the empty string ("").
-     */
-    preset?: TranscodePreset;
-    /**
      * Recording-configuration ARN. A value other than an empty string indicates that recording is enabled. Default: "" (empty string, recording is disabled).
      */
     recordingConfigurationArn?: ChannelRecordingConfigurationArn;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
-    /**
-     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable input resolution or bitrate, the stream probably will disconnect immediately. Some types generate multiple qualities (renditions) from the original input; this automatically gives viewers the best experience for their devices and network conditions. Some types provide transcoded video; transcoding allows higher playback quality across a range of download speeds. Default: STANDARD. Valid values:    BASIC: Video is transmuxed: Amazon IVS delivers the original input quality to viewers. The viewer’s video-quality choice is limited to the original input. Input resolution can be up to 1080p and bitrate can be up to 1.5 Mbps for 480p and up to 3.5 Mbps for resolutions between 480p and 1080p. Original audio is passed through.    STANDARD: Video is transcoded: multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Transcoding allows higher playback quality across a range of download speeds. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through. This is the default when you create a channel.    ADVANCED_SD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at SD quality (480p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.    ADVANCED_HD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at HD quality (720p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.   Optional transcode presets (available for the ADVANCED types) allow you to trade off available download bandwidth and video quality, to optimize the viewing experience. There are two presets:    Constrained bandwidth delivery uses a lower bitrate for each quality level. Use it if you have low download bandwidth and/or simple video content (e.g., talking heads)    Higher bandwidth delivery uses a higher bitrate for each quality level. Use it if you have high download bandwidth and/or complex video content (e.g., flashes and quick scene changes).  
-     */
-    type?: ChannelType;
   }
-  export type ChannelType = "BASIC"|"STANDARD"|"ADVANCED_SD"|"ADVANCED_HD"|string;
+  export type ChannelType = "BASIC"|"STANDARD"|string;
   export type Channels = Channel[];
   export interface CreateChannelRequest {
     /**
      * Whether the channel is private (enabled for playback authorization). Default: false.
      */
     authorized?: Boolean;
-    /**
-     * Whether the channel allows insecure RTMP ingest. Default: false.
-     */
-    insecureIngest?: Boolean;
     /**
      * Channel latency mode. Use NORMAL to broadcast and deliver live video up to Full HD. Use LOW for near-real-time interaction with viewers. (Note: In the Amazon IVS console, LOW and NORMAL correspond to Ultra-low and Standard, respectively.) Default: LOW.
      */
@@ -413,19 +389,15 @@ declare namespace IVS {
      */
     name?: ChannelName;
     /**
-     * Optional transcode preset for the channel. This is selectable only for ADVANCED_HD and ADVANCED_SD channel types. For those channel types, the default preset is HIGHER_BANDWIDTH_DELIVERY. For other channel types (BASIC and STANDARD), preset is the empty string ("").
-     */
-    preset?: TranscodePreset;
-    /**
      * Recording-configuration ARN. Default: "" (empty string, recording is disabled).
      */
     recordingConfigurationArn?: ChannelRecordingConfigurationArn;
     /**
-     * Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
     /**
-     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable input resolution or bitrate, the stream probably will disconnect immediately. Some types generate multiple qualities (renditions) from the original input; this automatically gives viewers the best experience for their devices and network conditions. Some types provide transcoded video; transcoding allows higher playback quality across a range of download speeds. Default: STANDARD. Valid values:    BASIC: Video is transmuxed: Amazon IVS delivers the original input quality to viewers. The viewer’s video-quality choice is limited to the original input. Input resolution can be up to 1080p and bitrate can be up to 1.5 Mbps for 480p and up to 3.5 Mbps for resolutions between 480p and 1080p. Original audio is passed through.    STANDARD: Video is transcoded: multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Transcoding allows higher playback quality across a range of download speeds. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through. This is the default when you create a channel.    ADVANCED_SD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at SD quality (480p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.    ADVANCED_HD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at HD quality (720p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.   Optional transcode presets (available for the ADVANCED types) allow you to trade off available download bandwidth and video quality, to optimize the viewing experience. There are two presets:    Constrained bandwidth delivery uses a lower bitrate for each quality level. Use it if you have low download bandwidth and/or simple video content (e.g., talking heads)    Higher bandwidth delivery uses a higher bitrate for each quality level. Use it if you have high download bandwidth and/or complex video content (e.g., flashes and quick scene changes).  
+     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable resolution or bitrate, the stream probably will disconnect immediately. Default: STANDARD. Valid values:    STANDARD: Multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through.    BASIC: Amazon IVS delivers the original input to viewers. The viewer’s video-quality choice is limited to the original input. Resolution can be up to 480p and bitrate can be up to 1.5 Mbps.  
      */
     type?: ChannelType;
   }
@@ -449,11 +421,7 @@ declare namespace IVS {
      */
     name?: RecordingConfigurationName;
     /**
-     * If a broadcast disconnects and then reconnects within the specified interval, the multiple streams will be considered a single broadcast and merged together. Default: 0.
-     */
-    recordingReconnectWindowSeconds?: RecordingReconnectWindowSeconds;
-    /**
-     * Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
     /**
@@ -473,7 +441,7 @@ declare namespace IVS {
      */
     channelArn: ChannelArn;
     /**
-     * Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
   }
@@ -601,7 +569,7 @@ declare namespace IVS {
      */
     publicKeyMaterial: PlaybackPublicKeyMaterial;
     /**
-     * Any tags provided with the request are added to the playback key pair tags. See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Any tags provided with the request are added to the playback key pair tags.
      */
     tags?: Tags;
   }
@@ -622,7 +590,6 @@ declare namespace IVS {
     video?: VideoConfiguration;
   }
   export type IngestEndpoint = string;
-  export type InsecureIngest = boolean;
   export type Integer = number;
   export type IsAuthorized = boolean;
   export interface ListChannelsRequest {
@@ -635,7 +602,7 @@ declare namespace IVS {
      */
     filterByRecordingConfigurationArn?: ChannelRecordingConfigurationArn;
     /**
-     * Maximum number of channels to return. Default: 100.
+     * Maximum number of channels to return. Default: 50.
      */
     maxResults?: MaxChannelResults;
     /**
@@ -655,11 +622,11 @@ declare namespace IVS {
   }
   export interface ListPlaybackKeyPairsRequest {
     /**
-     * Maximum number of key pairs to return. Default: your service quota or 100, whichever is smaller.
+     * The first key pair to retrieve. This is used for pagination; see the nextToken response field. Default: 50.
      */
     maxResults?: MaxPlaybackKeyPairResults;
     /**
-     * The first key pair to retrieve. This is used for pagination; see the nextToken response field.
+     * Maximum number of key pairs to return.
      */
     nextToken?: PaginationToken;
   }
@@ -675,7 +642,7 @@ declare namespace IVS {
   }
   export interface ListRecordingConfigurationsRequest {
     /**
-     * Maximum number of recording configurations to return. Default: your service quota or 100, whichever is smaller. 
+     * Maximum number of recording configurations to return. Default: 50. 
      */
     maxResults?: MaxRecordingConfigurationResults;
     /**
@@ -699,7 +666,7 @@ declare namespace IVS {
      */
     channelArn: ChannelArn;
     /**
-     * Maximum number of streamKeys to return. Default: 1.
+     * Maximum number of streamKeys to return. Default: 50.
      */
     maxResults?: MaxStreamKeyResults;
     /**
@@ -723,7 +690,7 @@ declare namespace IVS {
      */
     channelArn: ChannelArn;
     /**
-     * Maximum number of streams to return. Default: 100.
+     * Maximum number of streams to return. Default: 50.
      */
     maxResults?: MaxStreamResults;
     /**
@@ -747,7 +714,7 @@ declare namespace IVS {
      */
     filterBy?: StreamFilters;
     /**
-     * Maximum number of streams to return. Default: 100.
+     * Maximum number of streams to return. Default: 50.
      */
     maxResults?: MaxStreamResults;
     /**
@@ -767,13 +734,13 @@ declare namespace IVS {
   }
   export interface ListTagsForResourceRequest {
     /**
-     * The ARN of the resource to be retrieved. The ARN must be URL-encoded.
+     * The ARN of the resource to be retrieved.
      */
     resourceArn: ResourceArn;
   }
   export interface ListTagsForResourceResponse {
     /**
-     * Tags attached to the resource. Array of maps, each of the form string:string (key:value).
+     * 
      */
     tags: Tags;
   }
@@ -797,7 +764,7 @@ declare namespace IVS {
      */
     name?: PlaybackKeyPairName;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
   }
@@ -815,7 +782,7 @@ declare namespace IVS {
      */
     name?: PlaybackKeyPairName;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
   }
@@ -845,15 +812,11 @@ declare namespace IVS {
      */
     name?: RecordingConfigurationName;
     /**
-     * If a broadcast disconnects and then reconnects within the specified interval, the multiple streams will be considered a single broadcast and merged together. Default: 0.
-     */
-    recordingReconnectWindowSeconds?: RecordingReconnectWindowSeconds;
-    /**
      * Indicates the current state of the recording configuration. When the state is ACTIVE, the configuration is ready for recording a channel stream.
      */
     state: RecordingConfigurationState;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
     /**
@@ -883,12 +846,11 @@ declare namespace IVS {
      */
     state: RecordingConfigurationState;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
   }
   export type RecordingMode = "DISABLED"|"INTERVAL"|string;
-  export type RecordingReconnectWindowSeconds = number;
   export type ResourceArn = string;
   export type S3DestinationBucketName = string;
   export interface S3DestinationConfiguration {
@@ -919,11 +881,11 @@ declare namespace IVS {
      */
     playbackUrl?: PlaybackURL;
     /**
-     * Time of the stream’s start. This is an ISO 8601 timestamp; note that this is returned as a string.
+     * Time of the stream’s start. This is an ISO 8601 timestamp returned as a string.
      */
     startTime?: StreamStartTime;
     /**
-     * The stream’s state. Do not rely on the OFFLINE state, as the API may not return it; instead, a "NotBroadcasting" error will indicate that the stream is not live.
+     * The stream’s state.
      */
     state?: StreamState;
     /**
@@ -937,7 +899,7 @@ declare namespace IVS {
   }
   export interface StreamEvent {
     /**
-     * Time when the event occurred. This is an ISO 8601 timestamp; note that this is returned as a string.
+     * UTC ISO-8601 formatted timestamp of when the event occurred.
      */
     eventTime?: Time;
     /**
@@ -968,7 +930,7 @@ declare namespace IVS {
      */
     channelArn?: ChannelArn;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
     /**
@@ -989,7 +951,7 @@ declare namespace IVS {
      */
     channelArn?: ChannelArn;
     /**
-     * Tags attached to the resource. Array of 1-50 maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of 1-50 maps, each of the form string:string (key:value).
      */
     tags?: Tags;
   }
@@ -1003,7 +965,7 @@ declare namespace IVS {
      */
     channel?: Channel;
     /**
-     * Time when the channel went offline. This is an ISO 8601 timestamp; note that this is returned as a string. For live streams, this is NULL.
+     * UTC ISO-8601 formatted timestamp of when the channel went offline. For live streams, this is NULL.
      */
     endTime?: Time;
     /**
@@ -1015,7 +977,7 @@ declare namespace IVS {
      */
     recordingConfiguration?: RecordingConfiguration;
     /**
-     * Time when the channel went live. This is an ISO 8601 timestamp; note that this is returned as a string.
+     * UTC ISO-8601 formatted timestamp of when the channel went live.
      */
     startTime?: Time;
     /**
@@ -1030,7 +992,7 @@ declare namespace IVS {
   export type StreamSessionList = StreamSessionSummary[];
   export interface StreamSessionSummary {
     /**
-     * Time when the channel went offline. This is an ISO 8601 timestamp; note that this is returned as a string. For live streams, this is NULL.
+     * UTC ISO-8601 formatted timestamp of when the channel went offline. For live streams, this is NULL.
      */
     endTime?: Time;
     /**
@@ -1038,7 +1000,7 @@ declare namespace IVS {
      */
     hasErrorEvent?: Boolean;
     /**
-     * Time when the channel went live. This is an ISO 8601 timestamp; note that this is returned as a string.
+     * UTC ISO-8601 formatted timestamp of when the channel went live.
      */
     startTime?: Time;
     /**
@@ -1058,11 +1020,11 @@ declare namespace IVS {
      */
     health?: StreamHealth;
     /**
-     * Time of the stream’s start. This is an ISO 8601 timestamp; note that this is returned as a string. 
+     * Time of the stream’s start. This is an ISO 8601 timestamp returned as a string.
      */
     startTime?: StreamStartTime;
     /**
-     * The stream’s state. Do not rely on the OFFLINE state, as the API may not return it; instead, a "NotBroadcasting" error will indicate that the stream is not live.
+     * The stream’s state.
      */
     state?: StreamState;
     /**
@@ -1080,11 +1042,11 @@ declare namespace IVS {
   export type TagKeyList = TagKey[];
   export interface TagResourceRequest {
     /**
-     * ARN of the resource for which tags are to be added or updated. The ARN must be URL-encoded.
+     * ARN of the resource for which tags are to be added or updated.
      */
     resourceArn: ResourceArn;
     /**
-     * Array of tags to be added or updated. Array of maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of tags to be added or updated.
      */
     tags: Tags;
   }
@@ -1104,14 +1066,13 @@ declare namespace IVS {
     targetIntervalSeconds?: TargetIntervalSeconds;
   }
   export type Time = Date;
-  export type TranscodePreset = "HIGHER_BANDWIDTH_DELIVERY"|"CONSTRAINED_BANDWIDTH_DELIVERY"|string;
   export interface UntagResourceRequest {
     /**
-     * ARN of the resource for which tags are to be removed. The ARN must be URL-encoded.
+     * ARN of the resource for which tags are to be removed.
      */
     resourceArn: ResourceArn;
     /**
-     * Array of tags to be removed. Array of maps, each of the form string:string (key:value). See Tagging Amazon Web Services Resources for more information, including restrictions that apply to tags and "Tag naming limits and requirements"; Amazon IVS has no service-specific constraints beyond what is documented there.
+     * Array of tags to be removed.
      */
     tagKeys: TagKeyList;
   }
@@ -1127,10 +1088,6 @@ declare namespace IVS {
      */
     authorized?: Boolean;
     /**
-     * Whether the channel allows insecure RTMP ingest. Default: false.
-     */
-    insecureIngest?: Boolean;
-    /**
      * Channel latency mode. Use NORMAL to broadcast and deliver live video up to Full HD. Use LOW for near-real-time interaction with viewers. (Note: In the Amazon IVS console, LOW and NORMAL correspond to Ultra-low and Standard, respectively.)
      */
     latencyMode?: ChannelLatencyMode;
@@ -1139,15 +1096,11 @@ declare namespace IVS {
      */
     name?: ChannelName;
     /**
-     * Optional transcode preset for the channel. This is selectable only for ADVANCED_HD and ADVANCED_SD channel types. For those channel types, the default preset is HIGHER_BANDWIDTH_DELIVERY. For other channel types (BASIC and STANDARD), preset is the empty string ("").
-     */
-    preset?: TranscodePreset;
-    /**
      * Recording-configuration ARN. If this is set to an empty string, recording is disabled. A value other than an empty string indicates that recording is enabled
      */
     recordingConfigurationArn?: ChannelRecordingConfigurationArn;
     /**
-     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable input resolution or bitrate, the stream probably will disconnect immediately. Some types generate multiple qualities (renditions) from the original input; this automatically gives viewers the best experience for their devices and network conditions. Some types provide transcoded video; transcoding allows higher playback quality across a range of download speeds. Default: STANDARD. Valid values:    BASIC: Video is transmuxed: Amazon IVS delivers the original input quality to viewers. The viewer’s video-quality choice is limited to the original input. Input resolution can be up to 1080p and bitrate can be up to 1.5 Mbps for 480p and up to 3.5 Mbps for resolutions between 480p and 1080p. Original audio is passed through.    STANDARD: Video is transcoded: multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Transcoding allows higher playback quality across a range of download speeds. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through. This is the default when you create a channel.    ADVANCED_SD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at SD quality (480p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.    ADVANCED_HD: Video is transcoded; multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Input resolution can be up to 1080p and bitrate can be up to 8.5 Mbps; output is capped at HD quality (720p). You can select an optional transcode preset (see below). Audio for all renditions is transcoded, and an audio-only rendition is available.   Optional transcode presets (available for the ADVANCED types) allow you to trade off available download bandwidth and video quality, to optimize the viewing experience. There are two presets:    Constrained bandwidth delivery uses a lower bitrate for each quality level. Use it if you have low download bandwidth and/or simple video content (e.g., talking heads)    Higher bandwidth delivery uses a higher bitrate for each quality level. Use it if you have high download bandwidth and/or complex video content (e.g., flashes and quick scene changes).  
+     * Channel type, which determines the allowable resolution and bitrate. If you exceed the allowable resolution or bitrate, the stream probably will disconnect immediately. Valid values:    STANDARD: Multiple qualities are generated from the original input, to automatically give viewers the best experience for their devices and network conditions. Resolution can be up to 1080p and bitrate can be up to 8.5 Mbps. Audio is transcoded only for renditions 360p and below; above that, audio is passed through.    BASIC: Amazon IVS delivers the original input to viewers. The viewer’s video-quality choice is limited to the original input. Resolution can be up to 480p and bitrate can be up to 1.5 Mbps.  
      */
     type?: ChannelType;
   }

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InterceptorProviderDefaults = exports.InterceptorProviderBooter = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
-const debug_1 = tslib_1.__importDefault(require("debug"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
 const keys_1 = require("../keys");
 const types_1 = require("../types");
 const base_artifact_booter_1 = require("./base-artifact.booter");
@@ -43,12 +43,12 @@ let InterceptorProviderBooter = class InterceptorProviderBooter extends base_art
         }
     }
 };
-InterceptorProviderBooter = tslib_1.__decorate([
+InterceptorProviderBooter = (0, tslib_1.__decorate)([
     (0, types_1.booter)('interceptors'),
-    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
-    tslib_1.__param(2, (0, core_1.config)()),
-    tslib_1.__metadata("design:paramtypes", [core_1.Application, String, Object])
+    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
+    (0, tslib_1.__param)(2, (0, core_1.config)()),
+    (0, tslib_1.__metadata)("design:paramtypes", [core_1.Application, String, Object])
 ], InterceptorProviderBooter);
 exports.InterceptorProviderBooter = InterceptorProviderBooter;
 /**

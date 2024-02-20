@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -98,8 +98,8 @@ export class BindingKey<ValueType> {
     }
 
     return BindingKey.create<T>(
-      keyWithPath.slice(0, index).trim(),
-      keyWithPath.slice(index + 1),
+      keyWithPath.substr(0, index).trim(),
+      keyWithPath.substr(index + 1),
     );
   }
 

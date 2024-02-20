@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createViewGetter = exports.ContextView = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = tslib_1.__importDefault(require("debug"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
 const events_1 = require("events");
 const util_1 = require("util");
 const resolution_session_1 = require("./resolution-session");
@@ -156,10 +156,7 @@ class ContextView extends events_1.EventEmitter {
                 ...this.resolutionOptions,
                 ...(0, resolution_session_1.asResolutionOptions)(session),
             };
-            // https://github.com/loopbackio/loopback-next/issues/9041
-            // We should start with a new session for `view` resolution to avoid
-            // possible circular dependencies
-            options.session = undefined;
+            options.session = resolution_session_1.ResolutionSession.fork(options.session);
             return b.getValue(this.context, options);
         });
         if ((0, value_promise_1.isPromiseLike)(result)) {

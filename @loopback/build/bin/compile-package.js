@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/build
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -21,9 +21,9 @@ const debug = require('debug')('loopback:build');
 const utils = require('./utils');
 const path = require('path');
 const fs = require('fs');
-const {globSync} = require('glob');
+const glob = require('glob');
 const fse = require('fs-extra');
-const {buildOpts: buildOptions} = require('typescript');
+const buildOptions = require('typescript').buildOpts;
 
 function run(argv, options) {
   if (options === true) {
@@ -34,12 +34,8 @@ function run(argv, options) {
 
   const packageDir = utils.getPackageDir();
 
-  const runnerName = argv[1];
-
   const compilerOpts = argv.slice(2);
-  const runnerIsLbttsc = runnerName.includes('lb-ttsc');
-  const isUseTtscSet = utils.isOptionSet(compilerOpts, '--use-ttypescript');
-  const useTtsc = runnerIsLbttsc || isUseTtscSet;
+
   const isTargetSet = utils.isOptionSet(compilerOpts, '--target');
   const isOutDirSet = utils.isOptionSet(compilerOpts, '--outDir');
   const isProjectSet = utils.isOptionSet(compilerOpts, '-p', '--project');
@@ -48,33 +44,10 @@ function run(argv, options) {
     '--copy-resources',
   );
 
-  let TSC_CLI = 'typescript/lib/tsc';
-  if (useTtsc) {
-    try {
-      require.resolve('ttypescript');
-      TSC_CLI = 'ttypescript/lib/tsc';
-    } catch (e) {
-      if (isUseTtscSet) {
-        console.error(
-          'Error using the --use-ttypescript option - ttypescript is not installed',
-        );
-      } else {
-        console.error('Error using lb-ttsc - ttypescript is not installed');
-      }
-      process.exit(1);
-    }
-  }
-  debug(`Using ${TSC_CLI} to compile package`);
-
-  // --copy-resources and --use-ttypescript are not a TS Compiler options,
-  // so we remove them from the list of compiler options to avoid compiler
-  // errors.
+  // --copy-resources is not a TS Compiler option so we remove it from the
+  // list of compiler options to avoid compiler errors.
   if (isCopyResourcesSet) {
     compilerOpts.splice(compilerOpts.indexOf('--copy-resources'), 1);
-  }
-
-  if (isUseTtscSet) {
-    compilerOpts.splice(compilerOpts.indexOf('--use-ttypescript'), 1);
   }
 
   let target;
@@ -165,7 +138,7 @@ function run(argv, options) {
 
   const validArgs = validArgsForBuild(args);
 
-  return utils.runCLI(TSC_CLI, validArgs, {cwd, ...options});
+  return utils.runCLI('typescript/lib/tsc', validArgs, {cwd, ...options});
 }
 
 /**
@@ -265,7 +238,7 @@ function copyResources(rootDir, packageDir, tsConfigFile, outDir, options) {
     (tsConfig.compilerOptions && tsConfig.compilerOptions.rootDir) || '';
 
   const pattern = `@(${dirs})/**/!(*.ts)`;
-  const files = globSync(pattern, {root: packageDir, nodir: true});
+  const files = glob.sync(pattern, {root: packageDir, nodir: true});
   for (const file of files) {
     /**
      * Trim path that matches tsConfig.compilerOptions.rootDir

@@ -4,6 +4,7 @@
 // This file is licensed under the Artistic License 2.0.
 // License text available at https://opensource.org/licenses/Artistic-2.0
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.STRONGLOOP_GLB = void 0;
 exports.STRONGLOOP_GLB = {
     reset() {
         // tslint:disable:no-invalid-this

@@ -1,9 +1,8 @@
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {cloneDeep} from 'lodash';
 import {
   constrainDataObject,
   constrainFilter,
@@ -15,10 +14,7 @@ import {
   EntityCrudRepository,
   Filter,
   Getter,
-  InvalidPolymorphismError,
   Options,
-  StringKeyOf,
-  TypeResolver,
   Where,
 } from '../..';
 
@@ -37,8 +33,6 @@ export interface HasManyThroughRepository<
    * Create a target model instance
    * @param targetModelData - The target model data
    * @param options - Options for the operation
-   * options.polymorphicType a string or a string array of polymorphic type names
-   * specify of which concrete model the created instance should be
    * @returns A promise which resolves to the newly created target model instance
    */
   create(
@@ -46,43 +40,33 @@ export interface HasManyThroughRepository<
     options?: Options & {
       throughData?: DataObject<Through>;
       throughOptions?: Options;
-    } & {polymorphicType?: string},
+    },
   ): Promise<Target>;
 
   /**
    * Find target model instance(s)
    * @param filter - A filter object for where, order, limit, etc.
    * @param options - Options for the operation
-   * options.throughOptions.discriminator - target discriminator field on through
-   * options.polymorphicType a string or a string array of polymorphic type names
-   * to specify which repositories should are expected to be searched
-   * It is highly recommended to contain this param especially for
-   * datasources using deplicated ids across tables
    * @returns A promise which resolves with the found target instance(s)
    */
   find(
     filter?: Filter<Target>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {polymorphicType?: string | string[]},
+      throughOptions?: Options;
+    },
   ): Promise<Target[]>;
 
   /**
    * Delete multiple target model instances
    * @param where - Instances within the where scope are deleted
    * @param options
-   * options.throughOptions.discriminator - target discriminator field on through
-   * options.polymorphicType a string or a string array of polymorphic type names
-   * to specify which repositories should are expected to be searched
-   * It is highly recommended to contain this param especially for
-   * datasources using deplicated ids across tables
    * @returns A promise which resolves the deleted target model instances
    */
   delete(
     where?: Where<Target>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {polymorphicType?: string | string[]},
+      throughOptions?: Options;
+    },
   ): Promise<Count>;
 
   /**
@@ -90,18 +74,14 @@ export interface HasManyThroughRepository<
    * @param dataObject - The fields and their new values to patch
    * @param where - Instances within the where scope are patched
    * @param options
-   * options.throughOptions.discriminator - target discriminator field on through
-   * options.isPolymorphic - whether dataObject is a dictionary
    * @returns A promise which resolves the patched target model instances
    */
   patch(
-    dataObject:
-      | DataObject<Target>
-      | {[polymorphicType: string]: DataObject<Target>},
+    dataObject: DataObject<Target>,
     where?: Where<Target>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {isPolymorphic?: boolean},
+      throughOptions?: Options;
+    },
   ): Promise<Count>;
 
   /**
@@ -160,11 +140,7 @@ export class DefaultHasManyThroughRepository<
 > implements HasManyThroughRepository<TargetEntity, TargetID, ThroughEntity>
 {
   constructor(
-    public getTargetRepository:
-      | Getter<TargetRepository>
-      | {
-          [repoType: string]: Getter<TargetRepository>;
-        },
+    public getTargetRepository: Getter<TargetRepository>,
     public getThroughRepository: Getter<ThroughRepository>,
     public getTargetConstraintFromThroughModels: (
       throughInstances: ThroughEntity[],
@@ -175,52 +151,16 @@ export class DefaultHasManyThroughRepository<
     public getThroughConstraintFromTarget: (
       targetID: TargetID[],
     ) => DataObject<ThroughEntity>,
-    public targetResolver: TypeResolver<Entity, typeof Entity>,
-    public throughResolver: TypeResolver<Entity, typeof Entity>,
-  ) {
-    if (typeof getTargetRepository === 'function') {
-      this.getTargetRepositoryDict = {
-        [targetResolver().name]:
-          getTargetRepository as Getter<TargetRepository>,
-      };
-    } else {
-      this.getTargetRepositoryDict = getTargetRepository as {
-        [repoType: string]: Getter<TargetRepository>;
-      };
-    }
-  }
-
-  public getTargetRepositoryDict: {
-    [repoType: string]: Getter<TargetRepository>;
-  };
+  ) {}
 
   async create(
     targetModelData: DataObject<TargetEntity>,
     options?: Options & {
       throughData?: DataObject<ThroughEntity>;
       throughOptions?: Options;
-    } & {polymorphicType?: string},
+    },
   ): Promise<TargetEntity> {
-    let targetPolymorphicTypeName = options?.polymorphicType;
-    if (targetPolymorphicTypeName) {
-      if (!this.getTargetRepositoryDict[targetPolymorphicTypeName]) {
-        throw new InvalidPolymorphismError(targetPolymorphicTypeName);
-      }
-    } else {
-      if (Object.keys(this.getTargetRepositoryDict).length > 1) {
-        console.warn(
-          'It is highly recommended to specify the polymorphicTypes param when using polymorphic types.',
-        );
-      }
-      targetPolymorphicTypeName = this.targetResolver().name;
-      if (!this.getTargetRepositoryDict[targetPolymorphicTypeName]) {
-        throw new InvalidPolymorphismError(targetPolymorphicTypeName);
-      }
-    }
-
-    const targetRepository = await this.getTargetRepositoryDict[
-      targetPolymorphicTypeName
-    ]();
+    const targetRepository = await this.getTargetRepository();
     const targetInstance = await targetRepository.create(
       targetModelData,
       options,
@@ -232,304 +172,91 @@ export class DefaultHasManyThroughRepository<
   async find(
     filter?: Filter<TargetEntity>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {polymorphicType?: string | string[]},
+      throughOptions?: Options;
+    },
   ): Promise<TargetEntity[]> {
-    const targetDiscriminatorOnThrough = options?.throughOptions?.discriminator;
-    let targetPolymorphicTypes = options?.polymorphicType;
-    let allKeys: string[];
-    if (Object.keys(this.getTargetRepositoryDict).length <= 1) {
-      allKeys = Object.keys(this.getTargetRepositoryDict);
-    } else {
-      if (!targetDiscriminatorOnThrough) {
-        console.warn(
-          'It is highly recommended to specify the targetDiscriminatorOnThrough param when using polymorphic types.',
-        );
-      }
-      if (!targetPolymorphicTypes || targetPolymorphicTypes.length === 0) {
-        console.warn(
-          'It is highly recommended to specify the polymorphicTypes param when using polymorphic types.',
-        );
-        allKeys = Object.keys(this.getTargetRepositoryDict);
-      } else {
-        if (typeof targetPolymorphicTypes === 'string') {
-          targetPolymorphicTypes = [targetPolymorphicTypes];
-        }
-        allKeys = [];
-        new Set(targetPolymorphicTypes!).forEach(element => {
-          if (Object.keys(this.getTargetRepositoryDict).includes(element)) {
-            allKeys.push(element);
-          }
-        });
-      }
-    }
-
-    const sourceConstraint = this.getThroughConstraintFromSource();
-
-    const throughCategorized: {[concreteType: string]: (ThroughEntity & {})[]} =
-      {};
+    const targetRepository = await this.getTargetRepository();
     const throughRepository = await this.getThroughRepository();
-    (
-      await throughRepository.find(
-        constrainFilter(undefined, sourceConstraint),
-        options?.throughOptions,
-      )
-    ).forEach(element => {
-      let concreteTargetType;
-      if (!targetDiscriminatorOnThrough) {
-        concreteTargetType = this.targetResolver().name;
-      } else {
-        concreteTargetType = String(
-          element[targetDiscriminatorOnThrough as StringKeyOf<ThroughEntity>],
-        );
-      }
-      if (!allKeys.includes(concreteTargetType)) {
-        return;
-      }
-      if (!this.getTargetRepositoryDict[concreteTargetType]) {
-        throw new InvalidPolymorphismError(
-          concreteTargetType,
-          targetDiscriminatorOnThrough,
-        );
-      }
-      if (!throughCategorized[concreteTargetType]) {
-        throughCategorized[concreteTargetType] = [];
-      }
-      throughCategorized[concreteTargetType].push(element);
-    });
-
-    let allTargets: TargetEntity[] = [];
-    for (const key of Object.keys(throughCategorized)) {
-      const targetRepository = await this.getTargetRepositoryDict[key]();
-      const targetConstraint = this.getTargetConstraintFromThroughModels(
-        throughCategorized[key],
-      );
-      allTargets = allTargets.concat(
-        await targetRepository.find(
-          constrainFilter(filter, targetConstraint),
-          Object.assign(cloneDeep(options ?? {}), {polymorphicType: key}),
-        ),
-      );
-    }
-
-    return allTargets;
+    const sourceConstraint = this.getThroughConstraintFromSource();
+    const throughInstances = await throughRepository.find(
+      constrainFilter(undefined, sourceConstraint),
+      options?.throughOptions,
+    );
+    const targetConstraint =
+      this.getTargetConstraintFromThroughModels(throughInstances);
+    return targetRepository.find(
+      constrainFilter(filter, targetConstraint),
+      options,
+    );
   }
 
   async delete(
     where?: Where<TargetEntity>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {polymorphicType?: string | string[]},
+      throughOptions?: Options;
+    },
   ): Promise<Count> {
-    const targetDiscriminatorOnThrough = options?.throughOptions?.discriminator;
-    let targetPolymorphicTypes = options?.polymorphicType;
-    let allKeys: string[];
-    if (Object.keys(this.getTargetRepositoryDict).length <= 1) {
-      allKeys = Object.keys(this.getTargetRepositoryDict);
-    } else {
-      if (!targetDiscriminatorOnThrough) {
-        console.warn(
-          'It is highly recommended to specify the targetDiscriminatorOnThrough param when using polymorphic types.',
-        );
-      }
-      if (!targetPolymorphicTypes || targetPolymorphicTypes.length === 0) {
-        console.warn(
-          'It is highly recommended to specify the polymorphicTypes param when using polymorphic types.',
-        );
-        allKeys = Object.keys(this.getTargetRepositoryDict);
-      } else {
-        if (typeof targetPolymorphicTypes === 'string') {
-          targetPolymorphicTypes = [targetPolymorphicTypes];
-        }
-        allKeys = [];
-        new Set(targetPolymorphicTypes!).forEach(element => {
-          if (Object.keys(this.getTargetRepositoryDict).includes(element)) {
-            allKeys.push(element);
-          }
-        });
-      }
-    }
-
-    const sourceConstraint = this.getThroughConstraintFromSource();
-    let totalCount = 0;
-    const throughCategorized: {[concreteType: string]: (ThroughEntity & {})[]} =
-      {};
+    const targetRepository = await this.getTargetRepository();
     const throughRepository = await this.getThroughRepository();
-    (
-      await throughRepository.find(
-        constrainFilter(undefined, sourceConstraint),
-        options?.throughOptions,
-      )
-    ).forEach(element => {
-      let concreteTargetType;
-      if (!targetDiscriminatorOnThrough) {
-        concreteTargetType = this.targetResolver().name;
-      } else {
-        concreteTargetType = String(
-          element[targetDiscriminatorOnThrough as StringKeyOf<ThroughEntity>],
-        );
-      }
-      if (!allKeys.includes(concreteTargetType)) {
-        return;
-      }
-      if (!this.getTargetRepositoryDict[concreteTargetType]) {
-        throw new InvalidPolymorphismError(
-          concreteTargetType,
-          targetDiscriminatorOnThrough,
-        );
-      }
-      if (!throughCategorized[concreteTargetType]) {
-        throughCategorized[concreteTargetType] = [];
-      }
-      throughCategorized[concreteTargetType].push(element);
-    });
-
-    for (const targetKey of Object.keys(throughCategorized)) {
-      const targetRepository = await this.getTargetRepositoryDict[targetKey]();
-      if (where) {
-        // only delete related through models
-        // TODO(Agnes): this performance can be improved by only fetching related data
-        // TODO: add target ids to the `where` constraint
-        const targets = await targetRepository.find({where});
-        const targetIds = this.getTargetIds(targets);
-        if (targetIds.length > 0) {
-          const targetConstraint =
-            this.getThroughConstraintFromTarget(targetIds);
-          const constraints = {...targetConstraint, ...sourceConstraint};
-          await throughRepository.deleteAll(
-            constrainDataObject(
-              {},
-              constraints as DataObject<ThroughEntity>,
-            ) as Where<ThroughEntity>,
-            options?.throughOptions,
-          );
-        }
-      } else {
-        // otherwise, delete through models that relate to the sourceId
-        const targetFkValues = this.getTargetKeys(
-          throughCategorized[targetKey],
-        );
-        // delete through instances that have the targets that are going to be deleted
-        const throughFkConstraint =
-          this.getThroughConstraintFromTarget(targetFkValues);
+    const sourceConstraint = this.getThroughConstraintFromSource();
+    const throughInstances = await throughRepository.find(
+      constrainFilter(undefined, sourceConstraint),
+      options?.throughOptions,
+    );
+    if (where) {
+      // only delete related through models
+      // TODO(Agnes): this performance can be improved by only fetching related data
+      // TODO: add target ids to the `where` constraint
+      const targets = await targetRepository.find({where});
+      const targetIds = this.getTargetIds(targets);
+      if (targetIds.length > 0) {
+        const targetConstraint = this.getThroughConstraintFromTarget(targetIds);
+        const constraints = {...targetConstraint, ...sourceConstraint};
         await throughRepository.deleteAll(
-          constrainWhereOr({}, [
-            sourceConstraint as Where<ThroughEntity>,
-            throughFkConstraint as Where<ThroughEntity>,
-          ]),
+          constrainDataObject({}, constraints as DataObject<ThroughEntity>),
+          options?.throughOptions,
         );
       }
-      // delete target(s)
-      const targetConstraint = this.getTargetConstraintFromThroughModels(
-        throughCategorized[targetKey],
+    } else {
+      // otherwise, delete through models that relate to the sourceId
+      const targetFkValues = this.getTargetKeys(throughInstances);
+      // delete through instances that have the targets that are going to be deleted
+      const throughFkConstraint =
+        this.getThroughConstraintFromTarget(targetFkValues);
+      await throughRepository.deleteAll(
+        constrainWhereOr({}, [sourceConstraint, throughFkConstraint]),
       );
-      totalCount +=
-        (
-          await targetRepository.deleteAll(
-            constrainWhere(where, targetConstraint as Where<TargetEntity>),
-            options,
-          )
-        )?.count ?? 0;
     }
-    return {count: totalCount};
+    // delete target(s)
+    const targetConstraint =
+      this.getTargetConstraintFromThroughModels(throughInstances);
+    return targetRepository.deleteAll(
+      constrainWhere(where, targetConstraint as Where<TargetEntity>),
+      options,
+    );
   }
-
   // only allows patch target instances for now
   async patch(
-    dataObject:
-      | DataObject<TargetEntity>
-      | {[polymorphicType: string]: DataObject<TargetEntity>},
+    dataObject: DataObject<TargetEntity>,
     where?: Where<TargetEntity>,
     options?: Options & {
-      throughOptions?: Options & {discriminator?: string};
-    } & {isPolymorphic?: boolean},
+      throughOptions?: Options;
+    },
   ): Promise<Count> {
-    const targetDiscriminatorOnThrough = options?.throughOptions?.discriminator;
-    const isMultipleTypes = options?.isPolymorphic;
-    let allKeys: string[];
-    if (!targetDiscriminatorOnThrough) {
-      if (Object.keys(this.getTargetRepositoryDict).length > 1) {
-        console.warn(
-          'It is highly recommended to specify the targetDiscriminatorOnThrough param when using polymorphic types.',
-        );
-      }
-    }
-    if (!isMultipleTypes) {
-      if (Object.keys(this.getTargetRepositoryDict).length > 1) {
-        console.warn(
-          'It is highly recommended to specify the isMultipleTypes param and pass in a dictionary of dataobjects when using polymorphic types.',
-        );
-      }
-      allKeys = Object.keys(this.getTargetRepositoryDict);
-    } else {
-      allKeys = [];
-      new Set(Object.keys(dataObject)).forEach(element => {
-        if (Object.keys(this.getTargetRepositoryDict).includes(element)) {
-          allKeys.push(element);
-        }
-      });
-    }
-
-    const sourceConstraint = this.getThroughConstraintFromSource();
-
-    const throughCategorized: {[concreteType: string]: (ThroughEntity & {})[]} =
-      {};
+    const targetRepository = await this.getTargetRepository();
     const throughRepository = await this.getThroughRepository();
-    (
-      await throughRepository.find(
-        constrainFilter(undefined, sourceConstraint),
-        options?.throughOptions,
-      )
-    ).forEach(element => {
-      let concreteTargetType;
-      if (!targetDiscriminatorOnThrough) {
-        concreteTargetType = this.targetResolver().name;
-      } else {
-        concreteTargetType = String(
-          element[targetDiscriminatorOnThrough as StringKeyOf<ThroughEntity>],
-        );
-      }
-      if (!allKeys.includes(concreteTargetType)) {
-        return;
-      }
-      if (!this.getTargetRepositoryDict[concreteTargetType]) {
-        throw new InvalidPolymorphismError(
-          concreteTargetType,
-          targetDiscriminatorOnThrough,
-        );
-      }
-      if (!throughCategorized[concreteTargetType]) {
-        throughCategorized[concreteTargetType] = [];
-      }
-      throughCategorized[concreteTargetType].push(element);
-    });
-
-    let updatedCount = 0;
-    for (const key of Object.keys(throughCategorized)) {
-      const targetRepository = await this.getTargetRepositoryDict[key]();
-      const targetConstraint = this.getTargetConstraintFromThroughModels(
-        throughCategorized[key],
-      );
-      updatedCount +=
-        (
-          await targetRepository.updateAll(
-            constrainDataObject(
-              isMultipleTypes
-                ? (
-                    dataObject as {
-                      [polymorphicType: string]: DataObject<TargetEntity>;
-                    }
-                  )[key]
-                : (dataObject as DataObject<TargetEntity>),
-              targetConstraint,
-            ),
-            constrainWhere(where, targetConstraint as Where<TargetEntity>),
-            options,
-          )
-        )?.count ?? 0;
-    }
-
-    return {count: updatedCount};
+    const sourceConstraint = this.getThroughConstraintFromSource();
+    const throughInstances = await throughRepository.find(
+      constrainFilter(undefined, sourceConstraint),
+      options?.throughOptions,
+    );
+    const targetConstraint =
+      this.getTargetConstraintFromThroughModels(throughInstances);
+    return targetRepository.updateAll(
+      constrainDataObject(dataObject, targetConstraint),
+      constrainWhere(where, targetConstraint as Where<TargetEntity>),
+      options,
+    );
   }
 
   async link(
@@ -563,10 +290,7 @@ export class DefaultHasManyThroughRepository<
     const targetConstraint = this.getThroughConstraintFromTarget([targetId]);
     const constraints = {...targetConstraint, ...sourceConstraint};
     await throughRepository.deleteAll(
-      constrainDataObject(
-        {},
-        constraints as DataObject<ThroughEntity>,
-      ) as Where<ThroughEntity>,
+      constrainDataObject({}, constraints as DataObject<ThroughEntity>),
       options?.throughOptions,
     );
   }
@@ -587,10 +311,7 @@ export class DefaultHasManyThroughRepository<
       this.getThroughConstraintFromTarget(targetFkValues);
     const constraints = {...targetConstraint, ...sourceConstraint};
     await throughRepository.deleteAll(
-      constrainDataObject(
-        {},
-        constraints as DataObject<ThroughEntity>,
-      ) as Where<ThroughEntity>,
+      constrainDataObject({}, constraints as DataObject<ThroughEntity>),
       options?.throughOptions,
     );
   }

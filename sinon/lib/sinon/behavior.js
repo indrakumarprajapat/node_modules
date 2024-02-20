@@ -1,28 +1,28 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const extend = require("./util/core/extend");
-const functionName = require("@sinonjs/commons").functionName;
-const nextTick = require("./util/core/next-tick");
-const valueToString = require("@sinonjs/commons").valueToString;
-const exportAsyncBehaviors = require("./util/core/export-async-behaviors");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var extend = require("./util/core/extend");
+var functionName = require("@sinonjs/commons").functionName;
+var nextTick = require("./util/core/next-tick");
+var valueToString = require("@sinonjs/commons").valueToString;
+var exportAsyncBehaviors = require("./util/core/export-async-behaviors");
 
-const concat = arrayProto.concat;
-const join = arrayProto.join;
-const reverse = arrayProto.reverse;
-const slice = arrayProto.slice;
+var concat = arrayProto.concat;
+var join = arrayProto.join;
+var reverse = arrayProto.reverse;
+var slice = arrayProto.slice;
 
-const useLeftMostCallback = -1;
-const useRightMostCallback = -2;
+var useLeftMostCallback = -1;
+var useRightMostCallback = -2;
 
 function getCallback(behavior, args) {
-    const callArgAt = behavior.callArgAt;
+    var callArgAt = behavior.callArgAt;
 
     if (callArgAt >= 0) {
         return args[callArgAt];
     }
 
-    let argumentList;
+    var argumentList;
 
     if (callArgAt === useLeftMostCallback) {
         argumentList = args;
@@ -32,9 +32,9 @@ function getCallback(behavior, args) {
         argumentList = reverse(slice(args));
     }
 
-    const callArgProp = behavior.callArgProp;
+    var callArgProp = behavior.callArgProp;
 
-    for (let i = 0, l = argumentList.length; i < l; ++i) {
+    for (var i = 0, l = argumentList.length; i < l; ++i) {
         if (!callArgProp && typeof argumentList[i] === "function") {
             return argumentList[i];
         }
@@ -53,7 +53,7 @@ function getCallback(behavior, args) {
 
 function getCallbackError(behavior, func, args) {
     if (behavior.callArgAt < 0) {
-        let msg;
+        var msg;
 
         if (behavior.callArgProp) {
             msg = `${functionName(
@@ -80,8 +80,8 @@ function getCallbackError(behavior, func, args) {
 function ensureArgs(name, behavior, args) {
     // map function name to internal property
     //   callsArg => callArgAt
-    const property = name.replace(/sArg/, "ArgAt");
-    const index = behavior[property];
+    var property = name.replace(/sArg/, "ArgAt");
+    var index = behavior[property];
 
     if (index >= args.length) {
         throw new TypeError(
@@ -95,7 +95,7 @@ function ensureArgs(name, behavior, args) {
 function callCallback(behavior, args) {
     if (typeof behavior.callArgAt === "number") {
         ensureArgs("callsArg", behavior, args);
-        const func = getCallback(behavior, args);
+        var func = getCallback(behavior, args);
 
         if (typeof func !== "function") {
             throw new TypeError(getCallbackError(behavior, func, args));
@@ -119,9 +119,9 @@ function callCallback(behavior, args) {
     return undefined;
 }
 
-const proto = {
+var proto = {
     create: function create(stub) {
-        const behavior = extend({}, proto);
+        var behavior = extend({}, proto);
         delete behavior.create;
         delete behavior.addBehavior;
         delete behavior.createBehavior;
@@ -157,7 +157,7 @@ const proto = {
          * Note: callCallback intentionally happens before
          * everything else and cannot be moved lower
          */
-        const returnValue = callCallback(this, args);
+        var returnValue = callCallback(this, args);
 
         if (this.exception) {
             throw this.exception;
@@ -187,16 +187,16 @@ const proto = {
         } else if (this.reject) {
             return (this.promiseLibrary || Promise).reject(this.returnValue);
         } else if (this.callsThrough) {
-            const wrappedMethod = this.effectiveWrappedMethod();
+            var wrappedMethod = this.effectiveWrappedMethod();
 
             return wrappedMethod.apply(context, args);
         } else if (this.callsThroughWithNew) {
             // Get the original method (assumed to be a constructor in this case)
-            const WrappedClass = this.effectiveWrappedMethod();
+            var WrappedClass = this.effectiveWrappedMethod();
             // Turn the arguments object into a normal array
-            const argsArray = slice(args);
+            var argsArray = slice(args);
             // Call the constructor
-            const F = WrappedClass.bind.apply(
+            var F = WrappedClass.bind.apply(
                 WrappedClass,
                 concat([null], argsArray)
             );
@@ -211,7 +211,7 @@ const proto = {
     },
 
     effectiveWrappedMethod: function effectiveWrappedMethod() {
-        for (let stubb = this.stub; stubb; stubb = stubb.parent) {
+        for (var stubb = this.stub; stubb; stubb = stubb.parent) {
             if (stubb.wrappedMethod) {
                 return stubb.wrappedMethod;
             }
@@ -267,6 +267,6 @@ function addBehavior(stub, name, fn) {
 proto.addBehavior = addBehavior;
 proto.createBehavior = createBehavior;
 
-const asyncBehaviors = exportAsyncBehaviors(proto);
+var asyncBehaviors = exportAsyncBehaviors(proto);
 
 module.exports = extend.nonEnum({}, proto, asyncBehaviors);

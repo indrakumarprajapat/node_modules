@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,15 +7,15 @@ import {inject} from '@loopback/core';
 import {json} from 'body-parser';
 import {is} from 'type-is';
 import {RestBindings} from '../keys';
-import {sanitizeJsonParse} from '../parse-json';
 import {Request, RequestBodyParserOptions} from '../types';
 import {
   BodyParserMiddleware,
-  builtinParsers,
   getParserOptions,
   invokeBodyParserMiddleware,
+  builtinParsers,
 } from './body-parser.helpers';
 import {BodyParser, RequestBody} from './types';
+import {sanitizeJsonParse} from '../parse-json';
 
 export class JsonBodyParser implements BodyParser {
   name = builtinParsers.json;
@@ -26,15 +26,7 @@ export class JsonBodyParser implements BodyParser {
     options: RequestBodyParserOptions = {},
   ) {
     const jsonOptions = getParserOptions('json', options);
-    const prohibitedKeys = [
-      '__proto__',
-      'constructor.prototype',
-      ...(options.validation?.prohibitedKeys ?? []),
-    ];
-    jsonOptions.reviver = sanitizeJsonParse(
-      jsonOptions.reviver,
-      prohibitedKeys,
-    );
+    jsonOptions.reviver = sanitizeJsonParse(jsonOptions.reviver);
     this.jsonParser = json(jsonOptions);
   }
 

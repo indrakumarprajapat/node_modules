@@ -1,26 +1,26 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const extend = require("./util/core/extend");
-const functionToString = require("./util/core/function-to-string");
-const proxyCall = require("./proxy-call");
-const proxyCallUtil = require("./proxy-call-util");
-const proxyInvoke = require("./proxy-invoke");
-const inspect = require("util").inspect;
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var extend = require("./util/core/extend");
+var functionToString = require("./util/core/function-to-string");
+var proxyCall = require("./proxy-call");
+var proxyCallUtil = require("./proxy-call-util");
+var proxyInvoke = require("./proxy-invoke");
+var sinonFormat = require("./util/core/format");
 
-const push = arrayProto.push;
-const forEach = arrayProto.forEach;
-const slice = arrayProto.slice;
+var push = arrayProto.push;
+var forEach = arrayProto.forEach;
+var slice = arrayProto.slice;
 
-const emptyFakes = Object.freeze([]);
+var emptyFakes = Object.freeze([]);
 
 // Public API
-const proxyApi = {
+var proxyApi = {
     toString: functionToString,
 
     named: function named(name) {
         this.displayName = name;
-        const nameDescriptor = Object.getOwnPropertyDescriptor(this, "name");
+        var nameDescriptor = Object.getOwnPropertyDescriptor(this, "name");
         if (nameDescriptor && nameDescriptor.configurable) {
             // IE 11 functions don't have a name.
             // Safari 9 has names that are not configurable.
@@ -41,7 +41,7 @@ const proxyApi = {
     },
 
     getCall: function getCall(index) {
-        let i = index;
+        var i = index;
         if (i < 0) {
             // Negative indices means counting backwards from the last call
             i += this.callCount;
@@ -62,8 +62,8 @@ const proxyApi = {
     },
 
     getCalls: function () {
-        const calls = [];
-        let i;
+        var calls = [];
+        var i;
 
         for (i = 0; i < this.callCount; i++) {
             push(calls, this.getCall(i));
@@ -116,26 +116,26 @@ const proxyApi = {
 
     formatters: require("./spy-formatters"),
     printf: function (format) {
-        const spyInstance = this;
-        const args = slice(arguments, 1);
-        let formatter;
+        var spyInstance = this;
+        var args = slice(arguments, 1);
+        var formatter;
 
-        return (format || "").replace(/%(.)/g, function (match, specifier) {
-            formatter = proxyApi.formatters[specifier];
+        return (format || "").replace(/%(.)/g, function (match, specifyer) {
+            formatter = proxyApi.formatters[specifyer];
 
             if (typeof formatter === "function") {
                 return String(formatter(spyInstance, args));
-            } else if (!isNaN(parseInt(specifier, 10))) {
-                return inspect(args[specifier - 1]);
+            } else if (!isNaN(parseInt(specifyer, 10))) {
+                return sinonFormat(args[specifyer - 1]);
             }
 
-            return `%${specifier}`;
+            return `%${specifyer}`;
         });
     },
 
     resetHistory: function () {
         if (this.invoking) {
-            const err = new Error(
+            var err = new Error(
                 "Cannot reset Sinon function while invoking it. " +
                     "Move the call to .resetHistory outside of the callback."
             );
@@ -172,7 +172,7 @@ const proxyApi = {
     },
 };
 
-const delegateToCalls = proxyCallUtil.delegateToCalls;
+var delegateToCalls = proxyCallUtil.delegateToCalls;
 delegateToCalls(proxyApi, "calledOn", true);
 delegateToCalls(proxyApi, "alwaysCalledOn", false, "calledOn");
 delegateToCalls(proxyApi, "calledWith", true);
@@ -241,7 +241,7 @@ delegateToCalls(proxyApi, "calledWithNew", true);
 delegateToCalls(proxyApi, "alwaysCalledWithNew", false, "calledWithNew");
 
 function createProxy(func, originalFunc) {
-    const proxy = wrapFunction(func, originalFunc);
+    var proxy = wrapFunction(func, originalFunc);
 
     // Inherit function properties:
     extend(proxy, func);
@@ -254,8 +254,8 @@ function createProxy(func, originalFunc) {
 }
 
 function wrapFunction(func, originalFunc) {
-    const arity = originalFunc.length;
-    let p;
+    var arity = originalFunc.length;
+    var p;
     // Do not change this to use an eval. Projects that depend on sinon block the use of eval.
     // ref: https://github.com/sinonjs/sinon/issues/710
     switch (arity) {
@@ -332,10 +332,7 @@ function wrapFunction(func, originalFunc) {
             break;
         /*eslint-enable*/
     }
-    const nameDescriptor = Object.getOwnPropertyDescriptor(
-        originalFunc,
-        "name"
-    );
+    var nameDescriptor = Object.getOwnPropertyDescriptor(originalFunc, "name");
     if (nameDescriptor && nameDescriptor.configurable) {
         // IE 11 functions don't have a name.
         // Safari 9 has names that are not configurable.

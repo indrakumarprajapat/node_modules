@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -58,7 +58,7 @@ export function givenHttpServerConfig<T extends HttpOptions | HttpsOptions>(
     const config: T = {...customConfig};
     if (config.host == null) config.host = defaults.host;
     if (config.port == null) config.port = defaults.port;
-    setupTlsConfig(config as HttpsOptions);
+    setupTlsConfig(config);
     assertHostPort(config);
     return config;
   }

@@ -1,10 +1,10 @@
 "use strict";
 
-const walk = require("./util/core/walk");
-const getPropertyDescriptor = require("./util/core/get-property-descriptor");
-const hasOwnProperty =
+var walk = require("./util/core/walk");
+var getPropertyDescriptor = require("./util/core/get-property-descriptor");
+var hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-const push = require("@sinonjs/commons").prototypes.array.push;
+var push = require("@sinonjs/commons").prototypes.array.push;
 
 function collectMethod(methods, object, prop, propOwner) {
     if (
@@ -17,7 +17,7 @@ function collectMethod(methods, object, prop, propOwner) {
 
 // This function returns an array of all the own methods on the passed object
 function collectOwnMethods(object) {
-    const methods = [];
+    var methods = [];
 
     walk(object, collectMethod.bind(null, methods, object));
 

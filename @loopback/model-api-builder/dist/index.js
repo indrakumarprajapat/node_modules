@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/model-api-builder
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -16,6 +16,6 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-tslib_1.__exportStar(require("./model-api-builder"), exports);
-tslib_1.__exportStar(require("./model-api-config"), exports);
+(0, tslib_1.__exportStar)(require("./model-api-builder"), exports);
+(0, tslib_1.__exportStar)(require("./model-api-config"), exports);
 //# sourceMappingURL=index.js.map

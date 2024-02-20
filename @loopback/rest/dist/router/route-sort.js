@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -60,7 +60,7 @@ exports.compareRoute = compareRoute;
  */
 function toTokens(path) {
     const tokens = [];
-    (0, path_to_regexp_1.parse)(path).forEach(p => {
+    path_to_regexp_1.parse(path).forEach(p => {
         if (typeof p === 'string') {
             // The string can be /orders/count
             tokens.push(...p.split('/').filter(Boolean));

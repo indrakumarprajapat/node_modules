@@ -4,6 +4,7 @@
 // This file is licensed under the Artistic License 2.0.
 // License text available at https://opensource.org/licenses/Artistic-2.0
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StrongGlobalize = void 0;
 // Multi-instance strong-globalize
 const globalize = require("./globalize");
 const helper = require("./helper");

@@ -1,4 +1,4 @@
-import { RelationMetadata, RelationType } from '../relations';
+import { RelationType, RelationMetadata } from '../relations';
 export declare class InvalidRelationError<Props extends object = {}> extends Error {
     code: string;
     reason: string;

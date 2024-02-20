@@ -1,13 +1,13 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/metadata
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MethodMultiDecoratorFactory = exports.MethodParameterDecoratorFactory = exports.ParameterDecoratorFactory = exports.MethodDecoratorFactory = exports.PropertyDecoratorFactory = exports.ClassDecoratorFactory = exports.DecoratorFactory = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = tslib_1.__importDefault(require("debug"));
-const lodash_1 = tslib_1.__importDefault(require("lodash"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const lodash_1 = (0, tslib_1.__importDefault)(require("lodash"));
 const reflect_1 = require("./reflect");
 const debug = (0, debug_1.default)('loopback:metadata:decorator');
 /**

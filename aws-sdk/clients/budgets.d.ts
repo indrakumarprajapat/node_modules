@@ -774,8 +774,7 @@ declare namespace Budgets {
      */
     NextToken?: GenericString;
   }
-  export type DimensionValue = string;
-  export type DimensionValues = DimensionValue[];
+  export type DimensionValues = GenericString[];
   export type EventType = "SYSTEM"|"CREATE_ACTION"|"DELETE_ACTION"|"UPDATE_ACTION"|"EXECUTE_ACTION"|string;
   export interface ExecuteBudgetActionRequest {
     AccountId: AccountId;

@@ -28,11 +28,11 @@ declare class Personalize extends Service {
    */
   createBatchSegmentJob(callback?: (err: AWSError, data: Personalize.Types.CreateBatchSegmentJobResponse) => void): Request<Personalize.Types.CreateBatchSegmentJobResponse, AWSError>;
   /**
-   * Creates a campaign that deploys a solution version. When a client calls the GetRecommendations and GetPersonalizedRanking APIs, a campaign is specified in the request.  Minimum Provisioned TPS and Auto-Scaling    A high minProvisionedTPS will increase your bill. We recommend starting with 1 for minProvisionedTPS (the default). Track your usage using Amazon CloudWatch metrics, and increase the minProvisionedTPS as necessary.  A transaction is a single GetRecommendations or GetPersonalizedRanking call. Transactions per second (TPS) is the throughput and unit of billing for Amazon Personalize. The minimum provisioned TPS (minProvisionedTPS) specifies the baseline throughput provisioned by Amazon Personalize, and thus, the minimum billing charge.   If your TPS increases beyond minProvisionedTPS, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minProvisionedTPS. There's a short time delay while the capacity is increased that might cause loss of transactions. The actual TPS used is calculated as the average requests/second within a 5-minute window. You pay for maximum of either the minimum provisioned TPS or the actual TPS. We recommend starting with a low minProvisionedTPS, track your usage using Amazon CloudWatch metrics, and then increase the minProvisionedTPS as necessary.  Status  A campaign can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the campaign status, call DescribeCampaign.  Wait until the status of the campaign is ACTIVE before asking the campaign for recommendations.   Related APIs     ListCampaigns     DescribeCampaign     UpdateCampaign     DeleteCampaign   
+   * Creates a campaign that deploys a solution version. When a client calls the GetRecommendations and GetPersonalizedRanking APIs, a campaign is specified in the request.  Minimum Provisioned TPS and Auto-Scaling  A transaction is a single GetRecommendations or GetPersonalizedRanking call. Transactions per second (TPS) is the throughput and unit of billing for Amazon Personalize. The minimum provisioned TPS (minProvisionedTPS) specifies the baseline throughput provisioned by Amazon Personalize, and thus, the minimum billing charge.   If your TPS increases beyond minProvisionedTPS, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minProvisionedTPS. There's a short time delay while the capacity is increased that might cause loss of transactions. The actual TPS used is calculated as the average requests/second within a 5-minute window. You pay for maximum of either the minimum provisioned TPS or the actual TPS. We recommend starting with a low minProvisionedTPS, track your usage using Amazon CloudWatch metrics, and then increase the minProvisionedTPS as necessary.  Status  A campaign can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the campaign status, call DescribeCampaign.  Wait until the status of the campaign is ACTIVE before asking the campaign for recommendations.   Related APIs     ListCampaigns     DescribeCampaign     UpdateCampaign     DeleteCampaign   
    */
   createCampaign(params: Personalize.Types.CreateCampaignRequest, callback?: (err: AWSError, data: Personalize.Types.CreateCampaignResponse) => void): Request<Personalize.Types.CreateCampaignResponse, AWSError>;
   /**
-   * Creates a campaign that deploys a solution version. When a client calls the GetRecommendations and GetPersonalizedRanking APIs, a campaign is specified in the request.  Minimum Provisioned TPS and Auto-Scaling    A high minProvisionedTPS will increase your bill. We recommend starting with 1 for minProvisionedTPS (the default). Track your usage using Amazon CloudWatch metrics, and increase the minProvisionedTPS as necessary.  A transaction is a single GetRecommendations or GetPersonalizedRanking call. Transactions per second (TPS) is the throughput and unit of billing for Amazon Personalize. The minimum provisioned TPS (minProvisionedTPS) specifies the baseline throughput provisioned by Amazon Personalize, and thus, the minimum billing charge.   If your TPS increases beyond minProvisionedTPS, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minProvisionedTPS. There's a short time delay while the capacity is increased that might cause loss of transactions. The actual TPS used is calculated as the average requests/second within a 5-minute window. You pay for maximum of either the minimum provisioned TPS or the actual TPS. We recommend starting with a low minProvisionedTPS, track your usage using Amazon CloudWatch metrics, and then increase the minProvisionedTPS as necessary.  Status  A campaign can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the campaign status, call DescribeCampaign.  Wait until the status of the campaign is ACTIVE before asking the campaign for recommendations.   Related APIs     ListCampaigns     DescribeCampaign     UpdateCampaign     DeleteCampaign   
+   * Creates a campaign that deploys a solution version. When a client calls the GetRecommendations and GetPersonalizedRanking APIs, a campaign is specified in the request.  Minimum Provisioned TPS and Auto-Scaling  A transaction is a single GetRecommendations or GetPersonalizedRanking call. Transactions per second (TPS) is the throughput and unit of billing for Amazon Personalize. The minimum provisioned TPS (minProvisionedTPS) specifies the baseline throughput provisioned by Amazon Personalize, and thus, the minimum billing charge.   If your TPS increases beyond minProvisionedTPS, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minProvisionedTPS. There's a short time delay while the capacity is increased that might cause loss of transactions. The actual TPS used is calculated as the average requests/second within a 5-minute window. You pay for maximum of either the minimum provisioned TPS or the actual TPS. We recommend starting with a low minProvisionedTPS, track your usage using Amazon CloudWatch metrics, and then increase the minProvisionedTPS as necessary.  Status  A campaign can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the campaign status, call DescribeCampaign.  Wait until the status of the campaign is ACTIVE before asking the campaign for recommendations.   Related APIs     ListCampaigns     DescribeCampaign     UpdateCampaign     DeleteCampaign   
    */
   createCampaign(callback?: (err: AWSError, data: Personalize.Types.CreateCampaignResponse) => void): Request<Personalize.Types.CreateCampaignResponse, AWSError>;
   /**
@@ -60,11 +60,11 @@ declare class Personalize extends Service {
    */
   createDatasetGroup(callback?: (err: AWSError, data: Personalize.Types.CreateDatasetGroupResponse) => void): Request<Personalize.Types.CreateDatasetGroupResponse, AWSError>;
   /**
-   * Creates a job that imports training data from your data source (an Amazon S3 bucket) to an Amazon Personalize dataset. To allow Amazon Personalize to import the training data, you must specify an IAM service role that has permission to read from the data source, as Amazon Personalize makes a copy of your data and processes it internally. For information on granting access to your Amazon S3 bucket, see Giving Amazon Personalize Access to Amazon S3 Resources.   By default, a dataset import job replaces any existing data in the dataset that you imported in bulk. To add new records without replacing existing data, specify INCREMENTAL for the import mode in the CreateDatasetImportJob operation.   Status  A dataset import job can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   To get the status of the import job, call DescribeDatasetImportJob, providing the Amazon Resource Name (ARN) of the dataset import job. The dataset import is complete when the status shows as ACTIVE. If the status shows as CREATE FAILED, the response includes a failureReason key, which describes why the job failed.  Importing takes time. You must wait until the status shows as ACTIVE before training a model using the dataset.   Related APIs     ListDatasetImportJobs     DescribeDatasetImportJob   
+   * Creates a job that imports training data from your data source (an Amazon S3 bucket) to an Amazon Personalize dataset. To allow Amazon Personalize to import the training data, you must specify an IAM service role that has permission to read from the data source, as Amazon Personalize makes a copy of your data and processes it internally. For information on granting access to your Amazon S3 bucket, see Giving Amazon Personalize Access to Amazon S3 Resources.   The dataset import job replaces any existing data in the dataset that you imported in bulk.   Status  A dataset import job can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   To get the status of the import job, call DescribeDatasetImportJob, providing the Amazon Resource Name (ARN) of the dataset import job. The dataset import is complete when the status shows as ACTIVE. If the status shows as CREATE FAILED, the response includes a failureReason key, which describes why the job failed.  Importing takes time. You must wait until the status shows as ACTIVE before training a model using the dataset.   Related APIs     ListDatasetImportJobs     DescribeDatasetImportJob   
    */
   createDatasetImportJob(params: Personalize.Types.CreateDatasetImportJobRequest, callback?: (err: AWSError, data: Personalize.Types.CreateDatasetImportJobResponse) => void): Request<Personalize.Types.CreateDatasetImportJobResponse, AWSError>;
   /**
-   * Creates a job that imports training data from your data source (an Amazon S3 bucket) to an Amazon Personalize dataset. To allow Amazon Personalize to import the training data, you must specify an IAM service role that has permission to read from the data source, as Amazon Personalize makes a copy of your data and processes it internally. For information on granting access to your Amazon S3 bucket, see Giving Amazon Personalize Access to Amazon S3 Resources.   By default, a dataset import job replaces any existing data in the dataset that you imported in bulk. To add new records without replacing existing data, specify INCREMENTAL for the import mode in the CreateDatasetImportJob operation.   Status  A dataset import job can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   To get the status of the import job, call DescribeDatasetImportJob, providing the Amazon Resource Name (ARN) of the dataset import job. The dataset import is complete when the status shows as ACTIVE. If the status shows as CREATE FAILED, the response includes a failureReason key, which describes why the job failed.  Importing takes time. You must wait until the status shows as ACTIVE before training a model using the dataset.   Related APIs     ListDatasetImportJobs     DescribeDatasetImportJob   
+   * Creates a job that imports training data from your data source (an Amazon S3 bucket) to an Amazon Personalize dataset. To allow Amazon Personalize to import the training data, you must specify an IAM service role that has permission to read from the data source, as Amazon Personalize makes a copy of your data and processes it internally. For information on granting access to your Amazon S3 bucket, see Giving Amazon Personalize Access to Amazon S3 Resources.   The dataset import job replaces any existing data in the dataset that you imported in bulk.   Status  A dataset import job can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   To get the status of the import job, call DescribeDatasetImportJob, providing the Amazon Resource Name (ARN) of the dataset import job. The dataset import is complete when the status shows as ACTIVE. If the status shows as CREATE FAILED, the response includes a failureReason key, which describes why the job failed.  Importing takes time. You must wait until the status shows as ACTIVE before training a model using the dataset.   Related APIs     ListDatasetImportJobs     DescribeDatasetImportJob   
    */
   createDatasetImportJob(callback?: (err: AWSError, data: Personalize.Types.CreateDatasetImportJobResponse) => void): Request<Personalize.Types.CreateDatasetImportJobResponse, AWSError>;
   /**
@@ -84,19 +84,11 @@ declare class Personalize extends Service {
    */
   createFilter(callback?: (err: AWSError, data: Personalize.Types.CreateFilterResponse) => void): Request<Personalize.Types.CreateFilterResponse, AWSError>;
   /**
-   * Creates a metric attribution. A metric attribution creates reports on the data that you import into Amazon Personalize. Depending on how you imported the data, you can view reports in Amazon CloudWatch or Amazon S3. For more information, see Measuring impact of recommendations.
-   */
-  createMetricAttribution(params: Personalize.Types.CreateMetricAttributionRequest, callback?: (err: AWSError, data: Personalize.Types.CreateMetricAttributionResponse) => void): Request<Personalize.Types.CreateMetricAttributionResponse, AWSError>;
-  /**
-   * Creates a metric attribution. A metric attribution creates reports on the data that you import into Amazon Personalize. Depending on how you imported the data, you can view reports in Amazon CloudWatch or Amazon S3. For more information, see Measuring impact of recommendations.
-   */
-  createMetricAttribution(callback?: (err: AWSError, data: Personalize.Types.CreateMetricAttributionResponse) => void): Request<Personalize.Types.CreateMetricAttributionResponse, AWSError>;
-  /**
-   * Creates a recommender with the recipe (a Domain dataset group use case) you specify. You create recommenders for a Domain dataset group and specify the recommender's Amazon Resource Name (ARN) when you make a GetRecommendations request.   Minimum recommendation requests per second   A high minRecommendationRequestsPerSecond will increase your bill. We recommend starting with 1 for minRecommendationRequestsPerSecond (the default). Track your usage using Amazon CloudWatch metrics, and increase the minRecommendationRequestsPerSecond as necessary.  When you create a recommender, you can configure the recommender's minimum recommendation requests per second. The minimum recommendation requests per second (minRecommendationRequestsPerSecond) specifies the baseline recommendation request throughput provisioned by Amazon Personalize. The default minRecommendationRequestsPerSecond is 1. A recommendation request is a single GetRecommendations operation. Request throughput is measured in requests per second and Amazon Personalize uses your requests per second to derive your requests per hour and the price of your recommender usage.   If your requests per second increases beyond minRecommendationRequestsPerSecond, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minRecommendationRequestsPerSecond. There's a short time delay while the capacity is increased that might cause loss of requests.  Your bill is the greater of either the minimum requests per hour (based on minRecommendationRequestsPerSecond) or the actual number of requests. The actual request throughput used is calculated as the average requests/second within a one-hour window. We recommend starting with the default minRecommendationRequestsPerSecond, track your usage using Amazon CloudWatch metrics, and then increase the minRecommendationRequestsPerSecond as necessary.   Status  A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the recommender status, call DescribeRecommender.  Wait until the status of the recommender is ACTIVE before asking the recommender for recommendations.   Related APIs     ListRecommenders     DescribeRecommender     UpdateRecommender     DeleteRecommender   
+   * Creates a recommender with the recipe (a Domain dataset group use case) you specify. You create recommenders for a Domain dataset group and specify the recommender's Amazon Resource Name (ARN) when you make a GetRecommendations request.   Minimum recommendation requests per second  When you create a recommender, you can configure the recommender's minimum recommendation requests per second. The minimum recommendation requests per second (minRecommendationRequestsPerSecond) specifies the baseline recommendation request throughput provisioned by Amazon Personalize. The default minRecommendationRequestsPerSecond is 1. A recommendation request is a single GetRecommendations operation. Request throughput is measured in requests per second and Amazon Personalize uses your requests per second to derive your requests per hour and the price of your recommender usage.   If your requests per second increases beyond minRecommendationRequestsPerSecond, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minRecommendationRequestsPerSecond. There's a short time delay while the capacity is increased that might cause loss of requests.  Your bill is the greater of either the minimum requests per hour (based on minRecommendationRequestsPerSecond) or the actual number of requests. The actual request throughput used is calculated as the average requests/second within a one-hour window. We recommend starting with the default minRecommendationRequestsPerSecond, track your usage using Amazon CloudWatch metrics, and then increase the minRecommendationRequestsPerSecond as necessary.   Status  A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the recommender status, call DescribeRecommender.  Wait until the status of the recommender is ACTIVE before asking the recommender for recommendations.   Related APIs     ListRecommenders     DescribeRecommender     UpdateRecommender     DeleteRecommender   
    */
   createRecommender(params: Personalize.Types.CreateRecommenderRequest, callback?: (err: AWSError, data: Personalize.Types.CreateRecommenderResponse) => void): Request<Personalize.Types.CreateRecommenderResponse, AWSError>;
   /**
-   * Creates a recommender with the recipe (a Domain dataset group use case) you specify. You create recommenders for a Domain dataset group and specify the recommender's Amazon Resource Name (ARN) when you make a GetRecommendations request.   Minimum recommendation requests per second   A high minRecommendationRequestsPerSecond will increase your bill. We recommend starting with 1 for minRecommendationRequestsPerSecond (the default). Track your usage using Amazon CloudWatch metrics, and increase the minRecommendationRequestsPerSecond as necessary.  When you create a recommender, you can configure the recommender's minimum recommendation requests per second. The minimum recommendation requests per second (minRecommendationRequestsPerSecond) specifies the baseline recommendation request throughput provisioned by Amazon Personalize. The default minRecommendationRequestsPerSecond is 1. A recommendation request is a single GetRecommendations operation. Request throughput is measured in requests per second and Amazon Personalize uses your requests per second to derive your requests per hour and the price of your recommender usage.   If your requests per second increases beyond minRecommendationRequestsPerSecond, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minRecommendationRequestsPerSecond. There's a short time delay while the capacity is increased that might cause loss of requests.  Your bill is the greater of either the minimum requests per hour (based on minRecommendationRequestsPerSecond) or the actual number of requests. The actual request throughput used is calculated as the average requests/second within a one-hour window. We recommend starting with the default minRecommendationRequestsPerSecond, track your usage using Amazon CloudWatch metrics, and then increase the minRecommendationRequestsPerSecond as necessary.   Status  A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the recommender status, call DescribeRecommender.  Wait until the status of the recommender is ACTIVE before asking the recommender for recommendations.   Related APIs     ListRecommenders     DescribeRecommender     UpdateRecommender     DeleteRecommender   
+   * Creates a recommender with the recipe (a Domain dataset group use case) you specify. You create recommenders for a Domain dataset group and specify the recommender's Amazon Resource Name (ARN) when you make a GetRecommendations request.   Minimum recommendation requests per second  When you create a recommender, you can configure the recommender's minimum recommendation requests per second. The minimum recommendation requests per second (minRecommendationRequestsPerSecond) specifies the baseline recommendation request throughput provisioned by Amazon Personalize. The default minRecommendationRequestsPerSecond is 1. A recommendation request is a single GetRecommendations operation. Request throughput is measured in requests per second and Amazon Personalize uses your requests per second to derive your requests per hour and the price of your recommender usage.   If your requests per second increases beyond minRecommendationRequestsPerSecond, Amazon Personalize auto-scales the provisioned capacity up and down, but never below minRecommendationRequestsPerSecond. There's a short time delay while the capacity is increased that might cause loss of requests.  Your bill is the greater of either the minimum requests per hour (based on minRecommendationRequestsPerSecond) or the actual number of requests. The actual request throughput used is calculated as the average requests/second within a one-hour window. We recommend starting with the default minRecommendationRequestsPerSecond, track your usage using Amazon CloudWatch metrics, and then increase the minRecommendationRequestsPerSecond as necessary.   Status  A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the recommender status, call DescribeRecommender.  Wait until the status of the recommender is ACTIVE before asking the recommender for recommendations.   Related APIs     ListRecommenders     DescribeRecommender     UpdateRecommender     DeleteRecommender   
    */
   createRecommender(callback?: (err: AWSError, data: Personalize.Types.CreateRecommenderResponse) => void): Request<Personalize.Types.CreateRecommenderResponse, AWSError>;
   /**
@@ -108,11 +100,11 @@ declare class Personalize extends Service {
    */
   createSchema(callback?: (err: AWSError, data: Personalize.Types.CreateSchemaResponse) => void): Request<Personalize.Types.CreateSchemaResponse, AWSError>;
   /**
-   * Creates the configuration for training a model. A trained model is known as a solution version. After the configuration is created, you train the model (create a solution version) by calling the CreateSolutionVersion operation. Every time you call CreateSolutionVersion, a new version of the solution is created. After creating a solution version, you check its accuracy by calling GetSolutionMetrics. When you are satisfied with the version, you deploy it using CreateCampaign. The campaign provides recommendations to a client through the GetRecommendations API. To train a model, Amazon Personalize requires training data and a recipe. The training data comes from the dataset group that you provide in the request. A recipe specifies the training algorithm and a feature transformation. You can specify one of the predefined recipes provided by Amazon Personalize.   Amazon Personalize doesn't support configuring the hpoObjective for solution hyperparameter optimization at this time.   Status  A solution can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the status of the solution, call DescribeSolution. Wait until the status shows as ACTIVE before calling CreateSolutionVersion.  Related APIs     ListSolutions     CreateSolutionVersion     DescribeSolution     DeleteSolution       ListSolutionVersions     DescribeSolutionVersion   
+   * Creates the configuration for training a model. A trained model is known as a solution. After the configuration is created, you train the model (create a solution) by calling the CreateSolutionVersion operation. Every time you call CreateSolutionVersion, a new version of the solution is created. After creating a solution version, you check its accuracy by calling GetSolutionMetrics. When you are satisfied with the version, you deploy it using CreateCampaign. The campaign provides recommendations to a client through the GetRecommendations API. To train a model, Amazon Personalize requires training data and a recipe. The training data comes from the dataset group that you provide in the request. A recipe specifies the training algorithm and a feature transformation. You can specify one of the predefined recipes provided by Amazon Personalize. Alternatively, you can specify performAutoML and Amazon Personalize will analyze your data and select the optimum USER_PERSONALIZATION recipe for you.  Amazon Personalize doesn't support configuring the hpoObjective for solution hyperparameter optimization at this time.   Status  A solution can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the status of the solution, call DescribeSolution. Wait until the status shows as ACTIVE before calling CreateSolutionVersion.  Related APIs     ListSolutions     CreateSolutionVersion     DescribeSolution     DeleteSolution       ListSolutionVersions     DescribeSolutionVersion   
    */
   createSolution(params: Personalize.Types.CreateSolutionRequest, callback?: (err: AWSError, data: Personalize.Types.CreateSolutionResponse) => void): Request<Personalize.Types.CreateSolutionResponse, AWSError>;
   /**
-   * Creates the configuration for training a model. A trained model is known as a solution version. After the configuration is created, you train the model (create a solution version) by calling the CreateSolutionVersion operation. Every time you call CreateSolutionVersion, a new version of the solution is created. After creating a solution version, you check its accuracy by calling GetSolutionMetrics. When you are satisfied with the version, you deploy it using CreateCampaign. The campaign provides recommendations to a client through the GetRecommendations API. To train a model, Amazon Personalize requires training data and a recipe. The training data comes from the dataset group that you provide in the request. A recipe specifies the training algorithm and a feature transformation. You can specify one of the predefined recipes provided by Amazon Personalize.   Amazon Personalize doesn't support configuring the hpoObjective for solution hyperparameter optimization at this time.   Status  A solution can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the status of the solution, call DescribeSolution. Wait until the status shows as ACTIVE before calling CreateSolutionVersion.  Related APIs     ListSolutions     CreateSolutionVersion     DescribeSolution     DeleteSolution       ListSolutionVersions     DescribeSolutionVersion   
+   * Creates the configuration for training a model. A trained model is known as a solution. After the configuration is created, you train the model (create a solution) by calling the CreateSolutionVersion operation. Every time you call CreateSolutionVersion, a new version of the solution is created. After creating a solution version, you check its accuracy by calling GetSolutionMetrics. When you are satisfied with the version, you deploy it using CreateCampaign. The campaign provides recommendations to a client through the GetRecommendations API. To train a model, Amazon Personalize requires training data and a recipe. The training data comes from the dataset group that you provide in the request. A recipe specifies the training algorithm and a feature transformation. You can specify one of the predefined recipes provided by Amazon Personalize. Alternatively, you can specify performAutoML and Amazon Personalize will analyze your data and select the optimum USER_PERSONALIZATION recipe for you.  Amazon Personalize doesn't support configuring the hpoObjective for solution hyperparameter optimization at this time.   Status  A solution can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   To get the status of the solution, call DescribeSolution. Wait until the status shows as ACTIVE before calling CreateSolutionVersion.  Related APIs     ListSolutions     CreateSolutionVersion     DescribeSolution     DeleteSolution       ListSolutionVersions     DescribeSolutionVersion   
    */
   createSolution(callback?: (err: AWSError, data: Personalize.Types.CreateSolutionResponse) => void): Request<Personalize.Types.CreateSolutionResponse, AWSError>;
   /**
@@ -163,14 +155,6 @@ declare class Personalize extends Service {
    * Deletes a filter.
    */
   deleteFilter(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Deletes a metric attribution.
-   */
-  deleteMetricAttribution(params: Personalize.Types.DeleteMetricAttributionRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Deletes a metric attribution.
-   */
-  deleteMetricAttribution(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
    * Deactivates and removes a recommender. A deleted recommender can no longer be specified in a GetRecommendations request.
    */
@@ -284,14 +268,6 @@ declare class Personalize extends Service {
    */
   describeFilter(callback?: (err: AWSError, data: Personalize.Types.DescribeFilterResponse) => void): Request<Personalize.Types.DescribeFilterResponse, AWSError>;
   /**
-   * Describes a metric attribution.
-   */
-  describeMetricAttribution(params: Personalize.Types.DescribeMetricAttributionRequest, callback?: (err: AWSError, data: Personalize.Types.DescribeMetricAttributionResponse) => void): Request<Personalize.Types.DescribeMetricAttributionResponse, AWSError>;
-  /**
-   * Describes a metric attribution.
-   */
-  describeMetricAttribution(callback?: (err: AWSError, data: Personalize.Types.DescribeMetricAttributionResponse) => void): Request<Personalize.Types.DescribeMetricAttributionResponse, AWSError>;
-  /**
    * Describes a recipe. A recipe contains three items:   An algorithm that trains a model.   Hyperparameters that govern the training.   Feature transformation information for modifying the input data before training.   Amazon Personalize provides a set of predefined recipes. You specify a recipe when you create a solution with the CreateSolution API. CreateSolution trains a model by using the algorithm in the specified recipe and a training dataset. The solution, when deployed as a campaign, can provide recommendations using the GetRecommendations API.
    */
   describeRecipe(params: Personalize.Types.DescribeRecipeRequest, callback?: (err: AWSError, data: Personalize.Types.DescribeRecipeResponse) => void): Request<Personalize.Types.DescribeRecipeResponse, AWSError>;
@@ -300,11 +276,11 @@ declare class Personalize extends Service {
    */
   describeRecipe(callback?: (err: AWSError, data: Personalize.Types.DescribeRecipeResponse) => void): Request<Personalize.Types.DescribeRecipeResponse, AWSError>;
   /**
-   * Describes the given recommender, including its status. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS   When the status is CREATE FAILED, the response includes the failureReason key, which describes why. The modelMetrics key is null when the recommender is being created or deleted. For more information on recommenders, see CreateRecommender.
+   * Describes the given recommender, including its status. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   When the status is CREATE FAILED, the response includes the failureReason key, which describes why. For more information on recommenders, see CreateRecommender.
    */
   describeRecommender(params: Personalize.Types.DescribeRecommenderRequest, callback?: (err: AWSError, data: Personalize.Types.DescribeRecommenderResponse) => void): Request<Personalize.Types.DescribeRecommenderResponse, AWSError>;
   /**
-   * Describes the given recommender, including its status. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS   When the status is CREATE FAILED, the response includes the failureReason key, which describes why. The modelMetrics key is null when the recommender is being created or deleted. For more information on recommenders, see CreateRecommender.
+   * Describes the given recommender, including its status. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS   When the status is CREATE FAILED, the response includes the failureReason key, which describes why. For more information on recommenders, see CreateRecommender.
    */
   describeRecommender(callback?: (err: AWSError, data: Personalize.Types.DescribeRecommenderResponse) => void): Request<Personalize.Types.DescribeRecommenderResponse, AWSError>;
   /**
@@ -412,22 +388,6 @@ declare class Personalize extends Service {
    */
   listFilters(callback?: (err: AWSError, data: Personalize.Types.ListFiltersResponse) => void): Request<Personalize.Types.ListFiltersResponse, AWSError>;
   /**
-   * Lists the metrics for the metric attribution.
-   */
-  listMetricAttributionMetrics(params: Personalize.Types.ListMetricAttributionMetricsRequest, callback?: (err: AWSError, data: Personalize.Types.ListMetricAttributionMetricsResponse) => void): Request<Personalize.Types.ListMetricAttributionMetricsResponse, AWSError>;
-  /**
-   * Lists the metrics for the metric attribution.
-   */
-  listMetricAttributionMetrics(callback?: (err: AWSError, data: Personalize.Types.ListMetricAttributionMetricsResponse) => void): Request<Personalize.Types.ListMetricAttributionMetricsResponse, AWSError>;
-  /**
-   * Lists metric attributions.
-   */
-  listMetricAttributions(params: Personalize.Types.ListMetricAttributionsRequest, callback?: (err: AWSError, data: Personalize.Types.ListMetricAttributionsResponse) => void): Request<Personalize.Types.ListMetricAttributionsResponse, AWSError>;
-  /**
-   * Lists metric attributions.
-   */
-  listMetricAttributions(callback?: (err: AWSError, data: Personalize.Types.ListMetricAttributionsResponse) => void): Request<Personalize.Types.ListMetricAttributionsResponse, AWSError>;
-  /**
    * Returns a list of available recipes. The response provides the properties for each recipe, including the recipe's Amazon Resource Name (ARN).
    */
   listRecipes(params: Personalize.Types.ListRecipesRequest, callback?: (err: AWSError, data: Personalize.Types.ListRecipesResponse) => void): Request<Personalize.Types.ListRecipesResponse, AWSError>;
@@ -476,22 +436,6 @@ declare class Personalize extends Service {
    */
   listTagsForResource(callback?: (err: AWSError, data: Personalize.Types.ListTagsForResourceResponse) => void): Request<Personalize.Types.ListTagsForResourceResponse, AWSError>;
   /**
-   * Starts a recommender that is INACTIVE. Starting a recommender does not create any new models, but resumes billing and automatic retraining for the recommender.
-   */
-  startRecommender(params: Personalize.Types.StartRecommenderRequest, callback?: (err: AWSError, data: Personalize.Types.StartRecommenderResponse) => void): Request<Personalize.Types.StartRecommenderResponse, AWSError>;
-  /**
-   * Starts a recommender that is INACTIVE. Starting a recommender does not create any new models, but resumes billing and automatic retraining for the recommender.
-   */
-  startRecommender(callback?: (err: AWSError, data: Personalize.Types.StartRecommenderResponse) => void): Request<Personalize.Types.StartRecommenderResponse, AWSError>;
-  /**
-   * Stops a recommender that is ACTIVE. Stopping a recommender halts billing and automatic retraining for the recommender.
-   */
-  stopRecommender(params: Personalize.Types.StopRecommenderRequest, callback?: (err: AWSError, data: Personalize.Types.StopRecommenderResponse) => void): Request<Personalize.Types.StopRecommenderResponse, AWSError>;
-  /**
-   * Stops a recommender that is ACTIVE. Stopping a recommender halts billing and automatic retraining for the recommender.
-   */
-  stopRecommender(callback?: (err: AWSError, data: Personalize.Types.StopRecommenderResponse) => void): Request<Personalize.Types.StopRecommenderResponse, AWSError>;
-  /**
    * Stops creating a solution version that is in a state of CREATE_PENDING or CREATE IN_PROGRESS.  Depending on the current state of the solution version, the solution version state changes as follows:   CREATE_PENDING &gt; CREATE_STOPPED or   CREATE_IN_PROGRESS &gt; CREATE_STOPPING &gt; CREATE_STOPPED   You are billed for all of the training completed up until you stop the solution version creation. You cannot resume creating a solution version once it has been stopped.
    */
   stopSolutionVersionCreation(params: Personalize.Types.StopSolutionVersionCreationRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
@@ -516,27 +460,19 @@ declare class Personalize extends Service {
    */
   untagResource(callback?: (err: AWSError, data: Personalize.Types.UntagResourceResponse) => void): Request<Personalize.Types.UntagResourceResponse, AWSError>;
   /**
-   * Updates a campaign by either deploying a new solution or changing the value of the campaign's minProvisionedTPS parameter. To update a campaign, the campaign status must be ACTIVE or CREATE FAILED. Check the campaign status using the DescribeCampaign operation.  You can still get recommendations from a campaign while an update is in progress. The campaign will use the previous solution version and campaign configuration to generate recommendations until the latest campaign update status is Active.   For more information on campaigns, see CreateCampaign.
+   * Updates a campaign by either deploying a new solution or changing the value of the campaign's minProvisionedTPS parameter. To update a campaign, the campaign status must be ACTIVE or CREATE FAILED. Check the campaign status using the DescribeCampaign operation.  You must wait until the status of the updated campaign is ACTIVE before asking the campaign for recommendations.  For more information on campaigns, see CreateCampaign.
    */
   updateCampaign(params: Personalize.Types.UpdateCampaignRequest, callback?: (err: AWSError, data: Personalize.Types.UpdateCampaignResponse) => void): Request<Personalize.Types.UpdateCampaignResponse, AWSError>;
   /**
-   * Updates a campaign by either deploying a new solution or changing the value of the campaign's minProvisionedTPS parameter. To update a campaign, the campaign status must be ACTIVE or CREATE FAILED. Check the campaign status using the DescribeCampaign operation.  You can still get recommendations from a campaign while an update is in progress. The campaign will use the previous solution version and campaign configuration to generate recommendations until the latest campaign update status is Active.   For more information on campaigns, see CreateCampaign.
+   * Updates a campaign by either deploying a new solution or changing the value of the campaign's minProvisionedTPS parameter. To update a campaign, the campaign status must be ACTIVE or CREATE FAILED. Check the campaign status using the DescribeCampaign operation.  You must wait until the status of the updated campaign is ACTIVE before asking the campaign for recommendations.  For more information on campaigns, see CreateCampaign.
    */
   updateCampaign(callback?: (err: AWSError, data: Personalize.Types.UpdateCampaignResponse) => void): Request<Personalize.Types.UpdateCampaignResponse, AWSError>;
   /**
-   * Updates a metric attribution.
-   */
-  updateMetricAttribution(params: Personalize.Types.UpdateMetricAttributionRequest, callback?: (err: AWSError, data: Personalize.Types.UpdateMetricAttributionResponse) => void): Request<Personalize.Types.UpdateMetricAttributionResponse, AWSError>;
-  /**
-   * Updates a metric attribution.
-   */
-  updateMetricAttribution(callback?: (err: AWSError, data: Personalize.Types.UpdateMetricAttributionResponse) => void): Request<Personalize.Types.UpdateMetricAttributionResponse, AWSError>;
-  /**
-   * Updates the recommender to modify the recommender configuration. If you update the recommender to modify the columns used in training, Amazon Personalize automatically starts a full retraining of the models backing your recommender. While the update completes, you can still get recommendations from the recommender. The recommender uses the previous configuration until the update completes. To track the status of this update, use the latestRecommenderUpdate returned in the DescribeRecommender operation. 
+   * Updates the recommender to modify the recommender configuration.
    */
   updateRecommender(params: Personalize.Types.UpdateRecommenderRequest, callback?: (err: AWSError, data: Personalize.Types.UpdateRecommenderResponse) => void): Request<Personalize.Types.UpdateRecommenderResponse, AWSError>;
   /**
-   * Updates the recommender to modify the recommender configuration. If you update the recommender to modify the columns used in training, Amazon Personalize automatically starts a full retraining of the models backing your recommender. While the update completes, you can still get recommendations from the recommender. The recommender uses the previous configuration until the update completes. To track the status of this update, use the latestRecommenderUpdate returned in the DescribeRecommender operation. 
+   * Updates the recommender to modify the recommender configuration.
    */
   updateRecommender(callback?: (err: AWSError, data: Personalize.Types.UpdateRecommenderResponse) => void): Request<Personalize.Types.UpdateRecommenderResponse, AWSError>;
 }
@@ -738,7 +674,7 @@ declare namespace Personalize {
      */
     solutionVersionArn?: Arn;
     /**
-     * The number of predicted users generated by the batch segment job for each line of input data. The maximum number of users per segment is 5 million.
+     * The number of predicted users generated by the batch segment job for each line of input data.
      */
     numResults?: NumBatchResults;
     /**
@@ -818,7 +754,7 @@ declare namespace Personalize {
      */
     solutionVersionArn?: Arn;
     /**
-     * Specifies the requested minimum provisioned transactions (recommendations) per second. A high minProvisionedTPS will increase your bill. We recommend starting with 1 for minProvisionedTPS (the default). Track your usage using Amazon CloudWatch metrics, and increase the minProvisionedTPS as necessary.
+     * Specifies the requested minimum provisioned transactions (recommendations) per second.
      */
     minProvisionedTPS?: TransactionsPerSecond;
     /**
@@ -916,8 +852,6 @@ declare namespace Personalize {
   export type CategoricalHyperParameterRanges = CategoricalHyperParameterRange[];
   export type CategoricalValue = string;
   export type CategoricalValues = CategoricalValue[];
-  export type ColumnName = string;
-  export type ColumnNamesList = ColumnName[];
   export interface ContinuousHyperParameterRange {
     /**
      * The name of the hyperparameter.
@@ -993,7 +927,7 @@ declare namespace Personalize {
      */
     filterArn?: Arn;
     /**
-     * The number of predicted users generated by the batch segment job for each line of input data. The maximum number of users per segment is 5 million.
+     * The number of predicted users generated by the batch segment job for each line of input data.
      */
     numResults?: NumBatchResults;
     /**
@@ -1029,7 +963,7 @@ declare namespace Personalize {
      */
     solutionVersionArn: Arn;
     /**
-     * Specifies the requested minimum provisioned transactions (recommendations) per second that Amazon Personalize will support. A high minProvisionedTPS will increase your bill. We recommend starting with 1 for minProvisionedTPS (the default). Track your usage using Amazon CloudWatch metrics, and increase the minProvisionedTPS as necessary.
+     * Specifies the requested minimum provisioned transactions (recommendations) per second that Amazon Personalize will support.
      */
     minProvisionedTPS?: TransactionsPerSecond;
     /**
@@ -1132,14 +1066,6 @@ declare namespace Personalize {
      * A list of tags to apply to the dataset import job.
      */
     tags?: Tags;
-    /**
-     * Specify how to add the new records to an existing dataset. The default import mode is FULL. If you haven't imported bulk records into the dataset previously, you can only specify FULL.   Specify FULL to overwrite all existing bulk data in your dataset. Data you imported individually is not replaced.   Specify INCREMENTAL to append the new records to the existing data in your dataset. Amazon Personalize replaces any record with the same ID with the new one.  
-     */
-    importMode?: ImportMode;
-    /**
-     * If you created a metric attribution, specify whether to publish metrics for this import job to Amazon S3
-     */
-    publishAttributionMetricsToS3?: Boolean;
   }
   export interface CreateDatasetImportJobResponse {
     /**
@@ -1223,30 +1149,6 @@ declare namespace Personalize {
      */
     filterArn?: Arn;
   }
-  export interface CreateMetricAttributionRequest {
-    /**
-     * A name for the metric attribution.
-     */
-    name: Name;
-    /**
-     * The Amazon Resource Name (ARN) of the destination dataset group for the metric attribution.
-     */
-    datasetGroupArn: Arn;
-    /**
-     * A list of metric attributes for the metric attribution. Each metric attribute specifies an event type to track and a function. Available functions are SUM() or SAMPLECOUNT(). For SUM() functions, provide the dataset type (either Interactions or Items) and column to sum as a parameter. For example SUM(Items.PRICE).
-     */
-    metrics: MetricAttributes;
-    /**
-     * The output configuration details for the metric attribution.
-     */
-    metricsOutputConfig: MetricAttributionOutput;
-  }
-  export interface CreateMetricAttributionResponse {
-    /**
-     * The Amazon Resource Name (ARN) for the new metric attribution.
-     */
-    metricAttributionArn?: Arn;
-  }
   export interface CreateRecommenderRequest {
     /**
      * The name of the recommender.
@@ -1305,7 +1207,7 @@ declare namespace Personalize {
      */
     performHPO?: Boolean;
     /**
-     *  We don't recommend enabling automated machine learning. Instead, match your use case to the available Amazon Personalize recipes. For more information, see Determining your use case.   Whether to perform automated machine learning (AutoML). The default is false. For this case, you must specify recipeArn. When set to true, Amazon Personalize analyzes your training data and selects the optimal USER_PERSONALIZATION recipe and hyperparameters. In this case, you must omit recipeArn. Amazon Personalize determines the optimal recipe by running tests with different values for the hyperparameters. AutoML lengthens the training process as compared to selecting a specific recipe.
+     * Whether to perform automated machine learning (AutoML). The default is false. For this case, you must specify recipeArn. When set to true, Amazon Personalize analyzes your training data and selects the optimal USER_PERSONALIZATION recipe and hyperparameters. In this case, you must omit recipeArn. Amazon Personalize determines the optimal recipe by running tests with different values for the hyperparameters. AutoML lengthens the training process as compared to selecting a specific recipe.
      */
     performAutoML?: PerformAutoML;
     /**
@@ -1336,10 +1238,6 @@ declare namespace Personalize {
     solutionArn?: Arn;
   }
   export interface CreateSolutionVersionRequest {
-    /**
-     * The name of the solution version.
-     */
-    name?: Name;
     /**
      * The Amazon Resource Name (ARN) of the solution containing the training configuration information.
      */
@@ -1577,14 +1475,6 @@ declare namespace Personalize {
      * If a dataset import job fails, provides the reason why.
      */
     failureReason?: FailureReason;
-    /**
-     * The import mode used by the dataset import job to import new records.
-     */
-    importMode?: ImportMode;
-    /**
-     * Whether the job publishes metrics to Amazon S3 for a metric attribution.
-     */
-    publishAttributionMetricsToS3?: Boolean;
   }
   export interface DatasetImportJobSummary {
     /**
@@ -1611,10 +1501,6 @@ declare namespace Personalize {
      * If a dataset import job fails, the reason behind the failure.
      */
     failureReason?: FailureReason;
-    /**
-     * The import mode the dataset import job used to update the data in the dataset. For more information see Updating existing bulk data. 
-     */
-    importMode?: ImportMode;
   }
   export type DatasetImportJobs = DatasetImportJobSummary[];
   export interface DatasetSchema {
@@ -1791,12 +1677,6 @@ declare namespace Personalize {
      */
     filterArn: Arn;
   }
-  export interface DeleteMetricAttributionRequest {
-    /**
-     * The metric attribution's Amazon Resource Name (ARN).
-     */
-    metricAttributionArn: Arn;
-  }
   export interface DeleteRecommenderRequest {
     /**
      * The Amazon Resource Name (ARN) of the recommender to delete.
@@ -1947,18 +1827,6 @@ declare namespace Personalize {
      */
     filter?: Filter;
   }
-  export interface DescribeMetricAttributionRequest {
-    /**
-     * The metric attribution's Amazon Resource Name (ARN).
-     */
-    metricAttributionArn: Arn;
-  }
-  export interface DescribeMetricAttributionResponse {
-    /**
-     * The details of the metric attribution.
-     */
-    metricAttribution?: MetricAttribution;
-  }
   export interface DescribeRecipeRequest {
     /**
      * The Amazon Resource Name (ARN) of the recipe to describe.
@@ -2081,7 +1949,6 @@ declare namespace Personalize {
   export type EventTrackers = EventTrackerSummary[];
   export type EventType = string;
   export type EventValueThreshold = string;
-  export type ExcludedDatasetColumns = {[key: string]: ColumnNamesList};
   export type FailureReason = string;
   export interface FeatureTransformation {
     /**
@@ -2189,7 +2056,7 @@ declare namespace Personalize {
      */
     solutionVersionArn?: Arn;
     /**
-     * The metrics for the solution version. For more information, see  Evaluating a solution version with metrics .
+     * The metrics for the solution version.
      */
     metrics?: Metrics;
   }
@@ -2248,7 +2115,6 @@ declare namespace Personalize {
     categoricalHyperParameterRanges?: CategoricalHyperParameterRanges;
   }
   export type HyperParameters = {[key: string]: ParameterValue};
-  export type ImportMode = "FULL"|"INCREMENTAL"|string;
   export type IngestionMode = "BULK"|"PUT"|"ALL"|string;
   export interface IntegerHyperParameterRange {
     /**
@@ -2481,54 +2347,6 @@ declare namespace Personalize {
      */
     nextToken?: NextToken;
   }
-  export interface ListMetricAttributionMetricsRequest {
-    /**
-     * The Amazon Resource Name (ARN) of the metric attribution to retrieve attributes for.
-     */
-    metricAttributionArn?: Arn;
-    /**
-     * Specify the pagination token from a previous request to retrieve the next page of results.
-     */
-    nextToken?: NextToken;
-    /**
-     * The maximum number of metrics to return in one page of results.
-     */
-    maxResults?: MaxResults;
-  }
-  export interface ListMetricAttributionMetricsResponse {
-    /**
-     * The metrics for the specified metric attribution.
-     */
-    metrics?: MetricAttributes;
-    /**
-     * Specify the pagination token from a previous ListMetricAttributionMetricsResponse request to retrieve the next page of results.
-     */
-    nextToken?: NextToken;
-  }
-  export interface ListMetricAttributionsRequest {
-    /**
-     * The metric attributions' dataset group Amazon Resource Name (ARN).
-     */
-    datasetGroupArn?: Arn;
-    /**
-     * Specify the pagination token from a previous request to retrieve the next page of results.
-     */
-    nextToken?: NextToken;
-    /**
-     * The maximum number of metric attributions to return in one page of results.
-     */
-    maxResults?: MaxResults;
-  }
-  export interface ListMetricAttributionsResponse {
-    /**
-     * The list of metric attributions.
-     */
-    metricAttributions?: MetricAttributions;
-    /**
-     * Specify the pagination token from a previous request to retrieve the next page of results.
-     */
-    nextToken?: NextToken;
-  }
   export interface ListRecipesRequest {
     /**
      * The default is SERVICE.
@@ -2662,91 +2480,6 @@ declare namespace Personalize {
     tags?: Tags;
   }
   export type MaxResults = number;
-  export interface MetricAttribute {
-    /**
-     * The metric's event type.
-     */
-    eventType: EventType;
-    /**
-     * The metric's name. The name helps you identify the metric in Amazon CloudWatch or Amazon S3.
-     */
-    metricName: MetricName;
-    /**
-     * The attribute's expression. Available functions are SUM() or SAMPLECOUNT(). For SUM() functions, provide the dataset type (either Interactions or Items) and column to sum as a parameter. For example SUM(Items.PRICE).
-     */
-    expression: MetricExpression;
-  }
-  export type MetricAttributes = MetricAttribute[];
-  export type MetricAttributesNamesList = MetricName[];
-  export interface MetricAttribution {
-    /**
-     * The metric attribution's name.
-     */
-    name?: Name;
-    /**
-     * The metric attribution's Amazon Resource Name (ARN).
-     */
-    metricAttributionArn?: Arn;
-    /**
-     * The metric attribution's dataset group Amazon Resource Name (ARN).
-     */
-    datasetGroupArn?: Arn;
-    /**
-     * The metric attribution's output configuration.
-     */
-    metricsOutputConfig?: MetricAttributionOutput;
-    /**
-     * The metric attribution's status.
-     */
-    status?: Status;
-    /**
-     * The metric attribution's creation date time.
-     */
-    creationDateTime?: _Date;
-    /**
-     * The metric attribution's last updated date time.
-     */
-    lastUpdatedDateTime?: _Date;
-    /**
-     * The metric attribution's failure reason.
-     */
-    failureReason?: FailureReason;
-  }
-  export interface MetricAttributionOutput {
-    s3DataDestination?: S3DataConfig;
-    /**
-     * The Amazon Resource Name (ARN) of the IAM service role that has permissions to add data to your output Amazon S3 bucket and add metrics to Amazon CloudWatch. For more information, see Measuring impact of recommendations.
-     */
-    roleArn: RoleArn;
-  }
-  export interface MetricAttributionSummary {
-    /**
-     * The name of the metric attribution.
-     */
-    name?: Name;
-    /**
-     * The metric attribution's Amazon Resource Name (ARN).
-     */
-    metricAttributionArn?: Arn;
-    /**
-     * The metric attribution's status.
-     */
-    status?: Status;
-    /**
-     * The metric attribution's creation date time.
-     */
-    creationDateTime?: _Date;
-    /**
-     * The metric attribution's last updated date time.
-     */
-    lastUpdatedDateTime?: _Date;
-    /**
-     * The metric attribution's failure reason.
-     */
-    failureReason?: FailureReason;
-  }
-  export type MetricAttributions = MetricAttributionSummary[];
-  export type MetricExpression = string;
   export type MetricName = string;
   export type MetricRegex = string;
   export type MetricValue = number;
@@ -2866,7 +2599,7 @@ declare namespace Personalize {
      */
     lastUpdatedDateTime?: _Date;
     /**
-     * The status of the recommender. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS  
+     * The status of the recommender. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS  
      */
     status?: Status;
     /**
@@ -2877,10 +2610,6 @@ declare namespace Personalize {
      * Provides a summary of the latest updates to the recommender. 
      */
     latestRecommenderUpdate?: RecommenderUpdateSummary;
-    /**
-     * Provides evaluation metrics that help you determine the performance of a recommender. For more information, see  Evaluating a recommender.
-     */
-    modelMetrics?: Metrics;
   }
   export interface RecommenderConfig {
     /**
@@ -2888,13 +2617,9 @@ declare namespace Personalize {
      */
     itemExplorationConfig?: HyperParameters;
     /**
-     * Specifies the requested minimum provisioned recommendation requests per second that Amazon Personalize will support. A high minRecommendationRequestsPerSecond will increase your bill. We recommend starting with 1 for minRecommendationRequestsPerSecond (the default). Track your usage using Amazon CloudWatch metrics, and increase the minRecommendationRequestsPerSecond as necessary.
+     * Specifies the requested minimum provisioned recommendation requests per second that Amazon Personalize will support.
      */
     minRecommendationRequestsPerSecond?: TransactionsPerSecond;
-    /**
-     *  Specifies the training data configuration to use when creating a domain recommender. 
-     */
-    trainingDataConfig?: TrainingDataConfig;
   }
   export interface RecommenderSummary {
     /**
@@ -2918,7 +2643,7 @@ declare namespace Personalize {
      */
     recommenderConfig?: RecommenderConfig;
     /**
-     * The status of the recommender. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS  
+     * The status of the recommender. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS  
      */
     status?: Status;
     /**
@@ -2944,7 +2669,7 @@ declare namespace Personalize {
      */
     lastUpdatedDateTime?: _Date;
     /**
-     * The status of the recommender update. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   STOP PENDING &gt; STOP IN_PROGRESS &gt; INACTIVE &gt; START PENDING &gt; START IN_PROGRESS &gt; ACTIVE   DELETE PENDING &gt; DELETE IN_PROGRESS  
+     * The status of the recommender update. A recommender can be in one of the following states:   CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED   DELETE PENDING &gt; DELETE IN_PROGRESS  
      */
     status?: Status;
     /**
@@ -2981,7 +2706,7 @@ declare namespace Personalize {
      */
     performHPO?: PerformHPO;
     /**
-     *  We don't recommend enabling automated machine learning. Instead, match your use case to the available Amazon Personalize recipes. For more information, see Determining your use case.   When true, Amazon Personalize performs a search for the best USER_PERSONALIZATION recipe from the list specified in the solution configuration (recipeArn must not be specified). When false (the default), Amazon Personalize uses recipeArn for training.
+     * When true, Amazon Personalize performs a search for the best USER_PERSONALIZATION recipe from the list specified in the solution configuration (recipeArn must not be specified). When false (the default), Amazon Personalize uses recipeArn for training.
      */
     performAutoML?: PerformAutoML;
     /**
@@ -3046,10 +2771,6 @@ declare namespace Personalize {
      * Describes the additional objective for the solution, such as maximizing streaming minutes or increasing revenue. For more information see Optimizing a solution.
      */
     optimizationObjective?: OptimizationObjective;
-    /**
-     *  Specifies the training data configuration to use when creating a custom solution version (trained model). 
-     */
-    trainingDataConfig?: TrainingDataConfig;
   }
   export interface SolutionSummary {
     /**
@@ -3072,16 +2793,8 @@ declare namespace Personalize {
      * The date and time (in Unix time) that the solution was last updated.
      */
     lastUpdatedDateTime?: _Date;
-    /**
-     * The Amazon Resource Name (ARN) of the recipe used by the solution.
-     */
-    recipeArn?: Arn;
   }
   export interface SolutionVersion {
-    /**
-     * The name of the solution version.
-     */
-    name?: Name;
     /**
      * The ARN of the solution version.
      */
@@ -3167,31 +2880,7 @@ declare namespace Personalize {
   }
   export type SolutionVersions = SolutionVersionSummary[];
   export type Solutions = SolutionSummary[];
-  export interface StartRecommenderRequest {
-    /**
-     * The Amazon Resource Name (ARN) of the recommender to start.
-     */
-    recommenderArn: Arn;
-  }
-  export interface StartRecommenderResponse {
-    /**
-     * The Amazon Resource Name (ARN) of the recommender you started.
-     */
-    recommenderArn?: Arn;
-  }
   export type Status = string;
-  export interface StopRecommenderRequest {
-    /**
-     * The Amazon Resource Name (ARN) of the recommender to stop.
-     */
-    recommenderArn: Arn;
-  }
-  export interface StopRecommenderResponse {
-    /**
-     * The Amazon Resource Name (ARN) of the recommender you stopped.
-     */
-    recommenderArn?: Arn;
-  }
   export interface StopSolutionVersionCreationRequest {
     /**
      * The Amazon Resource Name (ARN) of the solution version you want to stop creating.
@@ -3216,7 +2905,7 @@ declare namespace Personalize {
      */
     resourceArn: Arn;
     /**
-     * Tags to apply to the resource. For more information see Tagging Amazon Personalize recources.
+     * Tags to apply to the resource. For more information see Tagging Personalize resources.
      */
     tags: Tags;
   }
@@ -3225,12 +2914,6 @@ declare namespace Personalize {
   export type TagValue = string;
   export type Tags = Tag[];
   export type TrackingId = string;
-  export interface TrainingDataConfig {
-    /**
-     * Specifies the columns to exclude from training. Each key is a dataset type, and each value is a list of columns. Exclude columns to control what data Amazon Personalize uses to generate recommendations. For example, you might have a column that you want to use only to filter recommendations. You can exclude this column from training and Amazon Personalize considers it only when filtering. 
-     */
-    excludedDatasetColumns?: ExcludedDatasetColumns;
-  }
   export type TrainingHours = number;
   export type TrainingInputMode = string;
   export type TrainingMode = "FULL"|"UPDATE"|string;
@@ -3264,7 +2947,7 @@ declare namespace Personalize {
      */
     solutionVersionArn?: Arn;
     /**
-     * Specifies the requested minimum provisioned transactions (recommendations) per second that Amazon Personalize will support. A high minProvisionedTPS will increase your bill. We recommend starting with 1 for minProvisionedTPS (the default). Track your usage using Amazon CloudWatch metrics, and increase the minProvisionedTPS as necessary.
+     * Specifies the requested minimum provisioned transactions (recommendations) per second that Amazon Personalize will support.
      */
     minProvisionedTPS?: TransactionsPerSecond;
     /**
@@ -3277,30 +2960,6 @@ declare namespace Personalize {
      * The same campaign ARN as given in the request.
      */
     campaignArn?: Arn;
-  }
-  export interface UpdateMetricAttributionRequest {
-    /**
-     * Add new metric attributes to the metric attribution.
-     */
-    addMetrics?: MetricAttributes;
-    /**
-     * Remove metric attributes from the metric attribution.
-     */
-    removeMetrics?: MetricAttributesNamesList;
-    /**
-     * An output config for the metric attribution.
-     */
-    metricsOutputConfig?: MetricAttributionOutput;
-    /**
-     * The Amazon Resource Name (ARN) for the metric attribution to update.
-     */
-    metricAttributionArn?: Arn;
-  }
-  export interface UpdateMetricAttributionResponse {
-    /**
-     * The Amazon Resource Name (ARN) for the metric attribution that you updated.
-     */
-    metricAttributionArn?: Arn;
   }
   export interface UpdateRecommenderRequest {
     /**

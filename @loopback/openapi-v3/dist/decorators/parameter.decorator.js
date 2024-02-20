@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -42,16 +42,16 @@ function param(paramSpec) {
             // generate schema if `paramSpec` doesn't have it
             !paramSpec.schema ||
                 // generate schema if `paramSpec` has `schema` but without `type`
-                ((0, types_1.isSchemaObject)(paramSpec.schema) && !paramSpec.schema.type)) {
+                (types_1.isSchemaObject(paramSpec.schema) && !paramSpec.schema.type)) {
                 // If content explicitly mentioned do not resolve schema
                 if (!paramSpec.content) {
                     // please note `resolveSchema` only adds `type` and `format` for `schema`
-                    paramSpec.schema = (0, generate_schema_1.resolveSchema)(paramType, paramSpec.schema);
+                    paramSpec.schema = generate_schema_1.resolveSchema(paramType, paramSpec.schema);
                 }
             }
         }
         if (paramSpec.schema &&
-            (0, types_1.isSchemaObject)(paramSpec.schema) &&
+            types_1.isSchemaObject(paramSpec.schema) &&
             paramSpec.schema.type === 'array') {
             // The design-time type is `Object` for `any`
             if (paramType != null && paramType !== Object && paramType !== Array) {
@@ -430,7 +430,7 @@ const builtinTypes = {
             options = {};
         }
         name = (_a = options === null || options === void 0 ? void 0 : options.name) !== null && _a !== void 0 ? _a : name;
-        return param.query.object(name, (0, filter_schema_1.getFilterSchemaFor)(modelCtor, options));
+        return param.query.object(name, filter_schema_1.getFilterSchemaFor(modelCtor, options));
     }
     param.filter = filter;
     /**
@@ -449,7 +449,7 @@ const builtinTypes = {
      *
      */
     function where(modelCtor, name = 'where') {
-        return param.query.object(name, (0, filter_schema_1.getWhereSchemaFor)(modelCtor));
+        return param.query.object(name, filter_schema_1.getWhereSchemaFor(modelCtor));
     }
     param.where = where;
 })(param = exports.param || (exports.param = {}));

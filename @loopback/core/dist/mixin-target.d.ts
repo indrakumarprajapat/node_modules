@@ -55,6 +55,6 @@ import { Constructor } from '@loopback/context';
  * }
  * ```
  */
-export type MixinTarget<T extends object> = Constructor<{
+export declare type MixinTarget<T extends object> = Constructor<{
     [P in keyof T]: T[P];
 }>;

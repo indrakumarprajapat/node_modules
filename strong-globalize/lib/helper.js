@@ -4,6 +4,7 @@
 // This file is licensed under the Artistic License 2.0.
 // License text available at https://opensource.org/licenses/Artistic-2.0
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLangAlias = exports.removeDoubleCurlyBraces = exports.loadMsgFromFile = exports.myIntlDir = exports.getLanguageFromRequest = exports.repackArgs = exports.mapArgs = exports.mapPercent = exports.percent = exports.intlDir = exports.headerIncluded = exports.getPackageItem = exports.getPackageVersion = exports.getPackageName = exports.getTrailerAfterDot = exports.getAppLanguages = exports.getSupportedLanguages = exports.isSupportedLanguage = exports.initIntlDirs = exports.sortMsges = exports.scanJsonPriv = exports.replaceJson = exports.scanJson = exports.normalizeKeyArrays = exports.readToJson = exports.resolveDependencies = exports.unsymbolLink = exports.requireResolve = exports.maxDirectoryDepth = exports.directoryDepth = exports.removeObsoleteFile = exports.enumerateMsgSyncPriv = exports.enumerateMsgSync = exports.cloneEnglishTxtSyncDeep = exports.enumerateLanguageSync = exports.enumerateFilesSyncPriv = exports.alreadyScanned = exports.enumerateFilesSync = exports.stripBom = exports.resTagExists = exports.registerResTag = exports.msgFileIdHash = exports.validateAmlValue = exports.isLoadMessages = exports.initGlobForSltGlobalize = exports.isRootPackage = exports.getRootDir = exports.setRootDir = exports.hashKeys = exports.MSG_GPB_UNAVAILABLE = exports.BIG_NUM = exports.AML_DEFAULT = exports.AML_NONE = exports.AML_ALL = exports.HELPTXT_TAG = exports.MSG_TAG = exports.PSEUDO_TAG = exports.PSEUDO_LANG = exports.ENGLISH = void 0;
 const dbg = require("debug");
 const debug = dbg('strong-globalize');
 const acceptLanguage = require("accept-language");
@@ -829,6 +830,8 @@ function getLanguageFromRequest(req, appLanguages, defaultLanguage) {
     if (!reqLanguage) {
         return defaultLanguage;
     }
+    // Copy the array so that it won't be mutated
+    appLanguages = [defaultLanguage, ...appLanguages];
     acceptLanguage.languages(appLanguages);
     const bestLanguage = acceptLanguage.get(reqLanguage);
     return bestLanguage || defaultLanguage;

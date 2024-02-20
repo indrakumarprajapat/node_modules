@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,29 +14,31 @@ const keys_1 = require("../keys");
 const parser_1 = require("../parser");
 const sequence_1 = require("../sequence");
 const ajv_factory_provider_1 = require("../validation/ajv-factory.provider");
-const debug = (0, debug_1.default)('loopback:rest:parse-param');
+const debug = debug_1.default('loopback:rest:parse-param');
 /**
  * Provides the function for parsing args in requests at runtime.
  *
  * @returns The handler function that will parse request args.
  */
-class ParseParamsProvider {
-    static value(requestBodyParser, validationOptions = ajv_factory_provider_1.DEFAULT_AJV_VALIDATION_OPTIONS, ajvFactory) {
-        const parseParams = (request, route) => (0, parser_1.parseOperationArgs)(request, route, requestBodyParser, {
-            ajvFactory: ajvFactory,
-            ...validationOptions,
-        });
-        return parseParams;
+let ParseParamsProvider = class ParseParamsProvider {
+    constructor(requestBodyParser, validationOptions = ajv_factory_provider_1.DEFAULT_AJV_VALIDATION_OPTIONS, ajvFactory) {
+        this.requestBodyParser = requestBodyParser;
+        this.validationOptions = validationOptions;
+        this.ajvFactory = ajvFactory;
     }
-}
-tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(keys_1.RestBindings.REQUEST_BODY_PARSER)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.RestBindings.REQUEST_BODY_PARSER_OPTIONS.deepProperty('validation'), { optional: true })),
-    tslib_1.__param(2, (0, core_1.inject)(keys_1.RestBindings.AJV_FACTORY, { optional: true })),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [body_parsers_1.RequestBodyParser, Object, Function]),
-    tslib_1.__metadata("design:returntype", Function)
-], ParseParamsProvider, "value", null);
+    value() {
+        return (request, route) => parser_1.parseOperationArgs(request, route, this.requestBodyParser, {
+            ajvFactory: this.ajvFactory,
+            ...this.validationOptions,
+        });
+    }
+};
+ParseParamsProvider = tslib_1.__decorate([
+    tslib_1.__param(0, core_1.inject(keys_1.RestBindings.REQUEST_BODY_PARSER)),
+    tslib_1.__param(1, core_1.inject(keys_1.RestBindings.REQUEST_BODY_PARSER_OPTIONS.deepProperty('validation'), { optional: true })),
+    tslib_1.__param(2, core_1.inject(keys_1.RestBindings.AJV_FACTORY, { optional: true })),
+    tslib_1.__metadata("design:paramtypes", [body_parsers_1.RequestBodyParser, Object, Function])
+], ParseParamsProvider);
 exports.ParseParamsProvider = ParseParamsProvider;
 let ParseParamsMiddlewareProvider = class ParseParamsMiddlewareProvider {
     value() {
@@ -49,7 +51,7 @@ let ParseParamsMiddlewareProvider = class ParseParamsMiddlewareProvider {
             });
             const route = await ctx.get(keys_1.RestBindings.Operation.ROUTE);
             debug('Parsing parameters for %s %s', route.verb, route.path);
-            const params = await (0, parser_1.parseOperationArgs)(ctx.request, route, requestBodyParser, {
+            const params = await parser_1.parseOperationArgs(ctx.request, route, requestBodyParser, {
                 ajvFactory: ajvFactory,
                 ...validationOptions,
             });
@@ -60,7 +62,7 @@ let ParseParamsMiddlewareProvider = class ParseParamsMiddlewareProvider {
     }
 };
 ParseParamsMiddlewareProvider = tslib_1.__decorate([
-    (0, core_1.injectable)((0, express_1.asMiddleware)({
+    core_1.injectable(express_1.asMiddleware({
         group: sequence_1.RestMiddlewareGroups.PARSE_PARAMS,
         upstreamGroups: sequence_1.RestMiddlewareGroups.FIND_ROUTE,
         chain: keys_1.RestTags.REST_MIDDLEWARE_CHAIN,

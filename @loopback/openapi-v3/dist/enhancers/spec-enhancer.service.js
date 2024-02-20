@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,7 +13,7 @@ const util_1 = require("util");
 const types_1 = require("../types");
 const keys_1 = require("./keys");
 const jsonmergepatch = require('json-merge-patch');
-const debug = (0, debug_1.default)('loopback:openapi:spec-enhancer');
+const debug = debug_1.default('loopback:openapi:spec-enhancer');
 /**
  * An extension point for OpenAPI Spec enhancement
  * This service is used for enhancing an OpenAPI spec by loading and applying one or more
@@ -85,14 +85,14 @@ let OASEnhancerService = class OASEnhancerService {
         for (const e of enhancers) {
             this._spec = await e.modifySpec(this._spec);
         }
-        debug(`Spec enhancer service, generated spec: ${(0, util_1.inspect)(this._spec)}`);
+        debug(`Spec enhancer service, generated spec: ${util_1.inspect(this._spec)}`);
         return this._spec;
     }
 };
 OASEnhancerService = tslib_1.__decorate([
-    (0, core_1.extensionPoint)(keys_1.OASEnhancerBindings.OAS_ENHANCER_EXTENSION_POINT_NAME),
-    tslib_1.__param(0, (0, core_1.extensions)()),
-    tslib_1.__param(1, (0, core_1.config)()),
+    core_1.extensionPoint(keys_1.OASEnhancerBindings.OAS_ENHANCER_EXTENSION_POINT_NAME),
+    tslib_1.__param(0, core_1.extensions()),
+    tslib_1.__param(1, core_1.config()),
     tslib_1.__metadata("design:paramtypes", [Function, Object])
 ], OASEnhancerService);
 exports.OASEnhancerService = OASEnhancerService;

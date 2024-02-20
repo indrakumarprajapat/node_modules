@@ -1,21 +1,21 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const proxyInvoke = require("./proxy-invoke");
-const proxyCallToString = require("./proxy-call").toString;
-const timesInWords = require("./util/core/times-in-words");
-const extend = require("./util/core/extend");
-const match = require("@sinonjs/samsam").createMatcher;
-const stub = require("./stub");
-const assert = require("./assert");
-const deepEqual = require("@sinonjs/samsam").deepEqual;
-const inspect = require("util").inspect;
-const valueToString = require("@sinonjs/commons").valueToString;
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var proxyInvoke = require("./proxy-invoke");
+var proxyCallToString = require("./proxy-call").toString;
+var timesInWords = require("./util/core/times-in-words");
+var extend = require("./util/core/extend");
+var match = require("@sinonjs/samsam").createMatcher;
+var stub = require("./stub");
+var assert = require("./assert");
+var deepEqual = require("@sinonjs/samsam").deepEqual;
+var format = require("./util/core/format");
+var valueToString = require("@sinonjs/commons").valueToString;
 
-const every = arrayProto.every;
-const forEach = arrayProto.forEach;
-const push = arrayProto.push;
-const slice = arrayProto.slice;
+var every = arrayProto.every;
+var forEach = arrayProto.forEach;
+var push = arrayProto.push;
+var slice = arrayProto.slice;
 
 function callCountInWords(callCount) {
     if (callCount === 0) {
@@ -26,11 +26,11 @@ function callCountInWords(callCount) {
 }
 
 function expectedCallCountInWords(expectation) {
-    const min = expectation.minCalls;
-    const max = expectation.maxCalls;
+    var min = expectation.minCalls;
+    var max = expectation.maxCalls;
 
     if (typeof min === "number" && typeof max === "number") {
-        let str = timesInWords(min);
+        var str = timesInWords(min);
 
         if (min !== max) {
             str = `at least ${str} and at most ${timesInWords(max)}`;
@@ -47,7 +47,7 @@ function expectedCallCountInWords(expectation) {
 }
 
 function receivedMinCalls(expectation) {
-    const hasMinLimit = typeof expectation.minCalls === "number";
+    var hasMinLimit = typeof expectation.minCalls === "number";
     return !hasMinLimit || expectation.callCount >= expectation.minCalls;
 }
 
@@ -60,17 +60,17 @@ function receivedMaxCalls(expectation) {
 }
 
 function verifyMatcher(possibleMatcher, arg) {
-    const isMatcher = match.isMatcher(possibleMatcher);
+    var isMatcher = match.isMatcher(possibleMatcher);
 
     return (isMatcher && possibleMatcher.test(arg)) || true;
 }
 
-const mockExpectation = {
+var mockExpectation = {
     minCalls: 1,
     maxCalls: 1,
 
     create: function create(methodName) {
-        const expectation = extend.nonEnum(stub(), mockExpectation);
+        var expectation = extend.nonEnum(stub(), mockExpectation);
         delete expectation.create;
         expectation.method = methodName;
 
@@ -143,7 +143,7 @@ const mockExpectation = {
     },
 
     verifyCallAllowed: function verifyCallAllowed(thisValue, args) {
-        const expectedArguments = this.expectedArguments;
+        var expectedArguments = this.expectedArguments;
 
         if (receivedMaxCalls(this)) {
             this.failed = true;
@@ -166,7 +166,7 @@ const mockExpectation = {
 
         if (!args) {
             mockExpectation.fail(
-                `${this.method} received no arguments, expected ${inspect(
+                `${this.method} received no arguments, expected ${format(
                     expectedArguments
                 )}`
             );
@@ -174,9 +174,9 @@ const mockExpectation = {
 
         if (args.length < expectedArguments.length) {
             mockExpectation.fail(
-                `${this.method} received too few arguments (${inspect(
+                `${this.method} received too few arguments (${format(
                     args
-                )}), expected ${inspect(expectedArguments)}`
+                )}), expected ${format(expectedArguments)}`
             );
         }
 
@@ -185,9 +185,9 @@ const mockExpectation = {
             args.length !== expectedArguments.length
         ) {
             mockExpectation.fail(
-                `${this.method} received too many arguments (${inspect(
+                `${this.method} received too many arguments (${format(
                     args
-                )}), expected ${inspect(expectedArguments)}`
+                )}), expected ${format(expectedArguments)}`
             );
         }
 
@@ -196,7 +196,7 @@ const mockExpectation = {
             function (expectedArgument, i) {
                 if (!verifyMatcher(expectedArgument, args[i])) {
                     mockExpectation.fail(
-                        `${this.method} received wrong arguments ${inspect(
+                        `${this.method} received wrong arguments ${format(
                             args
                         )}, didn't match ${String(expectedArguments)}`
                     );
@@ -204,9 +204,9 @@ const mockExpectation = {
 
                 if (!deepEqual(args[i], expectedArgument)) {
                     mockExpectation.fail(
-                        `${this.method} received wrong arguments ${inspect(
+                        `${this.method} received wrong arguments ${format(
                             args
-                        )}, expected ${inspect(expectedArguments)}`
+                        )}, expected ${format(expectedArguments)}`
                     );
                 }
             },
@@ -215,7 +215,7 @@ const mockExpectation = {
     },
 
     allowsCall: function allowsCall(thisValue, args) {
-        const expectedArguments = this.expectedArguments;
+        var expectedArguments = this.expectedArguments;
 
         if (this.met() && receivedMaxCalls(this)) {
             return false;
@@ -230,7 +230,7 @@ const mockExpectation = {
         }
 
         // eslint-disable-next-line no-underscore-dangle
-        const _args = args || [];
+        var _args = args || [];
 
         if (_args.length < expectedArguments.length) {
             return false;
@@ -273,18 +273,18 @@ const mockExpectation = {
     },
 
     toString: function () {
-        const args = slice(this.expectedArguments || []);
+        var args = slice(this.expectedArguments || []);
 
         if (!this.expectsExactArgCount) {
             push(args, "[...]");
         }
 
-        const callStr = proxyCallToString.call({
+        var callStr = proxyCallToString.call({
             proxy: this.method || "anonymous mock expectation",
             args: args,
         });
 
-        const message = `${callStr.replace(
+        var message = `${callStr.replace(
             ", [...",
             "[, ..."
         )} ${expectedCallCountInWords(this)}`;
@@ -311,7 +311,7 @@ const mockExpectation = {
     },
 
     fail: function fail(message) {
-        const exception = new Error(message);
+        var exception = new Error(message);
         exception.name = "ExpectationError";
 
         throw exception;

@@ -10,12 +10,12 @@ const g = require('strong-globalize')();
 
 module.exports = function logToConsole(req, err) {
   if (!Array.isArray(err)) {
-    g.error('Request %s %s failed: %s',
+    g.error('Unhandled error for request %s %s: %s',
       req.method, req.url, err.stack || err);
     return;
   }
 
-  const errMsg = g.f('Request %s %s failed with multiple errors:\n',
+  const errMsg = g.f('Unhandled array of errors for request %s %s\n',
     req.method, req.url);
   const errors = err.map(formatError).join('\n');
   console.error(errMsg, errors);

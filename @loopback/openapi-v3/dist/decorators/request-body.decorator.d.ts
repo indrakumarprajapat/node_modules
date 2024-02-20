@@ -86,9 +86,9 @@ export declare namespace requestBody {
      * @param itemSpec - the full item object
      */
     const array: (itemSpec: SchemaObject | ReferenceObject, properties?: {
-        description?: string;
-        required?: boolean;
-    }) => (target: object, member: string, index: number) => void;
+        description?: string | undefined;
+        required?: boolean | undefined;
+    } | undefined) => (target: object, member: string, index: number) => void;
     /**
      * Define a requestBody of `file` type. This is used to support
      * multipart/form-data based file upload. Use `@requestBody` for other content
@@ -114,7 +114,7 @@ export declare namespace requestBody {
      * @param properties - Optional description and required flag
      */
     const file: (properties?: {
-        description?: string;
-        required?: boolean;
-    }) => (target: object, member: string, index: number) => void;
+        description?: string | undefined;
+        required?: boolean | undefined;
+    } | undefined) => (target: object, member: string, index: number) => void;
 }

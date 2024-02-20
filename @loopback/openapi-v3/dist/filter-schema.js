@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,9 +19,9 @@ const json_to_schema_1 = require("./json-to-schema");
  * @param options - Options to build the filter schema.
  */
 function getFilterSchemaFor(modelCtor, options) {
-    const jsonSchema = (0, repository_json_schema_1.getFilterJsonSchemaFor)(modelCtor, options);
-    const schema = (0, json_to_schema_1.jsonToSchemaObject)(jsonSchema);
-    if ((0, openapi3_ts_1.isSchemaObject)(schema)) {
+    const jsonSchema = repository_json_schema_1.getFilterJsonSchemaFor(modelCtor, options);
+    const schema = json_to_schema_1.jsonToSchemaObject(jsonSchema);
+    if (openapi3_ts_1.isSchemaObject(schema)) {
         schema['x-typescript-type'] = `@loopback/repository#Filter<${modelCtor.name}>`;
     }
     return schema;
@@ -37,9 +37,9 @@ exports.getFilterSchemaFor = getFilterSchemaFor;
  * @param modelCtor - The model constructor to build the filter schema for.
  */
 function getWhereSchemaFor(modelCtor) {
-    const jsonSchema = (0, repository_json_schema_1.getWhereJsonSchemaFor)(modelCtor);
-    const schema = (0, json_to_schema_1.jsonToSchemaObject)(jsonSchema);
-    if ((0, openapi3_ts_1.isSchemaObject)(schema)) {
+    const jsonSchema = repository_json_schema_1.getWhereJsonSchemaFor(modelCtor);
+    const schema = json_to_schema_1.jsonToSchemaObject(jsonSchema);
+    if (openapi3_ts_1.isSchemaObject(schema)) {
         schema['x-typescript-type'] = `@loopback/repository#Where<${modelCtor.name}>`;
     }
     return schema;

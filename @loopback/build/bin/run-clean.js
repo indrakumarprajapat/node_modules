@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/build
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -22,10 +22,10 @@ Example usage:
 */
 
 'use strict';
-const {rimrafSync} = require('rimraf');
-const path = require('path');
 
 function run(argv, options) {
+  const rimraf = require('rimraf');
+  const path = require('path');
   const globPatterns = argv.slice(2);
   const removed = [];
   if (!globPatterns.length) {
@@ -46,7 +46,7 @@ function run(argv, options) {
         );
       }
     } else {
-      if (!options.dryRun) rimrafSync(pattern, {glob: true});
+      if (!options.dryRun) rimraf.sync(pattern);
       removed.push(pattern);
     }
   });

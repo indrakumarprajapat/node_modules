@@ -15,11 +15,6 @@
       "output_token": "NextToken",
       "limit_key": "MaxResults"
     },
-    "DescribeFileCaches": {
-      "input_token": "NextToken",
-      "output_token": "NextToken",
-      "limit_key": "MaxResults"
-    },
     "DescribeFileSystemAliases": {
       "input_token": "NextToken",
       "output_token": "NextToken",
@@ -38,14 +33,12 @@
     "DescribeStorageVirtualMachines": {
       "input_token": "NextToken",
       "output_token": "NextToken",
-      "limit_key": "MaxResults",
-      "result_key": "StorageVirtualMachines"
+      "limit_key": "MaxResults"
     },
     "DescribeVolumes": {
       "input_token": "NextToken",
       "output_token": "NextToken",
-      "limit_key": "MaxResults",
-      "result_key": "Volumes"
+      "limit_key": "MaxResults"
     },
     "ListTagsForResource": {
       "input_token": "NextToken",

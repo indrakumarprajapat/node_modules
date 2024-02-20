@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { Request } from '../types';
 import { ResolvedRoute, RouteEntry } from './route-entry';
 export interface RestRouter {
@@ -18,7 +17,7 @@ export interface RestRouter {
      */
     list(): RouteEntry[];
 }
-export type RestRouterOptions = {
+export declare type RestRouterOptions = {
     /**
      * When `true` it uses trailing slash to match. (default: `false`)
      *

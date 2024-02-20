@@ -20,14 +20,6 @@ declare class AmplifyUIBuilder extends Service {
    */
   createComponent(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.CreateComponentResponse) => void): Request<AmplifyUIBuilder.Types.CreateComponentResponse, AWSError>;
   /**
-   * Creates a new form for an Amplify app.
-   */
-  createForm(params: AmplifyUIBuilder.Types.CreateFormRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.CreateFormResponse) => void): Request<AmplifyUIBuilder.Types.CreateFormResponse, AWSError>;
-  /**
-   * Creates a new form for an Amplify app.
-   */
-  createForm(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.CreateFormResponse) => void): Request<AmplifyUIBuilder.Types.CreateFormResponse, AWSError>;
-  /**
    * Creates a theme to apply to the components in an Amplify app.
    */
   createTheme(params: AmplifyUIBuilder.Types.CreateThemeRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.CreateThemeResponse) => void): Request<AmplifyUIBuilder.Types.CreateThemeResponse, AWSError>;
@@ -43,14 +35,6 @@ declare class AmplifyUIBuilder extends Service {
    * Deletes a component from an Amplify app.
    */
   deleteComponent(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Deletes a form from an Amplify app.
-   */
-  deleteForm(params: AmplifyUIBuilder.Types.DeleteFormRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Deletes a form from an Amplify app.
-   */
-  deleteForm(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
    * Deletes a theme from an Amplify app.
    */
@@ -76,14 +60,6 @@ declare class AmplifyUIBuilder extends Service {
    */
   exportComponents(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ExportComponentsResponse) => void): Request<AmplifyUIBuilder.Types.ExportComponentsResponse, AWSError>;
   /**
-   * Exports form configurations to code that is ready to integrate into an Amplify app.
-   */
-  exportForms(params: AmplifyUIBuilder.Types.ExportFormsRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ExportFormsResponse) => void): Request<AmplifyUIBuilder.Types.ExportFormsResponse, AWSError>;
-  /**
-   * Exports form configurations to code that is ready to integrate into an Amplify app.
-   */
-  exportForms(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ExportFormsResponse) => void): Request<AmplifyUIBuilder.Types.ExportFormsResponse, AWSError>;
-  /**
    * Exports theme configurations to code that is ready to integrate into an Amplify app.
    */
   exportThemes(params: AmplifyUIBuilder.Types.ExportThemesRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ExportThemesResponse) => void): Request<AmplifyUIBuilder.Types.ExportThemesResponse, AWSError>;
@@ -99,22 +75,6 @@ declare class AmplifyUIBuilder extends Service {
    * Returns an existing component for an Amplify app.
    */
   getComponent(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.GetComponentResponse) => void): Request<AmplifyUIBuilder.Types.GetComponentResponse, AWSError>;
-  /**
-   * Returns an existing form for an Amplify app.
-   */
-  getForm(params: AmplifyUIBuilder.Types.GetFormRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.GetFormResponse) => void): Request<AmplifyUIBuilder.Types.GetFormResponse, AWSError>;
-  /**
-   * Returns an existing form for an Amplify app.
-   */
-  getForm(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.GetFormResponse) => void): Request<AmplifyUIBuilder.Types.GetFormResponse, AWSError>;
-  /**
-   * Returns existing metadata for an Amplify app.
-   */
-  getMetadata(params: AmplifyUIBuilder.Types.GetMetadataRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.GetMetadataResponse) => void): Request<AmplifyUIBuilder.Types.GetMetadataResponse, AWSError>;
-  /**
-   * Returns existing metadata for an Amplify app.
-   */
-  getMetadata(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.GetMetadataResponse) => void): Request<AmplifyUIBuilder.Types.GetMetadataResponse, AWSError>;
   /**
    * Returns an existing theme for an Amplify app.
    */
@@ -132,14 +92,6 @@ declare class AmplifyUIBuilder extends Service {
    */
   listComponents(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ListComponentsResponse) => void): Request<AmplifyUIBuilder.Types.ListComponentsResponse, AWSError>;
   /**
-   * Retrieves a list of forms for a specified Amplify app and backend environment.
-   */
-  listForms(params: AmplifyUIBuilder.Types.ListFormsRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ListFormsResponse) => void): Request<AmplifyUIBuilder.Types.ListFormsResponse, AWSError>;
-  /**
-   * Retrieves a list of forms for a specified Amplify app and backend environment.
-   */
-  listForms(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ListFormsResponse) => void): Request<AmplifyUIBuilder.Types.ListFormsResponse, AWSError>;
-  /**
    * Retrieves a list of themes for a specified Amplify app and backend environment.
    */
   listThemes(params: AmplifyUIBuilder.Types.ListThemesRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ListThemesResponse) => void): Request<AmplifyUIBuilder.Types.ListThemesResponse, AWSError>;
@@ -147,14 +99,6 @@ declare class AmplifyUIBuilder extends Service {
    * Retrieves a list of themes for a specified Amplify app and backend environment.
    */
   listThemes(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.ListThemesResponse) => void): Request<AmplifyUIBuilder.Types.ListThemesResponse, AWSError>;
-  /**
-   * Stores the metadata information about a feature on a form.
-   */
-  putMetadataFlag(params: AmplifyUIBuilder.Types.PutMetadataFlagRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Stores the metadata information about a feature on a form.
-   */
-  putMetadataFlag(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
    * Refreshes a previously issued access token that might have expired.
    */
@@ -172,14 +116,6 @@ declare class AmplifyUIBuilder extends Service {
    */
   updateComponent(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.UpdateComponentResponse) => void): Request<AmplifyUIBuilder.Types.UpdateComponentResponse, AWSError>;
   /**
-   * Updates an existing form.
-   */
-  updateForm(params: AmplifyUIBuilder.Types.UpdateFormRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.UpdateFormResponse) => void): Request<AmplifyUIBuilder.Types.UpdateFormResponse, AWSError>;
-  /**
-   * Updates an existing form.
-   */
-  updateForm(callback?: (err: AWSError, data: AmplifyUIBuilder.Types.UpdateFormResponse) => void): Request<AmplifyUIBuilder.Types.UpdateFormResponse, AWSError>;
-  /**
    * Updates an existing theme.
    */
   updateTheme(params: AmplifyUIBuilder.Types.UpdateThemeRequest, callback?: (err: AWSError, data: AmplifyUIBuilder.Types.UpdateThemeResponse) => void): Request<AmplifyUIBuilder.Types.UpdateThemeResponse, AWSError>;
@@ -191,6 +127,34 @@ declare class AmplifyUIBuilder extends Service {
 declare namespace AmplifyUIBuilder {
   export interface ActionParameters {
     /**
+     * The HTML anchor link to the location to open. Specify this value for a navigation action.
+     */
+    anchor?: ComponentProperty;
+    /**
+     * A dictionary of key-value pairs mapping Amplify Studio properties to fields in a data model. Use when the action performs an operation on an Amplify DataStore model.
+     */
+    fields?: ComponentProperties;
+    /**
+     * Specifies whether the user should be signed out globally. Specify this value for an auth sign out action.
+     */
+    global?: ComponentProperty;
+    /**
+     * The unique ID of the component that the ActionParameters apply to.
+     */
+    id?: ComponentProperty;
+    /**
+     * The name of the data model. Use when the action performs an operation on an Amplify DataStore model.
+     */
+    model?: String;
+    /**
+     * A key-value pair that specifies the state property name and its initial value.
+     */
+    state?: MutationActionSetStateParameter;
+    /**
+     * The element within the same component to modify when the action occurs.
+     */
+    target?: ComponentProperty;
+    /**
      * The type of navigation action. Valid values are url and anchor. This value is required for a navigation action.
      */
     type?: ComponentProperty;
@@ -198,34 +162,6 @@ declare namespace AmplifyUIBuilder {
      * The URL to the location to open. Specify this value for a navigation action.
      */
     url?: ComponentProperty;
-    /**
-     * The HTML anchor link to the location to open. Specify this value for a navigation action.
-     */
-    anchor?: ComponentProperty;
-    /**
-     * The element within the same component to modify when the action occurs.
-     */
-    target?: ComponentProperty;
-    /**
-     * Specifies whether the user should be signed out globally. Specify this value for an auth sign out action.
-     */
-    global?: ComponentProperty;
-    /**
-     * The name of the data model. Use when the action performs an operation on an Amplify DataStore model.
-     */
-    model?: String;
-    /**
-     * The unique ID of the component that the ActionParameters apply to.
-     */
-    id?: ComponentProperty;
-    /**
-     * A dictionary of key-value pairs mapping Amplify Studio properties to fields in a data model. Use when the action performs an operation on an Amplify DataStore model.
-     */
-    fields?: ComponentProperties;
-    /**
-     * A key-value pair that specifies the state property name and its initial value.
-     */
-    state?: MutationActionSetStateParameter;
   }
   export type Boolean = boolean;
   export interface Component {
@@ -234,76 +170,72 @@ declare namespace AmplifyUIBuilder {
      */
     appId: String;
     /**
-     * The name of the backend environment that is a part of the Amplify app.
+     * The information to connect a component's properties to data at runtime. You can't specify tags as a valid property for bindingProperties. 
      */
-    environmentName: String;
-    /**
-     * The unique ID of the component in its original source system, such as Figma.
-     */
-    sourceId?: String;
-    /**
-     * The unique ID of the component.
-     */
-    id: Uuid;
-    /**
-     * The name of the component.
-     */
-    name: ComponentName;
-    /**
-     * The type of the component. This can be an Amplify custom UI component or another custom component.
-     */
-    componentType: ComponentType;
-    /**
-     * Describes the component's properties. You can't specify tags as a valid property for properties.
-     */
-    properties: ComponentProperties;
+    bindingProperties: ComponentBindingProperties;
     /**
      * A list of the component's ComponentChild instances.
      */
     children?: ComponentChildList;
     /**
-     * A list of the component's variants. A variant is a unique style configuration of a main component.
-     */
-    variants: ComponentVariants;
-    /**
-     * Describes the component's properties that can be overriden in a customized instance of the component. You can't specify tags as a valid property for overrides.
-     */
-    overrides: ComponentOverrides;
-    /**
-     * The information to connect a component's properties to data at runtime. You can't specify tags as a valid property for bindingProperties. 
-     */
-    bindingProperties: ComponentBindingProperties;
-    /**
      * The data binding configuration for the component's properties. Use this for a collection component. You can't specify tags as a valid property for collectionProperties.
      */
     collectionProperties?: ComponentCollectionProperties;
+    /**
+     * The type of the component. This can be an Amplify custom UI component or another custom component.
+     */
+    componentType: ComponentType;
     /**
      * The time that the component was created.
      */
     createdAt: SyntheticTimestamp_date_time;
     /**
-     * The time that the component was modified.
+     * The name of the backend environment that is a part of the Amplify app.
      */
-    modifiedAt?: SyntheticTimestamp_date_time;
-    /**
-     * One or more key-value pairs to use when tagging the component.
-     */
-    tags?: Tags;
+    environmentName: String;
     /**
      * Describes the events that can be raised on the component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
      */
     events?: ComponentEvents;
     /**
+     * The unique ID of the component.
+     */
+    id: Uuid;
+    /**
+     * The time that the component was modified.
+     */
+    modifiedAt?: SyntheticTimestamp_date_time;
+    /**
+     * The name of the component.
+     */
+    name: ComponentName;
+    /**
+     * Describes the component's properties that can be overriden in a customized instance of the component. You can't specify tags as a valid property for overrides.
+     */
+    overrides: ComponentOverrides;
+    /**
+     * Describes the component's properties. You can't specify tags as a valid property for properties.
+     */
+    properties: ComponentProperties;
+    /**
      * The schema version of the component when it was imported.
      */
     schemaVersion?: String;
+    /**
+     * The unique ID of the component in its original source system, such as Figma.
+     */
+    sourceId?: String;
+    /**
+     * One or more key-value pairs to use when tagging the component.
+     */
+    tags?: Tags;
+    /**
+     * A list of the component's variants. A variant is a unique style configuration of a main component.
+     */
+    variants: ComponentVariants;
   }
   export type ComponentBindingProperties = {[key: string]: ComponentBindingPropertiesValue};
   export interface ComponentBindingPropertiesValue {
-    /**
-     * The property type.
-     */
-    type?: String;
     /**
      * Describes the properties to customize with data at runtime.
      */
@@ -312,16 +244,32 @@ declare namespace AmplifyUIBuilder {
      * The default value of the property.
      */
     defaultValue?: String;
+    /**
+     * The property type.
+     */
+    type?: String;
   }
   export interface ComponentBindingPropertiesValueProperties {
     /**
-     * An Amplify DataStore model.
+     * An Amazon S3 bucket.
      */
-    model?: String;
+    bucket?: String;
+    /**
+     * The default value to assign to the property.
+     */
+    defaultValue?: String;
     /**
      * The field to bind the data to.
      */
     field?: String;
+    /**
+     * The storage key for an Amazon S3 bucket.
+     */
+    key?: String;
+    /**
+     * An Amplify DataStore model.
+     */
+    model?: String;
     /**
      * A list of predicates for binding a component's properties to data.
      */
@@ -330,28 +278,20 @@ declare namespace AmplifyUIBuilder {
      * An authenticated user attribute.
      */
     userAttribute?: String;
-    /**
-     * An Amazon S3 bucket.
-     */
-    bucket?: String;
-    /**
-     * The storage key for an Amazon S3 bucket.
-     */
-    key?: String;
-    /**
-     * The default value to assign to the property.
-     */
-    defaultValue?: String;
-    /**
-     * The name of a component slot.
-     */
-    slotName?: String;
   }
   export interface ComponentChild {
+    /**
+     * The list of ComponentChild instances for this component.
+     */
+    children?: ComponentChildList;
     /**
      * The type of the child component. 
      */
     componentType: String;
+    /**
+     * Describes the events that can be raised on the child component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
+     */
+    events?: ComponentEvents;
     /**
      * The name of the child component.
      */
@@ -360,68 +300,56 @@ declare namespace AmplifyUIBuilder {
      * Describes the properties of the child component. You can't specify tags as a valid property for properties.
      */
     properties: ComponentProperties;
-    /**
-     * The list of ComponentChild instances for this component.
-     */
-    children?: ComponentChildList;
-    /**
-     * Describes the events that can be raised on the child component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
-     */
-    events?: ComponentEvents;
-    /**
-     * The unique ID of the child component in its original source system, such as Figma.
-     */
-    sourceId?: String;
   }
   export type ComponentChildList = ComponentChild[];
   export type ComponentCollectionProperties = {[key: string]: ComponentDataConfiguration};
   export interface ComponentConditionProperty {
     /**
-     * The name of the conditional property.
+     * The value to assign to the property if the condition is not met.
      */
-    property?: String;
+    else?: ComponentProperty;
     /**
      * The name of a field. Specify this when the property is a data model.
      */
     field?: String;
     /**
-     * The operator to use to perform the evaluation, such as eq to represent equals.
-     */
-    operator?: String;
-    /**
      * The value of the property to evaluate.
      */
     operand?: String;
     /**
-     * The value to assign to the property if the condition is met.
-     */
-    then?: ComponentProperty;
-    /**
-     * The value to assign to the property if the condition is not met.
-     */
-    else?: ComponentProperty;
-    /**
      * The type of the property to evaluate.
      */
     operandType?: String;
+    /**
+     * The operator to use to perform the evaluation, such as eq to represent equals.
+     */
+    operator?: String;
+    /**
+     * The name of the conditional property.
+     */
+    property?: String;
+    /**
+     * The value to assign to the property if the condition is met.
+     */
+    then?: ComponentProperty;
   }
   export interface ComponentDataConfiguration {
+    /**
+     * A list of IDs to use to bind data to a component. Use this property to bind specifically chosen data, rather than data retrieved from a query.
+     */
+    identifiers?: IdentifierList;
     /**
      * The name of the data model to use to bind data to a component.
      */
     model: String;
     /**
-     * Describes how to sort the component's properties.
-     */
-    sort?: SortPropertyList;
-    /**
      * Represents the conditional logic to use when binding data to a component. Use this property to retrieve only a subset of the data in a collection.
      */
     predicate?: Predicate;
     /**
-     * A list of IDs to use to bind data to a component. Use this property to bind specifically chosen data, rather than data retrieved from a query.
+     * Describes how to sort the component's properties.
      */
-    identifiers?: IdentifierList;
+    sort?: SortPropertyList;
   }
   export interface ComponentEvent {
     /**
@@ -432,10 +360,6 @@ declare namespace AmplifyUIBuilder {
      * Describes information about the action.
      */
     parameters?: ActionParameters;
-    /**
-     * Binds an event to an action on a component. When you specify a bindingEvent, the event is called when the action is performed.
-     */
-    bindingEvent?: String;
   }
   export type ComponentEvents = {[key: string]: ComponentEvent};
   export type ComponentList = Component[];
@@ -445,37 +369,21 @@ declare namespace AmplifyUIBuilder {
   export type ComponentProperties = {[key: string]: ComponentProperty};
   export interface ComponentProperty {
     /**
-     * The value to assign to the component property.
-     */
-    value?: String;
-    /**
      * The information to bind the component property to data at runtime.
      */
     bindingProperties?: ComponentPropertyBindingProperties;
-    /**
-     * The information to bind the component property to data at runtime. Use this for collection components.
-     */
-    collectionBindingProperties?: ComponentPropertyBindingProperties;
-    /**
-     * The default value to assign to the component property.
-     */
-    defaultValue?: String;
-    /**
-     * The data model to use to assign a value to the component property.
-     */
-    model?: String;
     /**
      * The information to bind the component property to form data.
      */
     bindings?: FormBindings;
     /**
-     * An event that occurs in your app. Use this for workflow data binding.
+     * The information to bind the component property to data at runtime. Use this for collection components.
      */
-    event?: String;
+    collectionBindingProperties?: ComponentPropertyBindingProperties;
     /**
-     * An authenticated user attribute to use to assign a value to the component property.
+     * The name of the component that is affected by an event.
      */
-    userAttribute?: String;
+    componentName?: String;
     /**
      * A list of component properties to concatenate to create the value to assign to this component property.
      */
@@ -489,31 +397,47 @@ declare namespace AmplifyUIBuilder {
      */
     configured?: Boolean;
     /**
-     * The component type.
+     * The default value to assign to the component property.
      */
-    type?: String;
+    defaultValue?: String;
+    /**
+     * An event that occurs in your app. Use this for workflow data binding.
+     */
+    event?: String;
     /**
      * The default value assigned to the property when the component is imported into an app.
      */
     importedValue?: String;
     /**
-     * The name of the component that is affected by an event.
+     * The data model to use to assign a value to the component property.
      */
-    componentName?: String;
+    model?: String;
     /**
      * The name of the component's property that is affected by an event.
      */
     property?: String;
+    /**
+     * The component type.
+     */
+    type?: String;
+    /**
+     * An authenticated user attribute to use to assign a value to the component property.
+     */
+    userAttribute?: String;
+    /**
+     * The value to assign to the component property.
+     */
+    value?: String;
   }
   export interface ComponentPropertyBindingProperties {
-    /**
-     * The component property to bind to the data field.
-     */
-    property: String;
     /**
      * The data field to bind the property to.
      */
     field?: String;
+    /**
+     * The component property to bind to the data field.
+     */
+    property: String;
   }
   export type ComponentPropertyList = ComponentProperty[];
   export interface ComponentSummary {
@@ -521,6 +445,10 @@ declare namespace AmplifyUIBuilder {
      * The unique ID of the Amplify app associated with the component.
      */
     appId: String;
+    /**
+     * The component type.
+     */
+    componentType: ComponentType;
     /**
      * The name of the backend environment that is a part of the Amplify app.
      */
@@ -533,84 +461,76 @@ declare namespace AmplifyUIBuilder {
      * The name of the component.
      */
     name: ComponentName;
-    /**
-     * The component type.
-     */
-    componentType: ComponentType;
   }
   export type ComponentSummaryList = ComponentSummary[];
   export type ComponentType = string;
   export interface ComponentVariant {
     /**
-     * The combination of variants that comprise this variant. You can't specify tags as a valid property for variantValues.
-     */
-    variantValues?: ComponentVariantValues;
-    /**
      * The properties of the component variant that can be overriden when customizing an instance of the component. You can't specify tags as a valid property for overrides.
      */
     overrides?: ComponentOverrides;
+    /**
+     * The combination of variants that comprise this variant. You can't specify tags as a valid property for variantValues.
+     */
+    variantValues?: ComponentVariantValues;
   }
   export type ComponentVariantValues = {[key: string]: String};
   export type ComponentVariants = ComponentVariant[];
   export interface CreateComponentData {
     /**
-     * The name of the component
+     * The data binding information for the component's properties.
      */
-    name: ComponentName;
-    /**
-     * The unique ID of the component in its original source system, such as Figma.
-     */
-    sourceId?: String;
-    /**
-     * The component type. This can be an Amplify custom UI component or another custom component.
-     */
-    componentType: ComponentType;
-    /**
-     * Describes the component's properties.
-     */
-    properties: ComponentProperties;
+    bindingProperties: ComponentBindingProperties;
     /**
      * A list of child components that are instances of the main component.
      */
     children?: ComponentChildList;
     /**
-     * A list of the unique variants of this component.
-     */
-    variants: ComponentVariants;
-    /**
-     * Describes the component properties that can be overriden to customize an instance of the component.
-     */
-    overrides: ComponentOverrides;
-    /**
-     * The data binding information for the component's properties.
-     */
-    bindingProperties: ComponentBindingProperties;
-    /**
      * The data binding configuration for customizing a component's properties. Use this for a collection component.
      */
     collectionProperties?: ComponentCollectionProperties;
     /**
-     * One or more key-value pairs to use when tagging the component data.
+     * The component type. This can be an Amplify custom UI component or another custom component.
      */
-    tags?: Tags;
+    componentType: ComponentType;
     /**
      * The event configuration for the component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
      */
     events?: ComponentEvents;
     /**
+     * The name of the component
+     */
+    name: ComponentName;
+    /**
+     * Describes the component properties that can be overriden to customize an instance of the component.
+     */
+    overrides: ComponentOverrides;
+    /**
+     * Describes the component's properties.
+     */
+    properties: ComponentProperties;
+    /**
      * The schema version of the component when it was imported.
      */
     schemaVersion?: String;
+    /**
+     * The unique ID of the component in its original source system, such as Figma.
+     */
+    sourceId?: String;
+    /**
+     * One or more key-value pairs to use when tagging the component data.
+     */
+    tags?: Tags;
+    /**
+     * A list of the unique variants of this component.
+     */
+    variants: ComponentVariants;
   }
   export interface CreateComponentRequest {
     /**
      * The unique ID of the Amplify app to associate with the component.
      */
     appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
     /**
      * The unique client token.
      */
@@ -619,6 +539,10 @@ declare namespace AmplifyUIBuilder {
      * Represents the configuration of the component to create.
      */
     componentToCreate: CreateComponentData;
+    /**
+     * The name of the backend environment that is a part of the Amplify app.
+     */
+    environmentName: String;
   }
   export interface CreateComponentResponse {
     /**
@@ -626,81 +550,11 @@ declare namespace AmplifyUIBuilder {
      */
     entity?: Component;
   }
-  export interface CreateFormData {
-    /**
-     * The name of the form.
-     */
-    name: FormName;
-    /**
-     * The type of data source to use to create the form.
-     */
-    dataType: FormDataTypeConfig;
-    /**
-     * Specifies whether to perform a create or update action on the form.
-     */
-    formActionType: FormActionType;
-    /**
-     * The configuration information for the form's fields.
-     */
-    fields: FieldsMap;
-    /**
-     * The configuration for the form's style.
-     */
-    style: FormStyle;
-    /**
-     * The configuration information for the visual helper elements for the form. These elements are not associated with any data.
-     */
-    sectionalElements: SectionalElementMap;
-    /**
-     * The schema version of the form.
-     */
-    schemaVersion: String;
-    /**
-     * The FormCTA object that stores the call to action configuration for the form.
-     */
-    cta?: FormCTA;
-    /**
-     * One or more key-value pairs to use when tagging the form data.
-     */
-    tags?: Tags;
-    /**
-     * Specifies an icon or decoration to display on the form.
-     */
-    labelDecorator?: LabelDecorator;
-  }
-  export interface CreateFormRequest {
-    /**
-     * The unique ID of the Amplify app to associate with the form.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The unique client token.
-     */
-    clientToken?: String;
-    /**
-     * Represents the configuration of the form to create.
-     */
-    formToCreate: CreateFormData;
-  }
-  export interface CreateFormResponse {
-    /**
-     * Describes the configuration of the new form.
-     */
-    entity?: Form;
-  }
   export interface CreateThemeData {
     /**
      * The name of the theme.
      */
     name: ThemeName;
-    /**
-     * A list of key-value pairs that deﬁnes the properties of the theme.
-     */
-    values: ThemeValuesList;
     /**
      * Describes the properties that can be overriden to customize an instance of the theme.
      */
@@ -709,6 +563,10 @@ declare namespace AmplifyUIBuilder {
      * One or more key-value pairs to use when tagging the theme data.
      */
     tags?: Tags;
+    /**
+     * A list of key-value pairs that deﬁnes the properties of the theme.
+     */
+    values: ThemeValuesList;
   }
   export interface CreateThemeRequest {
     /**
@@ -716,13 +574,13 @@ declare namespace AmplifyUIBuilder {
      */
     appId: String;
     /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
      * The unique client token.
      */
     clientToken?: String;
+    /**
+     * The name of the backend environment that is a part of the Amplify app.
+     */
+    environmentName: String;
     /**
      * Represents the configuration of the theme to create.
      */
@@ -745,20 +603,6 @@ declare namespace AmplifyUIBuilder {
     environmentName: String;
     /**
      * The unique ID of the component to delete.
-     */
-    id: Uuid;
-  }
-  export interface DeleteFormRequest {
-    /**
-     * The unique ID of the Amplify app associated with the form to delete.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The unique ID of the form to delete.
      */
     id: Uuid;
   }
@@ -790,21 +634,17 @@ declare namespace AmplifyUIBuilder {
     /**
      * The access code to send in the request.
      */
-    code: SensitiveString;
+    code: SyntheticExchangeCodeForTokenRequestBodyString;
     /**
      * The location of the application that will receive the access code.
      */
     redirectUri: String;
-    /**
-     * The ID of the client to request the token from.
-     */
-    clientId?: SensitiveString;
   }
   export interface ExchangeCodeForTokenResponse {
     /**
      * The access token.
      */
-    accessToken: SensitiveString;
+    accessToken: SyntheticExchangeCodeForTokenResponseString;
     /**
      * The date and time when the new access token expires.
      */
@@ -812,7 +652,7 @@ declare namespace AmplifyUIBuilder {
     /**
      * The token to use to refresh a previously issued access token that might have expired.
      */
-    refreshToken: SensitiveString;
+    refreshToken: SyntheticExchangeCodeForTokenResponseString;
   }
   export interface ExportComponentsRequest {
     /**
@@ -833,30 +673,6 @@ declare namespace AmplifyUIBuilder {
      * Represents the configuration of the exported components.
      */
     entities: ComponentList;
-    /**
-     * The pagination token that's included if more results are available.
-     */
-    nextToken?: String;
-  }
-  export interface ExportFormsRequest {
-    /**
-     * The unique ID of the Amplify app to export forms to.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The token to request the next page of results.
-     */
-    nextToken?: String;
-  }
-  export interface ExportFormsResponse {
-    /**
-     * Represents the configuration of the exported forms.
-     */
-    entities: FormList;
     /**
      * The pagination token that's included if more results are available.
      */
@@ -886,211 +702,6 @@ declare namespace AmplifyUIBuilder {
      */
     nextToken?: String;
   }
-  export type FeaturesMap = {[key: string]: String};
-  export interface FieldConfig {
-    /**
-     * The label for the field.
-     */
-    label?: String;
-    /**
-     * Specifies the field position.
-     */
-    position?: FieldPosition;
-    /**
-     * Specifies whether to hide a field.
-     */
-    excluded?: Boolean;
-    /**
-     * Describes the configuration for the default input value to display for a field.
-     */
-    inputType?: FieldInputConfig;
-    /**
-     * The validations to perform on the value in the field.
-     */
-    validations?: ValidationsList;
-  }
-  export interface FieldInputConfig {
-    /**
-     * The input type for the field. 
-     */
-    type: String;
-    /**
-     * Specifies a field that requires input.
-     */
-    required?: Boolean;
-    /**
-     * Specifies a read only field.
-     */
-    readOnly?: Boolean;
-    /**
-     * The text to display as a placeholder for the field.
-     */
-    placeholder?: String;
-    /**
-     * The default value for the field.
-     */
-    defaultValue?: String;
-    /**
-     * The text to display to describe the field.
-     */
-    descriptiveText?: String;
-    /**
-     * Specifies whether a field has a default value.
-     */
-    defaultChecked?: Boolean;
-    /**
-     * The default country code for a phone number.
-     */
-    defaultCountryCode?: String;
-    /**
-     * The information to use to customize the input fields with data at runtime.
-     */
-    valueMappings?: ValueMappings;
-    /**
-     * The name of the field.
-     */
-    name?: String;
-    /**
-     * The minimum value to display for the field.
-     */
-    minValue?: Float;
-    /**
-     * The maximum value to display for the field.
-     */
-    maxValue?: Float;
-    /**
-     * The stepping increment for a numeric value in a field.
-     */
-    step?: Float;
-    /**
-     * The value for the field.
-     */
-    value?: String;
-    /**
-     * Specifies whether to render the field as an array. This property is ignored if the dataSourceType for the form is a Data Store.
-     */
-    isArray?: Boolean;
-    /**
-     * The configuration for the file uploader field.
-     */
-    fileUploaderConfig?: FileUploaderFieldConfig;
-  }
-  export interface FieldPosition {
-    /**
-     * The field position is fixed and doesn't change in relation to other fields.
-     */
-    fixed?: FixedPosition;
-    /**
-     * The field position is to the right of the field specified by the string.
-     */
-    rightOf?: String;
-    /**
-     * The field position is below the field specified by the string.
-     */
-    below?: String;
-  }
-  export interface FieldValidationConfiguration {
-    /**
-     * The validation to perform on an object type. 
-     */
-    type: String;
-    /**
-     * The validation to perform on a string value.
-     */
-    strValues?: StrValues;
-    /**
-     * The validation to perform on a number value.
-     */
-    numValues?: NumValues;
-    /**
-     * The validation message to display.
-     */
-    validationMessage?: String;
-  }
-  export type FieldsMap = {[key: string]: FieldConfig};
-  export interface FileUploaderFieldConfig {
-    /**
-     * The access level to assign to the uploaded files in the Amazon S3 bucket where they are stored. The valid values for this property are private, protected, or public. For detailed information about the permissions associated with each access level, see File access levels in the Amplify documentation.
-     */
-    accessLevel: StorageAccessLevel;
-    /**
-     * The file types that are allowed to be uploaded by the file uploader. Provide this information in an array of strings specifying the valid file extensions.
-     */
-    acceptedFileTypes: StrValues;
-    /**
-     * Specifies whether to display or hide the image preview after selecting a file for upload. The default value is true to display the image preview.
-     */
-    showThumbnails?: Boolean;
-    /**
-     * Allows the file upload operation to be paused and resumed. The default value is false. When isResumable is set to true, the file uploader uses a multipart upload to break the files into chunks before upload. The progress of the upload isn't continuous, because the file uploader uploads a chunk at a time.
-     */
-    isResumable?: Boolean;
-    /**
-     * Specifies the maximum number of files that can be selected to upload. The default value is an unlimited number of files.
-     */
-    maxFileCount?: Integer;
-    /**
-     * The maximum file size in bytes that the file uploader will accept. The default value is an unlimited file size.
-     */
-    maxSize?: Integer;
-  }
-  export type FixedPosition = "first"|string;
-  export type Float = number;
-  export interface Form {
-    /**
-     * The unique ID of the Amplify app associated with the form.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The unique ID of the form.
-     */
-    id: Uuid;
-    /**
-     * The name of the form.
-     */
-    name: FormName;
-    /**
-     * The operation to perform on the specified form.
-     */
-    formActionType: FormActionType;
-    /**
-     * Stores the configuration for the form's style.
-     */
-    style: FormStyle;
-    /**
-     * The type of data source to use to create the form.
-     */
-    dataType: FormDataTypeConfig;
-    /**
-     * Stores the information about the form's fields.
-     */
-    fields: FieldsMap;
-    /**
-     * Stores the visual helper elements for the form that are not associated with any data.
-     */
-    sectionalElements: SectionalElementMap;
-    /**
-     * The schema version of the form when it was imported.
-     */
-    schemaVersion: String;
-    /**
-     * One or more key-value pairs to use when tagging the form.
-     */
-    tags?: Tags;
-    /**
-     * Stores the call to action configuration for the form.
-     */
-    cta?: FormCTA;
-    /**
-     * Specifies an icon or decoration to display on the form.
-     */
-    labelDecorator?: LabelDecorator;
-  }
-  export type FormActionType = "create"|"update"|string;
   export interface FormBindingElement {
     /**
      * The name of the component to retrieve a value from.
@@ -1102,145 +713,6 @@ declare namespace AmplifyUIBuilder {
     property: String;
   }
   export type FormBindings = {[key: string]: FormBindingElement};
-  export interface FormButton {
-    /**
-     * Specifies whether the button is visible on the form.
-     */
-    excluded?: Boolean;
-    /**
-     * Describes the button's properties.
-     */
-    children?: String;
-    /**
-     * The position of the button.
-     */
-    position?: FieldPosition;
-  }
-  export type FormButtonsPosition = "top"|"bottom"|"top_and_bottom"|string;
-  export interface FormCTA {
-    /**
-     * The position of the button.
-     */
-    position?: FormButtonsPosition;
-    /**
-     * Displays a clear button.
-     */
-    clear?: FormButton;
-    /**
-     * Displays a cancel button.
-     */
-    cancel?: FormButton;
-    /**
-     * Displays a submit button.
-     */
-    submit?: FormButton;
-  }
-  export type FormDataSourceType = "DataStore"|"Custom"|string;
-  export interface FormDataTypeConfig {
-    /**
-     * The data source type, either an Amplify DataStore model or a custom data type.
-     */
-    dataSourceType: FormDataSourceType;
-    /**
-     * The unique name of the data type you are using as the data source for the form.
-     */
-    dataTypeName: String;
-  }
-  export type FormInputBindingProperties = {[key: string]: FormInputBindingPropertiesValue};
-  export interface FormInputBindingPropertiesValue {
-    /**
-     * The property type.
-     */
-    type?: String;
-    /**
-     * Describes the properties to customize with data at runtime.
-     */
-    bindingProperties?: FormInputBindingPropertiesValueProperties;
-  }
-  export interface FormInputBindingPropertiesValueProperties {
-    /**
-     * An Amplify DataStore model.
-     */
-    model?: String;
-  }
-  export interface FormInputValueProperty {
-    /**
-     * The value to assign to the input field.
-     */
-    value?: String;
-    /**
-     * The information to bind fields to data at runtime.
-     */
-    bindingProperties?: FormInputValuePropertyBindingProperties;
-    /**
-     * A list of form properties to concatenate to create the value to assign to this field property.
-     */
-    concat?: FormInputValuePropertyList;
-  }
-  export interface FormInputValuePropertyBindingProperties {
-    /**
-     * The form property to bind to the data field.
-     */
-    property: String;
-    /**
-     * The data field to bind the property to.
-     */
-    field?: String;
-  }
-  export type FormInputValuePropertyList = FormInputValueProperty[];
-  export type FormList = Form[];
-  export type FormName = string;
-  export interface FormStyle {
-    /**
-     * The spacing for the horizontal gap.
-     */
-    horizontalGap?: FormStyleConfig;
-    /**
-     * The spacing for the vertical gap.
-     */
-    verticalGap?: FormStyleConfig;
-    /**
-     * The size of the outer padding for the form.
-     */
-    outerPadding?: FormStyleConfig;
-  }
-  export interface FormStyleConfig {
-    /**
-     * A reference to a design token to use to bind the form's style properties to an existing theme.
-     */
-    tokenReference?: String;
-    /**
-     * The value of the style setting.
-     */
-    value?: String;
-  }
-  export interface FormSummary {
-    /**
-     * The unique ID for the app associated with the form summary.
-     */
-    appId: String;
-    /**
-     * The form's data source type.
-     */
-    dataType: FormDataTypeConfig;
-    /**
-     * The name of the backend environment that is part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The type of operation to perform on the form.
-     */
-    formActionType: FormActionType;
-    /**
-     * The ID of the form.
-     */
-    id: Uuid;
-    /**
-     * The name of the form.
-     */
-    name: FormName;
-  }
-  export type FormSummaryList = FormSummary[];
   export interface GetComponentRequest {
     /**
      * The unique ID of the Amplify app.
@@ -1260,42 +732,6 @@ declare namespace AmplifyUIBuilder {
      * Represents the configuration settings for the component.
      */
     component?: Component;
-  }
-  export interface GetFormRequest {
-    /**
-     * The unique ID of the Amplify app.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The unique ID of the form.
-     */
-    id: Uuid;
-  }
-  export interface GetFormResponse {
-    /**
-     * Represents the configuration settings for the form.
-     */
-    form?: Form;
-  }
-  export interface GetMetadataRequest {
-    /**
-     * The unique ID of the Amplify app.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is part of the Amplify app.
-     */
-    environmentName: String;
-  }
-  export interface GetMetadataResponse {
-    /**
-     * Represents the configuration settings for the features metadata.
-     */
-    features: FeaturesMap;
   }
   export interface GetThemeRequest {
     /**
@@ -1319,7 +755,6 @@ declare namespace AmplifyUIBuilder {
   }
   export type IdentifierList = String[];
   export type Integer = number;
-  export type LabelDecorator = "required"|"optional"|"none"|string;
   export type ListComponentsLimit = number;
   export interface ListComponentsRequest {
     /**
@@ -1331,48 +766,19 @@ declare namespace AmplifyUIBuilder {
      */
     environmentName: String;
     /**
-     * The token to request the next page of results.
-     */
-    nextToken?: String;
-    /**
      * The maximum number of components to retrieve.
      */
     maxResults?: ListComponentsLimit;
+    /**
+     * The token to request the next page of results.
+     */
+    nextToken?: String;
   }
   export interface ListComponentsResponse {
     /**
      * The list of components for the Amplify app.
      */
     entities: ComponentSummaryList;
-    /**
-     * The pagination token that's included if more results are available.
-     */
-    nextToken?: String;
-  }
-  export type ListFormsLimit = number;
-  export interface ListFormsRequest {
-    /**
-     * The unique ID for the Amplify app.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is a part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The token to request the next page of results.
-     */
-    nextToken?: String;
-    /**
-     * The maximum number of forms to retrieve.
-     */
-    maxResults?: ListFormsLimit;
-  }
-  export interface ListFormsResponse {
-    /**
-     * The list of forms for the Amplify app.
-     */
-    entities: FormSummaryList;
     /**
      * The pagination token that's included if more results are available.
      */
@@ -1389,13 +795,13 @@ declare namespace AmplifyUIBuilder {
      */
     environmentName: String;
     /**
-     * The token to request the next page of results.
-     */
-    nextToken?: String;
-    /**
      * The maximum number of theme results to return in the response.
      */
     maxResults?: ListThemesLimit;
+    /**
+     * The token to request the next page of results.
+     */
+    nextToken?: String;
   }
   export interface ListThemesResponse {
     /**
@@ -1421,13 +827,7 @@ declare namespace AmplifyUIBuilder {
      */
     set: ComponentProperty;
   }
-  export type NumValues = Integer[];
-  export type OperandType = string;
   export interface Predicate {
-    /**
-     * A list of predicates to combine logically.
-     */
-    or?: PredicateList;
     /**
      * A list of predicates to combine logically.
      */
@@ -1437,43 +837,19 @@ declare namespace AmplifyUIBuilder {
      */
     field?: String;
     /**
-     * The operator to use to perform the evaluation.
-     */
-    operator?: String;
-    /**
      * The value to use when performing the evaluation.
      */
     operand?: String;
     /**
-     * The type of value to use when performing the evaluation.
+     * The operator to use to perform the evaluation.
      */
-    operandType?: OperandType;
+    operator?: String;
+    /**
+     * A list of predicates to combine logically.
+     */
+    or?: PredicateList;
   }
   export type PredicateList = Predicate[];
-  export interface PutMetadataFlagBody {
-    /**
-     * The new information to store.
-     */
-    newValue: String;
-  }
-  export interface PutMetadataFlagRequest {
-    /**
-     * The unique ID for the Amplify app.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The name of the feature associated with the metadata.
-     */
-    featureName: String;
-    /**
-     * The metadata information to store.
-     */
-    body: PutMetadataFlagBody;
-  }
   export interface RefreshTokenRequest {
     /**
      * The third-party provider for the token. The only valid value is figma.
@@ -1488,65 +864,35 @@ declare namespace AmplifyUIBuilder {
     /**
      * The token to use to refresh a previously issued access token that might have expired.
      */
-    token: SensitiveString;
-    /**
-     * The ID of the client to request the token from.
-     */
-    clientId?: SensitiveString;
+    token: SyntheticRefreshTokenRequestBodyString;
   }
   export interface RefreshTokenResponse {
     /**
      * The access token.
      */
-    accessToken: SensitiveString;
+    accessToken: SyntheticRefreshTokenResponseString;
     /**
      * The date and time when the new access token expires.
      */
     expiresIn: Integer;
   }
-  export interface SectionalElement {
-    /**
-     * The type of sectional element. Valid values are Heading, Text, and Divider.
-     */
-    type: String;
-    /**
-     * Specifies the position of the text in a field for a Text sectional element.
-     */
-    position?: FieldPosition;
-    /**
-     * The text for a Text sectional element.
-     */
-    text?: String;
-    /**
-     * Specifies the size of the font for a Heading sectional element. Valid values are 1 | 2 | 3 | 4 | 5 | 6.
-     */
-    level?: Integer;
-    /**
-     * Specifies the orientation for a Divider sectional element. Valid values are horizontal or vertical.
-     */
-    orientation?: String;
-    /**
-     * Excludes a sectional element that was generated by default for a specified data model.
-     */
-    excluded?: Boolean;
-  }
-  export type SectionalElementMap = {[key: string]: SectionalElement};
-  export type SensitiveString = string;
   export type SortDirection = "ASC"|"DESC"|string;
   export interface SortProperty {
-    /**
-     * The field to perform the sort on.
-     */
-    field: String;
     /**
      * The direction of the sort, either ascending or descending.
      */
     direction: SortDirection;
+    /**
+     * The field to perform the sort on.
+     */
+    field: String;
   }
   export type SortPropertyList = SortProperty[];
-  export type StorageAccessLevel = "public"|"protected"|"private"|string;
-  export type StrValues = String[];
   export type String = string;
+  export type SyntheticExchangeCodeForTokenRequestBodyString = string;
+  export type SyntheticExchangeCodeForTokenResponseString = string;
+  export type SyntheticRefreshTokenRequestBodyString = string;
+  export type SyntheticRefreshTokenResponseString = string;
   export type SyntheticTimestamp_date_time = Date;
   export type TagKey = string;
   export type TagValue = string;
@@ -1557,6 +903,10 @@ declare namespace AmplifyUIBuilder {
      */
     appId: String;
     /**
+     * The time that the theme was created.
+     */
+    createdAt: SyntheticTimestamp_date_time;
+    /**
      * The name of the backend environment that is a part of the Amplify app.
      */
     environmentName: String;
@@ -1565,21 +915,13 @@ declare namespace AmplifyUIBuilder {
      */
     id: Uuid;
     /**
-     * The name of the theme.
-     */
-    name: ThemeName;
-    /**
-     * The time that the theme was created.
-     */
-    createdAt: SyntheticTimestamp_date_time;
-    /**
      * The time that the theme was modified.
      */
     modifiedAt?: SyntheticTimestamp_date_time;
     /**
-     * A list of key-value pairs that defines the properties of the theme.
+     * The name of the theme.
      */
-    values: ThemeValuesList;
+    name: ThemeName;
     /**
      * Describes the properties that can be overriden to customize a theme.
      */
@@ -1588,6 +930,10 @@ declare namespace AmplifyUIBuilder {
      * One or more key-value pairs to use when tagging the theme.
      */
     tags?: Tags;
+    /**
+     * A list of key-value pairs that defines the properties of the theme.
+     */
+    values: ThemeValuesList;
   }
   export type ThemeList = Theme[];
   export type ThemeName = string;
@@ -1612,13 +958,13 @@ declare namespace AmplifyUIBuilder {
   export type ThemeSummaryList = ThemeSummary[];
   export interface ThemeValue {
     /**
-     * The value of a theme property.
-     */
-    value?: String;
-    /**
      * A list of key-value pairs that define the theme's properties.
      */
     children?: ThemeValuesList;
+    /**
+     * The value of a theme property.
+     */
+    value?: String;
   }
   export interface ThemeValues {
     /**
@@ -1634,6 +980,26 @@ declare namespace AmplifyUIBuilder {
   export type TokenProviders = "figma"|string;
   export interface UpdateComponentData {
     /**
+     * The data binding information for the component's properties.
+     */
+    bindingProperties?: ComponentBindingProperties;
+    /**
+     * The components that are instances of the main component.
+     */
+    children?: ComponentChildList;
+    /**
+     * The configuration for binding a component's properties to a data model. Use this for a collection component.
+     */
+    collectionProperties?: ComponentCollectionProperties;
+    /**
+     * The type of the component. This can be an Amplify custom UI component or another custom component.
+     */
+    componentType?: ComponentType;
+    /**
+     * The event configuration for the component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
+     */
+    events?: ComponentEvents;
+    /**
      * The unique ID of the component to update.
      */
     id?: Uuid;
@@ -1642,51 +1008,35 @@ declare namespace AmplifyUIBuilder {
      */
     name?: ComponentName;
     /**
-     * The unique ID of the component in its original source system, such as Figma.
+     * Describes the properties that can be overriden to customize the component.
      */
-    sourceId?: String;
-    /**
-     * The type of the component. This can be an Amplify custom UI component or another custom component.
-     */
-    componentType?: ComponentType;
+    overrides?: ComponentOverrides;
     /**
      * Describes the component's properties.
      */
     properties?: ComponentProperties;
     /**
-     * The components that are instances of the main component.
+     * The schema version of the component when it was imported.
      */
-    children?: ComponentChildList;
+    schemaVersion?: String;
+    /**
+     * The unique ID of the component in its original source system, such as Figma.
+     */
+    sourceId?: String;
     /**
      * A list of the unique variants of the main component being updated.
      */
     variants?: ComponentVariants;
-    /**
-     * Describes the properties that can be overriden to customize the component.
-     */
-    overrides?: ComponentOverrides;
-    /**
-     * The data binding information for the component's properties.
-     */
-    bindingProperties?: ComponentBindingProperties;
-    /**
-     * The configuration for binding a component's properties to a data model. Use this for a collection component.
-     */
-    collectionProperties?: ComponentCollectionProperties;
-    /**
-     * The event configuration for the component. Use for the workflow feature in Amplify Studio that allows you to bind events and actions to components.
-     */
-    events?: ComponentEvents;
-    /**
-     * The schema version of the component when it was imported.
-     */
-    schemaVersion?: String;
   }
   export interface UpdateComponentRequest {
     /**
      * The unique ID for the Amplify app.
      */
     appId: String;
+    /**
+     * The unique client token.
+     */
+    clientToken?: String;
     /**
      * The name of the backend environment that is part of the Amplify app.
      */
@@ -1695,10 +1045,6 @@ declare namespace AmplifyUIBuilder {
      * The unique ID for the component.
      */
     id: Uuid;
-    /**
-     * The unique client token.
-     */
-    clientToken?: String;
     /**
      * The configuration of the updated component.
      */
@@ -1710,72 +1056,6 @@ declare namespace AmplifyUIBuilder {
      */
     entity?: Component;
   }
-  export interface UpdateFormData {
-    /**
-     * The name of the form.
-     */
-    name?: FormName;
-    /**
-     * The type of data source to use to create the form.
-     */
-    dataType?: FormDataTypeConfig;
-    /**
-     * Specifies whether to perform a create or update action on the form.
-     */
-    formActionType?: FormActionType;
-    /**
-     * The configuration information for the form's fields.
-     */
-    fields?: FieldsMap;
-    /**
-     * The configuration for the form's style.
-     */
-    style?: FormStyle;
-    /**
-     * The configuration information for the visual helper elements for the form. These elements are not associated with any data.
-     */
-    sectionalElements?: SectionalElementMap;
-    /**
-     * The schema version of the form.
-     */
-    schemaVersion?: String;
-    /**
-     * The FormCTA object that stores the call to action configuration for the form.
-     */
-    cta?: FormCTA;
-    /**
-     * Specifies an icon or decoration to display on the form.
-     */
-    labelDecorator?: LabelDecorator;
-  }
-  export interface UpdateFormRequest {
-    /**
-     * The unique ID for the Amplify app.
-     */
-    appId: String;
-    /**
-     * The name of the backend environment that is part of the Amplify app.
-     */
-    environmentName: String;
-    /**
-     * The unique ID for the form.
-     */
-    id: Uuid;
-    /**
-     * The unique client token.
-     */
-    clientToken?: String;
-    /**
-     * The request accepts the following data in JSON format.
-     */
-    updatedForm: UpdateFormData;
-  }
-  export interface UpdateFormResponse {
-    /**
-     * Describes the configuration of the updated form.
-     */
-    entity?: Form;
-  }
   export interface UpdateThemeData {
     /**
      * The unique ID of the theme to update.
@@ -1786,19 +1066,23 @@ declare namespace AmplifyUIBuilder {
      */
     name?: ThemeName;
     /**
-     * A list of key-value pairs that define the theme's properties.
-     */
-    values: ThemeValuesList;
-    /**
      * Describes the properties that can be overriden to customize the theme.
      */
     overrides?: ThemeValuesList;
+    /**
+     * A list of key-value pairs that define the theme's properties.
+     */
+    values: ThemeValuesList;
   }
   export interface UpdateThemeRequest {
     /**
      * The unique ID for the Amplify app.
      */
     appId: String;
+    /**
+     * The unique client token.
+     */
+    clientToken?: String;
     /**
      * The name of the backend environment that is part of the Amplify app.
      */
@@ -1807,10 +1091,6 @@ declare namespace AmplifyUIBuilder {
      * The unique ID for the theme.
      */
     id: Uuid;
-    /**
-     * The unique client token.
-     */
-    clientToken?: String;
     /**
      * The configuration of the updated theme.
      */
@@ -1823,28 +1103,6 @@ declare namespace AmplifyUIBuilder {
     entity?: Theme;
   }
   export type Uuid = string;
-  export type ValidationsList = FieldValidationConfiguration[];
-  export interface ValueMapping {
-    /**
-     * The value to display for the complex object.
-     */
-    displayValue?: FormInputValueProperty;
-    /**
-     * The complex object.
-     */
-    value: FormInputValueProperty;
-  }
-  export type ValueMappingList = ValueMapping[];
-  export interface ValueMappings {
-    /**
-     * The value and display value pairs.
-     */
-    values: ValueMappingList;
-    /**
-     * The information to bind fields to data at runtime.
-     */
-    bindingProperties?: FormInputBindingProperties;
-  }
   /**
    * A string in YYYY-MM-DD format that represents the latest possible API version that can be used in this service. Specify 'latest' to use the latest possible version.
    */

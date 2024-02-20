@@ -1,13 +1,13 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const Sandbox = require("./sandbox");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var Sandbox = require("./sandbox");
 
-const forEach = arrayProto.forEach;
-const push = arrayProto.push;
+var forEach = arrayProto.forEach;
+var push = arrayProto.push;
 
 function prepareSandboxFromConfig(config) {
-    const sandbox = new Sandbox();
+    var sandbox = new Sandbox();
 
     if (config.useFakeServer) {
         if (typeof config.useFakeServer === "object") {
@@ -46,15 +46,15 @@ function createSandbox(config) {
         return new Sandbox();
     }
 
-    const configuredSandbox = prepareSandboxFromConfig(config);
+    var configuredSandbox = prepareSandboxFromConfig(config);
     configuredSandbox.args = configuredSandbox.args || [];
     configuredSandbox.injectedKeys = [];
     configuredSandbox.injectInto = config.injectInto;
-    const exposed = configuredSandbox.inject({});
+    var exposed = configuredSandbox.inject({});
 
     if (config.properties) {
         forEach(config.properties, function (prop) {
-            const value =
+            var value =
                 exposed[prop] || (prop === "sandbox" && configuredSandbox);
             exposeValue(configuredSandbox, config, prop, value);
         });

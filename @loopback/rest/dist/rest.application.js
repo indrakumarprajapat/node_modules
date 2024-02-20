@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -9,7 +9,7 @@ const core_1 = require("@loopback/core");
 const util_1 = require("util");
 const keys_1 = require("./keys");
 const rest_component_1 = require("./rest.component");
-exports.ERR_NO_MULTI_SERVER = (0, util_1.format)('RestApplication does not support multiple servers!', 'To create your own server bindings, please extend the Application class.');
+exports.ERR_NO_MULTI_SERVER = util_1.format('RestApplication does not support multiple servers!', 'To create your own server bindings, please extend the Application class.');
 // To help cut down on verbosity!
 exports.SequenceActions = keys_1.RestBindings.SequenceActions;
 /**

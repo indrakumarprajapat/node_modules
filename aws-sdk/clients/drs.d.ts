@@ -12,22 +12,6 @@ declare class Drs extends Service {
   constructor(options?: Drs.Types.ClientConfiguration)
   config: Config & Drs.Types.ClientConfiguration;
   /**
-   * Create an extended source server in the target Account based on the source server in staging account.
-   */
-  createExtendedSourceServer(params: Drs.Types.CreateExtendedSourceServerRequest, callback?: (err: AWSError, data: Drs.Types.CreateExtendedSourceServerResponse) => void): Request<Drs.Types.CreateExtendedSourceServerResponse, AWSError>;
-  /**
-   * Create an extended source server in the target Account based on the source server in staging account.
-   */
-  createExtendedSourceServer(callback?: (err: AWSError, data: Drs.Types.CreateExtendedSourceServerResponse) => void): Request<Drs.Types.CreateExtendedSourceServerResponse, AWSError>;
-  /**
-   * Creates a new Launch Configuration Template.
-   */
-  createLaunchConfigurationTemplate(params: Drs.Types.CreateLaunchConfigurationTemplateRequest, callback?: (err: AWSError, data: Drs.Types.CreateLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.CreateLaunchConfigurationTemplateResponse, AWSError>;
-  /**
-   * Creates a new Launch Configuration Template.
-   */
-  createLaunchConfigurationTemplate(callback?: (err: AWSError, data: Drs.Types.CreateLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.CreateLaunchConfigurationTemplateResponse, AWSError>;
-  /**
    * Creates a new ReplicationConfigurationTemplate.
    */
   createReplicationConfigurationTemplate(params: Drs.Types.CreateReplicationConfigurationTemplateRequest, callback?: (err: AWSError, data: Drs.Types.ReplicationConfigurationTemplate) => void): Request<Drs.Types.ReplicationConfigurationTemplate, AWSError>;
@@ -43,14 +27,6 @@ declare class Drs extends Service {
    * Deletes a single Job by ID.
    */
   deleteJob(callback?: (err: AWSError, data: Drs.Types.DeleteJobResponse) => void): Request<Drs.Types.DeleteJobResponse, AWSError>;
-  /**
-   * Deletes a single Launch Configuration Template by ID.
-   */
-  deleteLaunchConfigurationTemplate(params: Drs.Types.DeleteLaunchConfigurationTemplateRequest, callback?: (err: AWSError, data: Drs.Types.DeleteLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.DeleteLaunchConfigurationTemplateResponse, AWSError>;
-  /**
-   * Deletes a single Launch Configuration Template by ID.
-   */
-  deleteLaunchConfigurationTemplate(callback?: (err: AWSError, data: Drs.Types.DeleteLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.DeleteLaunchConfigurationTemplateResponse, AWSError>;
   /**
    * Deletes a single Recovery Instance by ID. This deletes the Recovery Instance resource from Elastic Disaster Recovery. The Recovery Instance must be disconnected first in order to delete it.
    */
@@ -91,14 +67,6 @@ declare class Drs extends Service {
    * Returns a list of Jobs. Use the JobsID and fromDate and toDate filters to limit which jobs are returned. The response is sorted by creationDataTime - latest date first. Jobs are created by the StartRecovery, TerminateRecoveryInstances and StartFailbackLaunch APIs. Jobs are also created by DiagnosticLaunch and TerminateDiagnosticInstances, which are APIs available only to *Support* and only used in response to relevant support tickets.
    */
   describeJobs(callback?: (err: AWSError, data: Drs.Types.DescribeJobsResponse) => void): Request<Drs.Types.DescribeJobsResponse, AWSError>;
-  /**
-   * Lists all Launch Configuration Templates, filtered by Launch Configuration Template IDs
-   */
-  describeLaunchConfigurationTemplates(params: Drs.Types.DescribeLaunchConfigurationTemplatesRequest, callback?: (err: AWSError, data: Drs.Types.DescribeLaunchConfigurationTemplatesResponse) => void): Request<Drs.Types.DescribeLaunchConfigurationTemplatesResponse, AWSError>;
-  /**
-   * Lists all Launch Configuration Templates, filtered by Launch Configuration Template IDs
-   */
-  describeLaunchConfigurationTemplates(callback?: (err: AWSError, data: Drs.Types.DescribeLaunchConfigurationTemplatesResponse) => void): Request<Drs.Types.DescribeLaunchConfigurationTemplatesResponse, AWSError>;
   /**
    * Lists all Recovery Instances or multiple Recovery Instances by ID.
    */
@@ -180,22 +148,6 @@ declare class Drs extends Service {
    */
   initializeService(callback?: (err: AWSError, data: Drs.Types.InitializeServiceResponse) => void): Request<Drs.Types.InitializeServiceResponse, AWSError>;
   /**
-   * Returns a list of source servers on a staging account that are extensible, which means that: a. The source server is not already extended into this Account. b. The source server on the Account we’re reading from is not an extension of another source server. 
-   */
-  listExtensibleSourceServers(params: Drs.Types.ListExtensibleSourceServersRequest, callback?: (err: AWSError, data: Drs.Types.ListExtensibleSourceServersResponse) => void): Request<Drs.Types.ListExtensibleSourceServersResponse, AWSError>;
-  /**
-   * Returns a list of source servers on a staging account that are extensible, which means that: a. The source server is not already extended into this Account. b. The source server on the Account we’re reading from is not an extension of another source server. 
-   */
-  listExtensibleSourceServers(callback?: (err: AWSError, data: Drs.Types.ListExtensibleSourceServersResponse) => void): Request<Drs.Types.ListExtensibleSourceServersResponse, AWSError>;
-  /**
-   * Returns an array of staging accounts for existing extended source servers.
-   */
-  listStagingAccounts(params: Drs.Types.ListStagingAccountsRequest, callback?: (err: AWSError, data: Drs.Types.ListStagingAccountsResponse) => void): Request<Drs.Types.ListStagingAccountsResponse, AWSError>;
-  /**
-   * Returns an array of staging accounts for existing extended source servers.
-   */
-  listStagingAccounts(callback?: (err: AWSError, data: Drs.Types.ListStagingAccountsResponse) => void): Request<Drs.Types.ListStagingAccountsResponse, AWSError>;
-  /**
    * List all tags for your Elastic Disaster Recovery resources.
    */
   listTagsForResource(params: Drs.Types.ListTagsForResourceRequest, callback?: (err: AWSError, data: Drs.Types.ListTagsForResourceResponse) => void): Request<Drs.Types.ListTagsForResourceResponse, AWSError>;
@@ -204,21 +156,13 @@ declare class Drs extends Service {
    */
   listTagsForResource(callback?: (err: AWSError, data: Drs.Types.ListTagsForResourceResponse) => void): Request<Drs.Types.ListTagsForResourceResponse, AWSError>;
   /**
-   * WARNING: RetryDataReplication is deprecated. Causes the data replication initiation sequence to begin immediately upon next Handshake for the specified Source Server ID, regardless of when the previous initiation started. This command will work only if the Source Server is stalled or is in a DISCONNECTED or STOPPED state. 
+   * Causes the data replication initiation sequence to begin immediately upon next Handshake for the specified Source Server ID, regardless of when the previous initiation started. This command will work only if the Source Server is stalled or is in a DISCONNECTED or STOPPED state.
    */
   retryDataReplication(params: Drs.Types.RetryDataReplicationRequest, callback?: (err: AWSError, data: Drs.Types.SourceServer) => void): Request<Drs.Types.SourceServer, AWSError>;
   /**
-   * WARNING: RetryDataReplication is deprecated. Causes the data replication initiation sequence to begin immediately upon next Handshake for the specified Source Server ID, regardless of when the previous initiation started. This command will work only if the Source Server is stalled or is in a DISCONNECTED or STOPPED state. 
+   * Causes the data replication initiation sequence to begin immediately upon next Handshake for the specified Source Server ID, regardless of when the previous initiation started. This command will work only if the Source Server is stalled or is in a DISCONNECTED or STOPPED state.
    */
   retryDataReplication(callback?: (err: AWSError, data: Drs.Types.SourceServer) => void): Request<Drs.Types.SourceServer, AWSError>;
-  /**
-   * Start replication to origin / target region - applies only to protected instances that originated in EC2. For recovery instances on target region - starts replication back to origin region. For failback instances on origin region - starts replication to target region to re-protect them. 
-   */
-  reverseReplication(params: Drs.Types.ReverseReplicationRequest, callback?: (err: AWSError, data: Drs.Types.ReverseReplicationResponse) => void): Request<Drs.Types.ReverseReplicationResponse, AWSError>;
-  /**
-   * Start replication to origin / target region - applies only to protected instances that originated in EC2. For recovery instances on target region - starts replication back to origin region. For failback instances on origin region - starts replication to target region to re-protect them. 
-   */
-  reverseReplication(callback?: (err: AWSError, data: Drs.Types.ReverseReplicationResponse) => void): Request<Drs.Types.ReverseReplicationResponse, AWSError>;
   /**
    * Initiates a Job for launching the machine that is being failed back to from the specified Recovery Instance. This will run conversion on the failback client and will reboot your machine, thus completing the failback process.
    */
@@ -236,14 +180,6 @@ declare class Drs extends Service {
    */
   startRecovery(callback?: (err: AWSError, data: Drs.Types.StartRecoveryResponse) => void): Request<Drs.Types.StartRecoveryResponse, AWSError>;
   /**
-   * Starts replication for a stopped Source Server. This action would make the Source Server protected again and restart billing for it.
-   */
-  startReplication(params: Drs.Types.StartReplicationRequest, callback?: (err: AWSError, data: Drs.Types.StartReplicationResponse) => void): Request<Drs.Types.StartReplicationResponse, AWSError>;
-  /**
-   * Starts replication for a stopped Source Server. This action would make the Source Server protected again and restart billing for it.
-   */
-  startReplication(callback?: (err: AWSError, data: Drs.Types.StartReplicationResponse) => void): Request<Drs.Types.StartReplicationResponse, AWSError>;
-  /**
    * Stops the failback process for a specified Recovery Instance. This changes the Failback State of the Recovery Instance back to FAILBACK_NOT_STARTED.
    */
   stopFailback(params: Drs.Types.StopFailbackRequest, callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
@@ -251,14 +187,6 @@ declare class Drs extends Service {
    * Stops the failback process for a specified Recovery Instance. This changes the Failback State of the Recovery Instance back to FAILBACK_NOT_STARTED.
    */
   stopFailback(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
-  /**
-   * Stops replication for a Source Server. This action would make the Source Server unprotected, delete its existing snapshots and stop billing for it.
-   */
-  stopReplication(params: Drs.Types.StopReplicationRequest, callback?: (err: AWSError, data: Drs.Types.StopReplicationResponse) => void): Request<Drs.Types.StopReplicationResponse, AWSError>;
-  /**
-   * Stops replication for a Source Server. This action would make the Source Server unprotected, delete its existing snapshots and stop billing for it.
-   */
-  stopReplication(callback?: (err: AWSError, data: Drs.Types.StopReplicationResponse) => void): Request<Drs.Types.StopReplicationResponse, AWSError>;
   /**
    * Adds or overwrites only the specified tags for the specified Elastic Disaster Recovery resource or resources. When you specify an existing tag key, the value is overwritten with the new value. Each resource can have a maximum of 50 tags. Each tag consists of a key and optional value.
    */
@@ -300,14 +228,6 @@ declare class Drs extends Service {
    */
   updateLaunchConfiguration(callback?: (err: AWSError, data: Drs.Types.LaunchConfiguration) => void): Request<Drs.Types.LaunchConfiguration, AWSError>;
   /**
-   * Updates an existing Launch Configuration Template by ID.
-   */
-  updateLaunchConfigurationTemplate(params: Drs.Types.UpdateLaunchConfigurationTemplateRequest, callback?: (err: AWSError, data: Drs.Types.UpdateLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.UpdateLaunchConfigurationTemplateResponse, AWSError>;
-  /**
-   * Updates an existing Launch Configuration Template by ID.
-   */
-  updateLaunchConfigurationTemplate(callback?: (err: AWSError, data: Drs.Types.UpdateLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.UpdateLaunchConfigurationTemplateResponse, AWSError>;
-  /**
    * Allows you to update a ReplicationConfiguration by Source Server ID.
    */
   updateReplicationConfiguration(params: Drs.Types.UpdateReplicationConfigurationRequest, callback?: (err: AWSError, data: Drs.Types.ReplicationConfiguration) => void): Request<Drs.Types.ReplicationConfiguration, AWSError>;
@@ -326,17 +246,6 @@ declare class Drs extends Service {
 }
 declare namespace Drs {
   export type ARN = string;
-  export interface Account {
-    /**
-     * Account ID of AWS account.
-     */
-    accountID?: AccountID;
-  }
-  export type AccountID = string;
-  export type AccountIDs = AccountID[];
-  export type Accounts = Account[];
-  export type AwsAvailabilityZone = string;
-  export type AwsRegion = string;
   export type Boolean = boolean;
   export type BoundedString = string;
   export interface CPU {
@@ -349,87 +258,12 @@ declare namespace Drs {
      */
     modelName?: BoundedString;
   }
-  export type ConversionMap = {[key: string]: EbsSnapshot};
-  export interface ConversionProperties {
-    /**
-     * The timestamp of when the snapshot being converted was taken
-     */
-    dataTimestamp?: LargeBoundedString;
-    /**
-     * Whether the volume being converted uses UEFI or not
-     */
-    forceUefi?: Boolean;
-    /**
-     * The root volume name of a conversion job
-     */
-    rootVolumeName?: LargeBoundedString;
-    /**
-     * A mapping between the volumes being converted and the converted snapshot ids
-     */
-    volumeToConversionMap?: VolumeToConversionMap;
-    /**
-     * A mapping between the volumes and their sizes
-     */
-    volumeToVolumeSize?: VolumeToSizeMap;
-  }
   export type Cpus = CPU[];
-  export interface CreateExtendedSourceServerRequest {
-    /**
-     * This defines the ARN of the source server in staging Account based on which you want to create an extended source server.
-     */
-    sourceServerArn: SourceServerARN;
-    /**
-     * A list of tags associated with the extended source server.
-     */
-    tags?: TagsMap;
-  }
-  export interface CreateExtendedSourceServerResponse {
-    /**
-     * Created extended source server.
-     */
-    sourceServer?: SourceServer;
-  }
-  export interface CreateLaunchConfigurationTemplateRequest {
-    /**
-     * Copy private IP.
-     */
-    copyPrivateIp?: Boolean;
-    /**
-     * Copy tags.
-     */
-    copyTags?: Boolean;
-    /**
-     * Launch disposition.
-     */
-    launchDisposition?: LaunchDisposition;
-    /**
-     * Licensing.
-     */
-    licensing?: Licensing;
-    /**
-     * Request to associate tags during creation of a Launch Configuration Template.
-     */
-    tags?: TagsMap;
-    /**
-     * Target instance type right-sizing method.
-     */
-    targetInstanceTypeRightSizingMethod?: TargetInstanceTypeRightSizingMethod;
-  }
-  export interface CreateLaunchConfigurationTemplateResponse {
-    /**
-     * Created Launch Configuration Template.
-     */
-    launchConfigurationTemplate?: LaunchConfigurationTemplate;
-  }
   export interface CreateReplicationConfigurationTemplateRequest {
     /**
      * Whether to associate the default Elastic Disaster Recovery Security group with the Replication Configuration Template.
      */
     associateDefaultSecurityGroup: Boolean;
-    /**
-     * Whether to allow the AWS replication agent to automatically replicate newly added disks.
-     */
-    autoReplicateNewDisks?: Boolean;
     /**
      * Configure bandwidth throttling for the outbound data transfer rate of the Source Server in Mbps.
      */
@@ -514,15 +348,11 @@ declare namespace Drs {
     /**
      * Data replication lag duration.
      */
-    lagDuration?: ISO8601DurationString;
+    lagDuration?: ISO8601DatetimeString;
     /**
      * The disks that should be replicated.
      */
     replicatedDisks?: DataReplicationInfoReplicatedDisks;
-    /**
-     * AWS Availability zone into which data is being replicated.
-     */
-    stagingAvailabilityZone?: AwsAvailabilityZone;
   }
   export interface DataReplicationInfoReplicatedDisk {
     /**
@@ -583,17 +413,9 @@ declare namespace Drs {
   }
   export interface DeleteJobResponse {
   }
-  export interface DeleteLaunchConfigurationTemplateRequest {
-    /**
-     * The ID of the Launch Configuration Template to be deleted.
-     */
-    launchConfigurationTemplateID: LaunchConfigurationTemplateID;
-  }
-  export interface DeleteLaunchConfigurationTemplateResponse {
-  }
   export interface DeleteRecoveryInstanceRequest {
     /**
-     * The ID of the Recovery Instance to be deleted.
+     * RThe ID of the Recovery Instance to be deleted.
      */
     recoveryInstanceID: RecoveryInstanceID;
   }
@@ -641,7 +463,7 @@ declare namespace Drs {
     /**
      * A set of filters by which to return Jobs.
      */
-    filters?: DescribeJobsRequestFilters;
+    filters: DescribeJobsRequestFilters;
     /**
      * Maximum number of Jobs to retrieve.
      */
@@ -676,36 +498,12 @@ declare namespace Drs {
      */
     nextToken?: PaginationToken;
   }
-  export interface DescribeLaunchConfigurationTemplatesRequest {
-    /**
-     * Request to filter Launch Configuration Templates list by Launch Configuration Template ID.
-     */
-    launchConfigurationTemplateIDs?: LaunchConfigurationTemplateIDs;
-    /**
-     * Maximum results to be returned in DescribeLaunchConfigurationTemplates.
-     */
-    maxResults?: MaxResultsType;
-    /**
-     * The token of the next Launch Configuration Template to retrieve.
-     */
-    nextToken?: PaginationToken;
-  }
-  export interface DescribeLaunchConfigurationTemplatesResponse {
-    /**
-     * List of items returned by DescribeLaunchConfigurationTemplates.
-     */
-    items?: LaunchConfigurationTemplates;
-    /**
-     * The token of the next Launch Configuration Template to retrieve.
-     */
-    nextToken?: PaginationToken;
-  }
   export type DescribeRecoveryInstancesItems = RecoveryInstance[];
   export interface DescribeRecoveryInstancesRequest {
     /**
      * A set of filters by which to return Recovery Instances.
      */
-    filters?: DescribeRecoveryInstancesRequestFilters;
+    filters: DescribeRecoveryInstancesRequestFilters;
     /**
      * Maximum number of Recovery Instances to retrieve.
      */
@@ -789,7 +587,7 @@ declare namespace Drs {
     /**
      * The IDs of the Replication Configuration Templates to retrieve. An empty list means all Replication Configuration Templates.
      */
-    replicationConfigurationTemplateIDs?: ReplicationConfigurationTemplateIDs;
+    replicationConfigurationTemplateIDs: ReplicationConfigurationTemplateIDs;
   }
   export interface DescribeReplicationConfigurationTemplatesResponse {
     /**
@@ -805,7 +603,7 @@ declare namespace Drs {
     /**
      * A set of filters by which to return Source Servers.
      */
-    filters?: DescribeSourceServersRequestFilters;
+    filters: DescribeSourceServersRequestFilters;
     /**
      * Maximum number of Source Servers to retrieve.
      */
@@ -824,10 +622,6 @@ declare namespace Drs {
      * An array of Source Servers IDs that should be returned. An empty array means all Source Servers.
      */
     sourceServerIDs?: DescribeSourceServersRequestFiltersIDs;
-    /**
-     * An array of staging account IDs that extended source servers belong to. An empty array means all source servers will be shown.
-     */
-    stagingAccountIDs?: AccountIDs;
   }
   export type DescribeSourceServersRequestFiltersIDs = SourceServerID[];
   export interface DescribeSourceServersResponse {
@@ -866,13 +660,10 @@ declare namespace Drs {
   export type EC2InstanceID = string;
   export type EC2InstanceState = "PENDING"|"RUNNING"|"STOPPING"|"STOPPED"|"SHUTTING-DOWN"|"TERMINATED"|"NOT_FOUND"|string;
   export type EC2InstanceType = string;
-  export type EbsSnapshot = string;
-  export type EbsSnapshotsList = EbsSnapshot[];
+  export type EbsSnapshotsList = ebsSnapshot[];
   export type EbsVolumeID = string;
-  export type ExtensionStatus = "EXTENDED"|"EXTENSION_ERROR"|"NOT_EXTENDED"|string;
-  export type FailbackLaunchType = "RECOVERY"|"DRILL"|string;
-  export type FailbackReplicationError = "AGENT_NOT_SEEN"|"FAILBACK_CLIENT_NOT_SEEN"|"NOT_CONVERGING"|"UNSTABLE_NETWORK"|"FAILED_TO_ESTABLISH_RECOVERY_INSTANCE_COMMUNICATION"|"FAILED_TO_DOWNLOAD_REPLICATION_SOFTWARE_TO_FAILBACK_CLIENT"|"FAILED_TO_CONFIGURE_REPLICATION_SOFTWARE"|"FAILED_TO_PAIR_AGENT_WITH_REPLICATION_SOFTWARE"|"FAILED_TO_ESTABLISH_AGENT_REPLICATOR_SOFTWARE_COMMUNICATION"|"FAILED_GETTING_REPLICATION_STATE"|"SNAPSHOTS_FAILURE"|"FAILED_TO_CREATE_SECURITY_GROUP"|"FAILED_TO_LAUNCH_REPLICATION_SERVER"|"FAILED_TO_BOOT_REPLICATION_SERVER"|"FAILED_TO_AUTHENTICATE_WITH_SERVICE"|"FAILED_TO_DOWNLOAD_REPLICATION_SOFTWARE"|"FAILED_TO_CREATE_STAGING_DISKS"|"FAILED_TO_ATTACH_STAGING_DISKS"|"FAILED_TO_PAIR_REPLICATION_SERVER_WITH_AGENT"|"FAILED_TO_CONNECT_AGENT_TO_REPLICATION_SERVER"|"FAILED_TO_START_DATA_TRANSFER"|string;
-  export type FailbackState = "FAILBACK_NOT_STARTED"|"FAILBACK_IN_PROGRESS"|"FAILBACK_READY_FOR_LAUNCH"|"FAILBACK_COMPLETED"|"FAILBACK_ERROR"|"FAILBACK_NOT_READY_FOR_LAUNCH"|"FAILBACK_LAUNCH_STATE_NOT_AVAILABLE"|string;
+  export type FailbackReplicationError = "AGENT_NOT_SEEN"|"FAILBACK_CLIENT_NOT_SEEN"|"NOT_CONVERGING"|"UNSTABLE_NETWORK"|"FAILED_TO_ESTABLISH_RECOVERY_INSTANCE_COMMUNICATION"|"FAILED_TO_DOWNLOAD_REPLICATION_SOFTWARE_TO_FAILBACK_CLIENT"|"FAILED_TO_CONFIGURE_REPLICATION_SOFTWARE"|"FAILED_TO_PAIR_AGENT_WITH_REPLICATION_SOFTWARE"|"FAILED_TO_ESTABLISH_AGENT_REPLICATOR_SOFTWARE_COMMUNICATION"|string;
+  export type FailbackState = "FAILBACK_NOT_STARTED"|"FAILBACK_IN_PROGRESS"|"FAILBACK_READY_FOR_LAUNCH"|"FAILBACK_COMPLETED"|"FAILBACK_ERROR"|string;
   export interface GetFailbackReplicationConfigurationRequest {
     /**
      * The ID of the Recovery Instance whose failback replication configuration should be returned.
@@ -911,7 +702,6 @@ declare namespace Drs {
   }
   export type IPsList = BoundedString[];
   export type ISO8601DatetimeString = string;
-  export type ISO8601DurationString = string;
   export interface IdentificationHints {
     /**
      * AWS Instance ID identification hint.
@@ -934,7 +724,7 @@ declare namespace Drs {
   }
   export interface InitializeServiceResponse {
   }
-  export type InitiatedBy = "START_RECOVERY"|"START_DRILL"|"FAILBACK"|"DIAGNOSTIC"|"TERMINATE_RECOVERY_INSTANCES"|"TARGET_ACCOUNT"|string;
+  export type InitiatedBy = "START_RECOVERY"|"START_DRILL"|"FAILBACK"|"DIAGNOSTIC"|"TERMINATE_RECOVERY_INSTANCES"|string;
   export interface Job {
     /**
      * The ARN of a Job.
@@ -991,10 +781,6 @@ declare namespace Drs {
   export type JobLogEvent = "JOB_START"|"SERVER_SKIPPED"|"CLEANUP_START"|"CLEANUP_END"|"CLEANUP_FAIL"|"SNAPSHOT_START"|"SNAPSHOT_END"|"SNAPSHOT_FAIL"|"USING_PREVIOUS_SNAPSHOT"|"USING_PREVIOUS_SNAPSHOT_FAILED"|"CONVERSION_START"|"CONVERSION_END"|"CONVERSION_FAIL"|"LAUNCH_START"|"LAUNCH_FAILED"|"JOB_CANCEL"|"JOB_END"|string;
   export interface JobLogEventData {
     /**
-     * Properties of a conversion job
-     */
-    conversionProperties?: ConversionProperties;
-    /**
      * The ID of a conversion server.
      */
     conversionServerID?: EC2InstanceID;
@@ -1013,7 +799,7 @@ declare namespace Drs {
   }
   export type JobLogs = JobLog[];
   export type JobStatus = "PENDING"|"STARTED"|"COMPLETED"|string;
-  export type JobType = "LAUNCH"|"TERMINATE"|"CREATE_CONVERTED_SNAPSHOT"|string;
+  export type JobType = "LAUNCH"|"TERMINATE"|string;
   export type JobsList = Job[];
   export type LargeBoundedString = string;
   export type LastLaunchResult = "NOT_STARTED"|"PENDING"|"SUCCEEDED"|"FAILED"|string;
@@ -1052,43 +838,6 @@ declare namespace Drs {
      */
     targetInstanceTypeRightSizingMethod?: TargetInstanceTypeRightSizingMethod;
   }
-  export interface LaunchConfigurationTemplate {
-    /**
-     * ARN of the Launch Configuration Template.
-     */
-    arn?: ARN;
-    /**
-     * Copy private IP.
-     */
-    copyPrivateIp?: Boolean;
-    /**
-     * Copy tags.
-     */
-    copyTags?: Boolean;
-    /**
-     * ID of the Launch Configuration Template.
-     */
-    launchConfigurationTemplateID?: LaunchConfigurationTemplateID;
-    /**
-     * Launch disposition.
-     */
-    launchDisposition?: LaunchDisposition;
-    /**
-     * Licensing.
-     */
-    licensing?: Licensing;
-    /**
-     * Tags of the Launch Configuration Template.
-     */
-    tags?: TagsMap;
-    /**
-     * Target instance type right-sizing method.
-     */
-    targetInstanceTypeRightSizingMethod?: TargetInstanceTypeRightSizingMethod;
-  }
-  export type LaunchConfigurationTemplateID = string;
-  export type LaunchConfigurationTemplateIDs = LaunchConfigurationTemplateID[];
-  export type LaunchConfigurationTemplates = LaunchConfigurationTemplate[];
   export type LaunchDisposition = "STOPPED"|"STARTED"|string;
   export type LaunchStatus = "PENDING"|"IN_PROGRESS"|"LAUNCHED"|"FAILED"|"TERMINATED"|string;
   export interface Licensing {
@@ -1105,7 +854,7 @@ declare namespace Drs {
     /**
      * The amount of time that the Source Server has been replicating for.
      */
-    elapsedReplicationDuration?: ISO8601DurationString;
+    elapsedReplicationDuration?: ISO8601DatetimeString;
     /**
      * The date and time of the first byte that was replicated from the Source Server.
      */
@@ -1124,10 +873,6 @@ declare namespace Drs {
      * An object containing information regarding the initiation of the last launch of a Source Server.
      */
     initiated?: LifeCycleLastLaunchInitiated;
-    /**
-     * Status of Source Server's last launch.
-     */
-    status?: LaunchStatus;
   }
   export interface LifeCycleLastLaunchInitiated {
     /**
@@ -1143,51 +888,6 @@ declare namespace Drs {
      */
     type?: LastLaunchType;
   }
-  export interface ListExtensibleSourceServersRequest {
-    /**
-     * The maximum number of extensible source servers to retrieve.
-     */
-    maxResults?: MaxResultsReplicatingSourceServers;
-    /**
-     * The token of the next extensible source server to retrieve.
-     */
-    nextToken?: PaginationToken;
-    /**
-     * The Id of the staging Account to retrieve extensible source servers from.
-     */
-    stagingAccountID: AccountID;
-  }
-  export interface ListExtensibleSourceServersResponse {
-    /**
-     * A list of source servers on a staging Account that are extensible.
-     */
-    items?: StagingSourceServersList;
-    /**
-     * The token of the next extensible source server to retrieve.
-     */
-    nextToken?: PaginationToken;
-  }
-  export interface ListStagingAccountsRequest {
-    /**
-     * The maximum number of staging Accounts to retrieve.
-     */
-    maxResults?: ListStagingAccountsRequestMaxResultsInteger;
-    /**
-     * The token of the next staging Account to retrieve.
-     */
-    nextToken?: PaginationToken;
-  }
-  export type ListStagingAccountsRequestMaxResultsInteger = number;
-  export interface ListStagingAccountsResponse {
-    /**
-     * An array of staging AWS Accounts.
-     */
-    accounts?: Accounts;
-    /**
-     * The token of the next staging Account to retrieve.
-     */
-    nextToken?: PaginationToken;
-  }
   export interface ListTagsForResourceRequest {
     /**
      * The ARN of the resource whose tags should be returned.
@@ -1200,8 +900,6 @@ declare namespace Drs {
      */
     tags?: TagsMap;
   }
-  export type MaxResultsReplicatingSourceServers = number;
-  export type MaxResultsType = number;
   export interface NetworkInterface {
     /**
      * Network interface IPs.
@@ -1223,7 +921,6 @@ declare namespace Drs {
      */
     fullString?: BoundedString;
   }
-  export type OriginEnvironment = "ON_PREMISES"|"AWS"|string;
   export type PITPolicy = PITPolicyRule[];
   export interface PITPolicyRule {
     /**
@@ -1295,14 +992,6 @@ declare namespace Drs {
      */
     jobID?: JobID;
     /**
-     * AWS availability zone associated with the recovery instance.
-     */
-    originAvailabilityZone?: AwsAvailabilityZone;
-    /**
-     * Environment (On Premises / AWS) of the instance that the recovery instance originated from.
-     */
-    originEnvironment?: OriginEnvironment;
-    /**
      * The date and time of the Point in Time (PIT) snapshot that this Recovery Instance was launched from.
      */
     pointInTimeSnapshotDateTime?: ISO8601DatetimeString;
@@ -1358,10 +1047,6 @@ declare namespace Drs {
      * The disks that should be replicated.
      */
     replicatedDisks?: RecoveryInstanceDataReplicationInfoReplicatedDisks;
-    /**
-     * AWS Availability zone into which data is being replicated.
-     */
-    stagingAvailabilityZone?: AwsAvailabilityZone;
   }
   export interface RecoveryInstanceDataReplicationInfoReplicatedDisk {
     /**
@@ -1406,10 +1091,10 @@ declare namespace Drs {
      */
     status?: RecoveryInstanceDataReplicationInitiationStepStatus;
   }
-  export type RecoveryInstanceDataReplicationInitiationStepName = "LINK_FAILBACK_CLIENT_WITH_RECOVERY_INSTANCE"|"COMPLETE_VOLUME_MAPPING"|"ESTABLISH_RECOVERY_INSTANCE_COMMUNICATION"|"DOWNLOAD_REPLICATION_SOFTWARE_TO_FAILBACK_CLIENT"|"CONFIGURE_REPLICATION_SOFTWARE"|"PAIR_AGENT_WITH_REPLICATION_SOFTWARE"|"ESTABLISH_AGENT_REPLICATOR_SOFTWARE_COMMUNICATION"|"WAIT"|"CREATE_SECURITY_GROUP"|"LAUNCH_REPLICATION_SERVER"|"BOOT_REPLICATION_SERVER"|"AUTHENTICATE_WITH_SERVICE"|"DOWNLOAD_REPLICATION_SOFTWARE"|"CREATE_STAGING_DISKS"|"ATTACH_STAGING_DISKS"|"PAIR_REPLICATION_SERVER_WITH_AGENT"|"CONNECT_AGENT_TO_REPLICATION_SERVER"|"START_DATA_TRANSFER"|string;
+  export type RecoveryInstanceDataReplicationInitiationStepName = "LINK_FAILBACK_CLIENT_WITH_RECOVERY_INSTANCE"|"COMPLETE_VOLUME_MAPPING"|"ESTABLISH_RECOVERY_INSTANCE_COMMUNICATION"|"DOWNLOAD_REPLICATION_SOFTWARE_TO_FAILBACK_CLIENT"|"CONFIGURE_REPLICATION_SOFTWARE"|"PAIR_AGENT_WITH_REPLICATION_SOFTWARE"|"ESTABLISH_AGENT_REPLICATOR_SOFTWARE_COMMUNICATION"|string;
   export type RecoveryInstanceDataReplicationInitiationStepStatus = "NOT_STARTED"|"IN_PROGRESS"|"SUCCEEDED"|"FAILED"|"SKIPPED"|string;
   export type RecoveryInstanceDataReplicationInitiationSteps = RecoveryInstanceDataReplicationInitiationStep[];
-  export type RecoveryInstanceDataReplicationState = "STOPPED"|"INITIATING"|"INITIAL_SYNC"|"BACKLOG"|"CREATING_SNAPSHOT"|"CONTINUOUS"|"PAUSED"|"RESCAN"|"STALLED"|"DISCONNECTED"|"REPLICATION_STATE_NOT_AVAILABLE"|"NOT_STARTED"|string;
+  export type RecoveryInstanceDataReplicationState = "STOPPED"|"INITIATING"|"INITIAL_SYNC"|"BACKLOG"|"CREATING_SNAPSHOT"|"CONTINUOUS"|"PAUSED"|"RESCAN"|"STALLED"|"DISCONNECTED"|string;
   export interface RecoveryInstanceDisk {
     /**
      * The amount of storage on the disk in bytes.
@@ -1450,10 +1135,6 @@ declare namespace Drs {
      * The Job ID of the last failback log for this Recovery Instance.
      */
     failbackJobID?: JobID;
-    /**
-     * The launch type (Recovery / Drill) of the last launch for the failback replication of this recovery instance.
-     */
-    failbackLaunchType?: FailbackLaunchType;
     /**
      * Whether we are failing back to the original Source Server for this Recovery Instance.
      */
@@ -1531,10 +1212,6 @@ declare namespace Drs {
      */
     associateDefaultSecurityGroup?: Boolean;
     /**
-     * Whether to allow the AWS replication agent to automatically replicate newly added disks.
-     */
-    autoReplicateNewDisks?: Boolean;
-    /**
      * Configure bandwidth throttling for the outbound data transfer rate of the Source Server in Mbps.
      */
     bandwidthThrottling?: PositiveInteger;
@@ -1596,7 +1273,7 @@ declare namespace Drs {
     useDedicatedReplicationServer?: Boolean;
   }
   export type ReplicationConfigurationDataPlaneRouting = "PRIVATE_IP"|"PUBLIC_IP"|string;
-  export type ReplicationConfigurationDefaultLargeStagingDiskType = "GP2"|"GP3"|"ST1"|"AUTO"|string;
+  export type ReplicationConfigurationDefaultLargeStagingDiskType = "GP2"|"GP3"|"ST1"|string;
   export type ReplicationConfigurationEbsEncryption = "DEFAULT"|"CUSTOM"|string;
   export interface ReplicationConfigurationReplicatedDisk {
     /**
@@ -1611,10 +1288,6 @@ declare namespace Drs {
      * Whether to boot from this disk or not.
      */
     isBootDisk?: Boolean;
-    /**
-     * The Staging Disk EBS volume type to be used during replication when stagingDiskType is set to Auto. This is a read-only field.
-     */
-    optimizedStagingDiskType?: ReplicationConfigurationReplicatedDiskStagingDiskType;
     /**
      * The Staging Disk EBS volume type to be used during replication.
      */
@@ -1635,10 +1308,6 @@ declare namespace Drs {
      * Whether to associate the default Elastic Disaster Recovery Security group with the Replication Configuration Template.
      */
     associateDefaultSecurityGroup?: Boolean;
-    /**
-     * Whether to allow the AWS replication agent to automatically replicate newly added disks.
-     */
-    autoReplicateNewDisks?: Boolean;
     /**
      * Configure bandwidth throttling for the outbound data transfer rate of the Source Server in Mbps.
      */
@@ -1699,7 +1368,6 @@ declare namespace Drs {
   export type ReplicationConfigurationTemplateID = string;
   export type ReplicationConfigurationTemplateIDs = ReplicationConfigurationTemplateID[];
   export type ReplicationConfigurationTemplates = ReplicationConfigurationTemplate[];
-  export type ReplicationDirection = "FAILOVER"|"FAILBACK"|string;
   export type ReplicationServersSecurityGroupsIDs = SecurityGroupID[];
   export interface RetryDataReplicationRequest {
     /**
@@ -1707,34 +1375,8 @@ declare namespace Drs {
      */
     sourceServerID: SourceServerID;
   }
-  export interface ReverseReplicationRequest {
-    /**
-     * The ID of the Recovery Instance that we want to reverse the replication for.
-     */
-    recoveryInstanceID: RecoveryInstanceID;
-  }
-  export interface ReverseReplicationResponse {
-    /**
-     * ARN of created SourceServer.
-     */
-    reversedDirectionSourceServerArn?: SourceServerARN;
-  }
   export type SecurityGroupID = string;
   export type SmallBoundedString = string;
-  export interface SourceCloudProperties {
-    /**
-     * AWS Account ID for an EC2-originated Source Server.
-     */
-    originAccountID?: AccountID;
-    /**
-     * AWS Availability Zone for an EC2-originated Source Server.
-     */
-    originAvailabilityZone?: AwsAvailabilityZone;
-    /**
-     * AWS Region for an EC2-originated Source Server.
-     */
-    originRegion?: AwsRegion;
-  }
   export interface SourceProperties {
     /**
      * An array of CPUs.
@@ -1768,10 +1410,6 @@ declare namespace Drs {
      * The recommended EC2 instance type that will be used when recovering the Source Server.
      */
     recommendedInstanceType?: EC2InstanceType;
-    /**
-     * Are EC2 nitro instance types supported when recovering the Source Server.
-     */
-    supportsNitroInstances?: Boolean;
   }
   export interface SourceServer {
     /**
@@ -1795,18 +1433,6 @@ declare namespace Drs {
      */
     recoveryInstanceId?: RecoveryInstanceID;
     /**
-     * Replication direction of the Source Server.
-     */
-    replicationDirection?: ReplicationDirection;
-    /**
-     * For EC2-originated Source Servers which have been failed over and then failed back, this value will mean the ARN of the Source Server on the opposite replication direction.
-     */
-    reversedDirectionSourceServerArn?: SourceServerARN;
-    /**
-     * Source cloud properties of the Source Server.
-     */
-    sourceCloudProperties?: SourceCloudProperties;
-    /**
      * The source properties of the Source Server.
      */
     sourceProperties?: SourceProperties;
@@ -1815,51 +1441,13 @@ declare namespace Drs {
      */
     sourceServerID?: SourceServerID;
     /**
-     * The staging area of the source server.
-     */
-    stagingArea?: StagingArea;
-    /**
      * The tags associated with the Source Server.
      */
     tags?: TagsMap;
   }
-  export type SourceServerARN = string;
   export type SourceServerID = string;
   export type SourceServerIDs = SourceServerID[];
   export type SourceServersList = SourceServer[];
-  export interface StagingArea {
-    /**
-     * Shows an error message that occurred when DRS tried to access the staging source server. In this case StagingArea$status will have value EXTENSION_ERROR
-     */
-    errorMessage?: LargeBoundedString;
-    /**
-     * Account ID of the account to which source server belongs. If this source server is extended - shows Account ID of staging source server.
-     */
-    stagingAccountID?: AccountID;
-    /**
-     * Arn of the staging source server if this source server is extended
-     */
-    stagingSourceServerArn?: ARN;
-    /**
-     * Status of Source server extension. Possible values: (a) NOT_EXTENDED - This is a source server that is replicating in the current account. (b) EXTENDED - Source server is extended from a staging source server. In this case, the value of stagingSourceServerArn is pointing to the Arn of the source server in the staging account. (c) EXTENSION_ERROR - Some issue occurred when accessing staging source server. In this case, errorMessage field will contain an error message that explains what happened.
-     */
-    status?: ExtensionStatus;
-  }
-  export interface StagingSourceServer {
-    /**
-     * The ARN of the source server.
-     */
-    arn?: SourceServerARN;
-    /**
-     * Hostname of staging source server.
-     */
-    hostname?: BoundedString;
-    /**
-     * A list of tags associated with the staging source server.
-     */
-    tags?: TagsMap;
-  }
-  export type StagingSourceServersList = StagingSourceServer[];
   export interface StartFailbackLaunchRequest {
     /**
      * The IDs of the Recovery Instance whose failback launch we want to request.
@@ -1908,35 +1496,11 @@ declare namespace Drs {
      */
     job?: Job;
   }
-  export interface StartReplicationRequest {
-    /**
-     * The ID of the Source Server to start replication for.
-     */
-    sourceServerID: SourceServerID;
-  }
-  export interface StartReplicationResponse {
-    /**
-     * The Source Server that this action was targeted on.
-     */
-    sourceServer?: SourceServer;
-  }
   export interface StopFailbackRequest {
     /**
      * The ID of the Recovery Instance we want to stop failback for.
      */
     recoveryInstanceID: RecoveryInstanceID;
-  }
-  export interface StopReplicationRequest {
-    /**
-     * The ID of the Source Server to stop replication for.
-     */
-    sourceServerID: SourceServerID;
-  }
-  export interface StopReplicationResponse {
-    /**
-     * The Source Server that this action was targeted on.
-     */
-    sourceServer?: SourceServer;
   }
   export type StrictlyPositiveInteger = number;
   export type SubnetID = string;
@@ -2025,47 +1589,11 @@ declare namespace Drs {
      */
     targetInstanceTypeRightSizingMethod?: TargetInstanceTypeRightSizingMethod;
   }
-  export interface UpdateLaunchConfigurationTemplateRequest {
-    /**
-     * Copy private IP.
-     */
-    copyPrivateIp?: Boolean;
-    /**
-     * Copy tags.
-     */
-    copyTags?: Boolean;
-    /**
-     * Launch Configuration Template ID.
-     */
-    launchConfigurationTemplateID: LaunchConfigurationTemplateID;
-    /**
-     * Launch disposition.
-     */
-    launchDisposition?: LaunchDisposition;
-    /**
-     * Licensing.
-     */
-    licensing?: Licensing;
-    /**
-     * Target instance type right-sizing method.
-     */
-    targetInstanceTypeRightSizingMethod?: TargetInstanceTypeRightSizingMethod;
-  }
-  export interface UpdateLaunchConfigurationTemplateResponse {
-    /**
-     * Updated Launch Configuration Template.
-     */
-    launchConfigurationTemplate?: LaunchConfigurationTemplate;
-  }
   export interface UpdateReplicationConfigurationRequest {
     /**
      * Whether to associate the default Elastic Disaster Recovery Security group with the Replication Configuration.
      */
     associateDefaultSecurityGroup?: Boolean;
-    /**
-     * Whether to allow the AWS replication agent to automatically replicate newly added disks.
-     */
-    autoReplicateNewDisks?: Boolean;
     /**
      * Configure bandwidth throttling for the outbound data transfer rate of the Source Server in Mbps.
      */
@@ -2137,10 +1665,6 @@ declare namespace Drs {
      */
     associateDefaultSecurityGroup?: Boolean;
     /**
-     * Whether to allow the AWS replication agent to automatically replicate newly added disks.
-     */
-    autoReplicateNewDisks?: Boolean;
-    /**
      * Configure bandwidth throttling for the outbound data transfer rate of the Source Server in Mbps.
      */
     bandwidthThrottling?: PositiveInteger;
@@ -2193,8 +1717,7 @@ declare namespace Drs {
      */
     useDedicatedReplicationServer?: Boolean;
   }
-  export type VolumeToConversionMap = {[key: string]: ConversionMap};
-  export type VolumeToSizeMap = {[key: string]: PositiveInteger};
+  export type ebsSnapshot = string;
   /**
    * A string in YYYY-MM-DD format that represents the latest possible API version that can be used in this service. Specify 'latest' to use the latest possible version.
    */

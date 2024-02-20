@@ -1,8 +1,6 @@
-/// <reference types="express" />
 import { HandlerContext, Request, Response } from '@loopback/express';
 import { ReferenceObject, SchemaObject } from '@loopback/openapi-v3';
-import Ajv, { ErrorObject, FormatDefinition, KeywordDefinition, Options as AjvOptions, ValidateFunction } from 'ajv';
-import { ErrorMessageOptions } from 'ajv-errors';
+import ajv, { Ajv, FormatDefinition, KeywordDefinition } from 'ajv';
 import { Options, OptionsJson, OptionsText, OptionsUrlencoded } from 'body-parser';
 import { ResolvedRoute, RouteEntry } from './router';
 /**
@@ -13,11 +11,11 @@ export * from '@loopback/express';
  * Find a route matching the incoming request.
  * Throw an error when no route was found.
  */
-export type FindRoute = (request: Request) => ResolvedRoute;
+export declare type FindRoute = (request: Request) => ResolvedRoute;
 /**
  * A function to parse OpenAPI operation parameters for a given route
  */
-export type ParseParams = (request: Request, route: ResolvedRoute) => Promise<OperationArgs>;
+export declare type ParseParams = (request: Request, route: ResolvedRoute) => Promise<OperationArgs>;
 /**
  * Invokes a method defined in the Application Controller
  *
@@ -27,14 +25,14 @@ export type ParseParams = (request: Request, route: ResolvedRoute) => Promise<Op
  * @param args - Operation arguments for the method
  * @returns OperationRetval Result from method invocation
  */
-export type InvokeMethod = (route: RouteEntry, args: OperationArgs) => Promise<OperationRetval>;
+export declare type InvokeMethod = (route: RouteEntry, args: OperationArgs) => Promise<OperationRetval>;
 /**
  * Send the operation response back to the client.
  *
  * @param response - The response the response to send to.
  * @param result - The operation result to send.
  */
-export type Send = (response: Response, result: OperationRetval) => void;
+export declare type Send = (response: Response, result: OperationRetval) => void;
 /**
  * Reject the request with an error.
  *
@@ -42,7 +40,7 @@ export type Send = (response: Response, result: OperationRetval) => void;
  * and other data  needed to handle an incoming HTTP request.
  * @param err - The error.
  */
-export type Reject = (handlerContext: HandlerContext, err: Error) => void;
+export declare type Reject = (handlerContext: HandlerContext, err: Error) => void;
 /**
  * Log information about a failed request.
  *
@@ -50,28 +48,33 @@ export type Reject = (handlerContext: HandlerContext, err: Error) => void;
  * @param statusCode - Status code of the HTTP response
  * @param request - The request that failed.
  */
-export type LogError = (err: Error, statusCode: number, request: Request) => void;
+export declare type LogError = (err: Error, statusCode: number, request: Request) => void;
 /**
  * Cache for AJV schema validators
  */
-export type SchemaValidatorCache = WeakMap<SchemaObject | ReferenceObject, // First keyed by schema object
-Map<string, ValidateFunction>>;
+export declare type SchemaValidatorCache = WeakMap<SchemaObject | ReferenceObject, // First keyed by schema object
+Map<string, ajv.ValidateFunction>>;
 /**
  * Options for AJV errors
  */
-export type AjvErrorOptions = ErrorMessageOptions;
+export declare type AjvErrorOptions = {
+    keepErrors?: boolean;
+    singleError?: boolean;
+};
 /**
  * Factory function for Ajv instances
  */
-export type AjvFactory = (options?: AjvOptions) => Ajv;
+export declare type AjvFactory = (options?: ajv.Options) => Ajv;
 /**
  * Ajv keyword definition with a name
  */
-export type AjvKeyword = KeywordDefinition;
+export declare type AjvKeyword = KeywordDefinition & {
+    name: string;
+};
 /**
  * Ajv format definition with a name
  */
-export type AjvFormat<T extends string | number = string> = FormatDefinition<T> & {
+export declare type AjvFormat = FormatDefinition & {
     name: string;
 };
 /**
@@ -91,7 +94,7 @@ export interface ValueValidationOptions extends ValidationOptions {
 /**
  * Options for request body validation using AJV
  */
-export interface ValidationOptions extends AjvOptions {
+export interface ValidationOptions extends ajv.Options {
     /**
      * Custom cache for compiled schemas by AJV. This setting makes it possible
      * to skip the default cache.
@@ -99,29 +102,26 @@ export interface ValidationOptions extends AjvOptions {
     compiledSchemaCache?: SchemaValidatorCache;
     /**
      * Enable additional AJV keywords from https://github.com/epoberezkin/ajv-keywords
+     * - `true`: Add all keywords from `ajv-keywords`
      * - `string[]`: Add an array of keywords from `ajv-keywords`
      */
-    ajvKeywords?: string[];
+    ajvKeywords?: true | string[];
     /**
      * Enable custom error messages in JSON-Schema for AJV validator
      * from https://github.com/epoberezkin/ajv-errors
      * - `true`: Enable `ajv-errors`
      * - `AjvErrorOptions`: Enable `ajv-errors` with options
      */
-    ajvErrors?: AjvErrorOptions;
+    ajvErrors?: true | AjvErrorOptions;
     /**
      * A function that transform the `ErrorObject`s reported by AJV.
      * This could be used for error messages customization, localization, etc.
      */
-    ajvErrorTransformer?: (errors: ErrorObject[]) => ErrorObject[];
+    ajvErrorTransformer?: (errors: ajv.ErrorObject[]) => ajv.ErrorObject[];
     /**
      * A factory to create Ajv instance
      */
-    ajvFactory?: (options: AjvOptions) => Ajv;
-    /**
-     * An array of keys to be rejected, such as `__proto__`.
-     */
-    prohibitedKeys?: string[];
+    ajvFactory?: (options: ajv.Options) => Ajv;
 }
 /**
  * Options for request body parsing
@@ -158,16 +158,16 @@ export interface RequestBodyParserOptions extends Options {
      */
     [name: string]: unknown;
 }
-export type PathParameterValues = {
+export declare type PathParameterValues = {
     [key: string]: any;
 };
-export type OperationArgs = any[];
+export declare type OperationArgs = any[];
 /**
  * Return value of a controller method (a function implementing an operation).
  * This is a type alias for "any", used to distinguish
  * operation results from other "any" typed values.
  */
-export type OperationRetval = any;
+export declare type OperationRetval = any;
 /**
  * user profile to add in session
  */
@@ -190,4 +190,4 @@ export interface Session {
 export interface RequestWithSession extends Request {
     session: Session;
 }
-export type RequestBodyValidationOptions = ValidationOptions;
+export declare type RequestBodyValidationOptions = ValidationOptions;

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,7 +13,7 @@ let UserCredentials = class UserCredentials extends repository_1.Entity {
     }
 };
 tslib_1.__decorate([
-    (0, repository_1.property)({
+    repository_1.property({
         type: 'string',
         id: true,
         generated: false,
@@ -22,21 +22,21 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], UserCredentials.prototype, "id", void 0);
 tslib_1.__decorate([
-    (0, repository_1.property)({
+    repository_1.property({
         type: 'string',
         required: true,
     }),
     tslib_1.__metadata("design:type", String)
 ], UserCredentials.prototype, "password", void 0);
 tslib_1.__decorate([
-    (0, repository_1.property)({
+    repository_1.property({
         type: 'string',
         required: true,
     }),
     tslib_1.__metadata("design:type", String)
 ], UserCredentials.prototype, "userId", void 0);
 UserCredentials = tslib_1.__decorate([
-    (0, repository_1.model)({ settings: { strict: false } }),
+    repository_1.model({ settings: { strict: false } }),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], UserCredentials);
 exports.UserCredentials = UserCredentials;

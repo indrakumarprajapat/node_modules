@@ -3,12 +3,6 @@
     "DescribeAccountAttributes": {
       "result_key": "AccountAttributes"
     },
-    "DescribeAddressTransfers": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "AddressTransfers"
-    },
     "DescribeAddresses": {
       "result_key": "Addresses"
     },
@@ -20,12 +14,6 @@
     },
     "DescribeAvailabilityZones": {
       "result_key": "AvailabilityZones"
-    },
-    "DescribeAwsNetworkPerformanceMetricSubscriptions": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "Subscriptions"
     },
     "DescribeBundleTasks": {
       "result_key": "BundleTasks"
@@ -178,9 +166,6 @@
       "result_key": "IamInstanceProfileAssociations"
     },
     "DescribeImages": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
       "result_key": "Images"
     },
     "DescribeImportImageTasks": {
@@ -242,18 +227,6 @@
       "limit_key": "MaxResults",
       "output_token": "NextToken",
       "result_key": "IpamPools"
-    },
-    "DescribeIpamResourceDiscoveries": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "IpamResourceDiscoveries"
-    },
-    "DescribeIpamResourceDiscoveryAssociations": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "IpamResourceDiscoveryAssociations"
     },
     "DescribeIpamScopes": {
       "input_token": "NextToken",
@@ -563,18 +536,6 @@
       "output_token": "NextToken",
       "result_key": "TransitGatewayPeeringAttachments"
     },
-    "DescribeTransitGatewayPolicyTables": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "TransitGatewayPolicyTables"
-    },
-    "DescribeTransitGatewayRouteTableAnnouncements": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "TransitGatewayRouteTableAnnouncements"
-    },
     "DescribeTransitGatewayRouteTables": {
       "input_token": "NextToken",
       "limit_key": "MaxResults",
@@ -598,36 +559,6 @@
       "limit_key": "MaxResults",
       "output_token": "NextToken",
       "result_key": "InterfaceAssociations"
-    },
-    "DescribeVerifiedAccessEndpoints": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "VerifiedAccessEndpoints"
-    },
-    "DescribeVerifiedAccessGroups": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "VerifiedAccessGroups"
-    },
-    "DescribeVerifiedAccessInstanceLoggingConfigurations": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "LoggingConfigurations"
-    },
-    "DescribeVerifiedAccessInstances": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "VerifiedAccessInstances"
-    },
-    "DescribeVerifiedAccessTrustProviders": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "VerifiedAccessTrustProviders"
     },
     "DescribeVolumeStatus": {
       "input_token": "NextToken",
@@ -707,12 +638,6 @@
       "output_token": "NextToken",
       "result_key": "Ipv6CidrAssociations"
     },
-    "GetAwsNetworkPerformanceData": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "DataResponses"
-    },
     "GetGroupsForCapacityReservation": {
       "input_token": "NextToken",
       "limit_key": "MaxResults",
@@ -730,18 +655,6 @@
       "limit_key": "MaxResults",
       "output_token": "NextToken",
       "result_key": "HistoryRecords"
-    },
-    "GetIpamDiscoveredAccounts": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "IpamDiscoveredAccounts"
-    },
-    "GetIpamDiscoveredResourceCidrs": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "IpamDiscoveredResourceCidrs"
     },
     "GetIpamPoolAllocations": {
       "input_token": "NextToken",
@@ -773,12 +686,6 @@
       "output_token": "NextToken",
       "result_key": "Entries"
     },
-    "GetNetworkInsightsAccessScopeAnalysisFindings": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "AnalysisFindings"
-    },
     "GetSpotPlacementScores": {
       "input_token": "NextToken",
       "limit_key": "MaxResults",
@@ -796,12 +703,6 @@
       "limit_key": "MaxResults",
       "output_token": "NextToken",
       "result_key": "MulticastDomainAssociations"
-    },
-    "GetTransitGatewayPolicyTableAssociations": {
-      "input_token": "NextToken",
-      "limit_key": "MaxResults",
-      "output_token": "NextToken",
-      "result_key": "Associations"
     },
     "GetTransitGatewayPrefixListReferences": {
       "input_token": "NextToken",

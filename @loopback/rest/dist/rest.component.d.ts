@@ -11,4 +11,4 @@ export declare class RestComponent implements Component {
     };
     constructor(app: Application, config?: RestComponentConfig);
 }
-export type RestComponentConfig = RestServerConfig;
+export declare type RestComponentConfig = RestServerConfig;

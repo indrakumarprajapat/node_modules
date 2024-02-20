@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,28 +14,27 @@ import {asMiddleware, Middleware} from '@loopback/express';
 import debugFactory from 'debug';
 import {HttpHandler} from '../http-handler';
 import {RestBindings, RestTags} from '../keys';
+import {ResolvedRoute} from '../router';
 import {RestMiddlewareGroups} from '../sequence';
-import {FindRoute} from '../types';
+import {FindRoute, Request} from '../types';
 
 const debug = debugFactory('loopback:rest:find-route');
 
-export class FindRouteProvider {
-  static value(
-    @inject(RestBindings.Http.CONTEXT) context: Context,
-    @inject(RestBindings.HANDLER) handler: HttpHandler,
-  ): FindRoute {
-    const findRoute: FindRoute = request => {
-      const found = handler.findRoute(request);
-      debug(
-        'Route found for %s %s',
-        request.method,
-        request.originalUrl,
-        found,
-      );
-      found.updateBindings(context);
-      return found;
-    };
-    return findRoute;
+export class FindRouteProvider implements Provider<FindRoute> {
+  constructor(
+    @inject(RestBindings.Http.CONTEXT) protected context: Context,
+    @inject(RestBindings.HANDLER) protected handler: HttpHandler,
+  ) {}
+
+  value(): FindRoute {
+    return request => this.action(request);
+  }
+
+  action(request: Request): ResolvedRoute {
+    const found = this.handler.findRoute(request);
+    debug('Route found for %s %s', request.method, request.originalUrl, found);
+    found.updateBindings(this.context);
+    return found;
   }
 }
 

@@ -1,6 +1,6 @@
 import sinon, { SinonSpy } from 'sinon';
 export { sinon, SinonSpy };
-export type StubbedInstanceWithSinonAccessor<T> = T & {
+export declare type StubbedInstanceWithSinonAccessor<T> = T & {
     stubs: sinon.SinonStubbedInstance<T>;
 };
 /**
@@ -22,4 +22,4 @@ export type StubbedInstanceWithSinonAccessor<T> = T & {
  * @returns A stubbed version of the constructor, with an extra property `stubs`
  * providing access to stub API for individual methods.
  */
-export declare function createStubInstance<TType extends object>(constructor: sinon.StubbableType<TType>): StubbedInstanceWithSinonAccessor<TType>;
+export declare function createStubInstance<TType>(constructor: sinon.StubbableType<TType>): StubbedInstanceWithSinonAccessor<TType>;

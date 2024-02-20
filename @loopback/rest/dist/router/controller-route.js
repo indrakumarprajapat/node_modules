@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,7 +13,7 @@ const http_errors_1 = tslib_1.__importDefault(require("http-errors"));
 const util_1 = require("util");
 const keys_1 = require("../keys");
 const base_route_1 = require("./base-route");
-const debug = (0, debug_1.default)('loopback:rest:controller-route');
+const debug = debug_1.default('loopback:rest:controller-route');
 /**
  * A route backed by a controller
  */
@@ -43,8 +43,7 @@ class ControllerRoute extends base_route_1.BaseRoute {
             'x-operation-name': methodName,
             tags: [controllerName],
         }, spec));
-        this._controllerFactory =
-            controllerFactory !== null && controllerFactory !== void 0 ? controllerFactory : createControllerFactoryForClass(controllerCtor);
+        this._controllerFactory = controllerFactory !== null && controllerFactory !== void 0 ? controllerFactory : createControllerFactoryForClass(controllerCtor);
         this._controllerCtor = controllerCtor;
         this._controllerName = controllerName || controllerCtor.name;
         this._methodName = methodName;
@@ -82,7 +81,7 @@ class ControllerRoute extends base_route_1.BaseRoute {
             throw new http_errors_1.default.NotFound(`Controller method not found: ${this.describe()}`);
         }
         // Invoke the method with dependency injection
-        return (0, core_1.invokeMethod)(controller, this._methodName, requestContext, args, {
+        return core_1.invokeMethod(controller, this._methodName, requestContext, args, {
             source: new base_route_1.RouteSource(this),
         });
     }
@@ -108,7 +107,7 @@ function createControllerFactoryForClass(controllerCtor) {
             optional: true,
         });
         if (inst === undefined) {
-            inst = await (0, core_1.instantiateClass)(controllerCtor, ctx);
+            inst = await core_1.instantiateClass(controllerCtor, ctx);
         }
         return inst;
     };
@@ -131,11 +130,11 @@ exports.createControllerFactoryForInstance = createControllerFactoryForInstance;
 function createRoutesForController(spec, controllerCtor, controllerFactory) {
     var _a;
     const routes = [];
-    (0, assert_1.default)(typeof spec === 'object' && !!spec, 'API specification must be a non-null object');
+    assert_1.default(typeof spec === 'object' && !!spec, 'API specification must be a non-null object');
     if (!spec.paths || !Object.keys(spec.paths).length) {
         return routes;
     }
-    debug('Creating route for controller with API %s', (0, util_1.inspect)(spec, { depth: null }));
+    debug('Creating route for controller with API %s', util_1.inspect(spec, { depth: null }));
     const basePath = (_a = spec.basePath) !== null && _a !== void 0 ? _a : '/';
     for (const p in spec.paths) {
         for (const verb in spec.paths[p]) {

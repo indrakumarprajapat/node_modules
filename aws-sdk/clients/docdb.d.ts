@@ -760,10 +760,6 @@ declare namespace DocDB {
      */
     DBClusterIdentifier: String;
     /**
-     * A value that indicates whether to copy tags from the DB instance to snapshots of the DB instance. By default, tags are not copied.
-     */
-    CopyTagsToSnapshot?: BooleanOptional;
-    /**
      * A value that specifies the order in which an Amazon DocumentDB replica is promoted to the primary instance after a failure of the existing primary instance. Default: 1 Valid values: 0-15
      */
     PromotionTier?: IntegerOptional;
@@ -979,10 +975,6 @@ declare namespace DocDB {
      * Provides a list of the Identity and Access Management (IAM) roles that are associated with the cluster. (IAM) roles that are associated with a cluster grant permission for the cluster to access other Amazon Web Services services on your behalf.
      */
     AssociatedRoles?: DBClusterRoles;
-    /**
-     * Identifies the clone group to which the DB cluster is associated.
-     */
-    CloneGroupId?: String;
     /**
      * Specifies the time when the cluster was created, in Universal Coordinated Time (UTC).
      */
@@ -1322,10 +1314,6 @@ declare namespace DocDB {
      * The identifier of the CA certificate for this DB instance.
      */
     CACertificateIdentifier?: String;
-    /**
-     * A value that indicates whether to copy tags from the DB instance to snapshots of the DB instance. By default, tags are not copied.
-     */
-    CopyTagsToSnapshot?: BooleanOptional;
     /**
      * A value that specifies the order in which an Amazon DocumentDB replica is promoted to the primary instance after a failure of the existing primary instance.
      */
@@ -1988,7 +1976,7 @@ declare namespace DocDB {
      */
     GlobalClusterIdentifier?: GlobalClusterIdentifier;
     /**
-     * The Amazon Web Services Region-unique, immutable identifier for the global database cluster. This identifier is found in CloudTrail log entries whenever the KMS customer master key (CMK) for the cluster is accessed. 
+     * The Amazon Web Services Region-unique, immutable identifier for the global database cluster. This identifier is found in AWS CloudTrail log entries whenever the AWS KMS customer master key (CMK) for the cluster is accessed. 
      */
     GlobalClusterResourceId?: String;
     /**
@@ -2182,10 +2170,6 @@ declare namespace DocDB {
      * Indicates the certificate that needs to be associated with the instance.
      */
     CACertificateIdentifier?: String;
-    /**
-     * A value that indicates whether to copy all tags from the DB instance to snapshots of the DB instance. By default, tags are not copied.
-     */
-    CopyTagsToSnapshot?: BooleanOptional;
     /**
      * A value that specifies the order in which an Amazon DocumentDB replica is promoted to the primary instance after a failure of the existing primary instance. Default: 1 Valid values: 0-15
      */
@@ -2571,10 +2555,6 @@ declare namespace DocDB {
      * Specifies whether this cluster can be deleted. If DeletionProtection is enabled, the cluster cannot be deleted unless it is modified and DeletionProtection is disabled. DeletionProtection protects clusters from being accidentally deleted.
      */
     DeletionProtection?: BooleanOptional;
-    /**
-     * The name of the DB cluster parameter group to associate with this DB cluster.  Type: String.       Required: No. If this argument is omitted, the default DB cluster parameter group is used. If supplied, must match the name of an existing default DB cluster parameter group. The string must consist of from 1 to 255 letters, numbers or hyphens. Its first character must be a letter, and it cannot end with a hyphen or contain two consecutive hyphens.
-     */
-    DBClusterParameterGroupName?: String;
   }
   export interface RestoreDBClusterFromSnapshotResult {
     DBCluster?: DBCluster;
@@ -2584,10 +2564,6 @@ declare namespace DocDB {
      * The name of the new cluster to be created. Constraints:   Must contain from 1 to 63 letters, numbers, or hyphens.   The first character must be a letter.   Cannot end with a hyphen or contain two consecutive hyphens.  
      */
     DBClusterIdentifier: String;
-    /**
-     * The type of restore to be performed. You can specify one of the following values:    full-copy - The new DB cluster is restored as a full copy of the source DB cluster.    copy-on-write - The new DB cluster is restored as a clone of the source DB cluster.   Constraints: You can't specify copy-on-write if the engine version of the source DB cluster is earlier than 1.11. If you don't specify a RestoreType value, then the new DB cluster is restored as a full copy of the source DB cluster.
-     */
-    RestoreType?: String;
     /**
      * The identifier of the source cluster from which to restore. Constraints:   Must match the identifier of an existing DBCluster.  
      */

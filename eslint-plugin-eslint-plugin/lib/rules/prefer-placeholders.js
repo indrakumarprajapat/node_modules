@@ -12,7 +12,6 @@ const { findVariable } = require('eslint-utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -20,17 +19,15 @@ module.exports = {
       description: 'require using placeholders for dynamic report messages',
       category: 'Rules',
       recommended: false,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/prefer-placeholders.md',
     },
     fixable: null,
     schema: [],
     messages: {
-      usePlaceholders:
-        'Use report message placeholders instead of string concatenation.',
+      usePlaceholders: 'Use report message placeholders instead of string concatenation.',
     },
   },
 
-  create(context) {
+  create (context) {
     let contextIdentifiers;
 
     const sourceCode = context.getSourceCode();
@@ -41,59 +38,53 @@ module.exports = {
     // ----------------------------------------------------------------------
 
     return {
-      Program(ast) {
-        contextIdentifiers = utils.getContextIdentifiers(scopeManager, ast);
+      Program (node) {
+        contextIdentifiers = utils.getContextIdentifiers(context, node);
       },
-      CallExpression(node) {
+      CallExpression (node) {
         if (
           node.callee.type === 'MemberExpression' &&
           contextIdentifiers.has(node.callee.object) &&
-          node.callee.property.type === 'Identifier' &&
-          node.callee.property.name === 'report'
+          node.callee.property.type === 'Identifier' && node.callee.property.name === 'report'
         ) {
           const reportInfo = utils.getReportInfo(node.arguments, context);
 
-          if (!reportInfo) {
+          if (!reportInfo || !reportInfo.message) {
             return;
           }
 
-          const reportMessagesAndDataArray = utils
-            .collectReportViolationAndSuggestionData(reportInfo)
-            .filter((obj) => obj.message);
-          for (let { message: messageNode } of reportMessagesAndDataArray) {
-            if (messageNode.type === 'Identifier') {
-              // See if we can find the variable declaration.
+          let messageNode = reportInfo.message;
 
-              const variable = findVariable(
-                scopeManager.acquire(messageNode) || scopeManager.globalScope,
-                messageNode
-              );
+          if (messageNode.type === 'Identifier') {
+            // See if we can find the variable declaration.
 
-              if (
-                !variable ||
-                !variable.defs ||
-                !variable.defs[0] ||
-                !variable.defs[0].node ||
-                variable.defs[0].node.type !== 'VariableDeclarator' ||
-                !variable.defs[0].node.init
-              ) {
-                return;
-              }
-
-              messageNode = variable.defs[0].node.init;
-            }
+            const variable = findVariable(
+              scopeManager.acquire(messageNode) || scopeManager.globalScope,
+              messageNode
+            );
 
             if (
-              (messageNode.type === 'TemplateLiteral' &&
-                messageNode.expressions.length > 0) ||
-              (messageNode.type === 'BinaryExpression' &&
-                messageNode.operator === '+')
+              !variable ||
+              !variable.defs ||
+              !variable.defs[0] ||
+              !variable.defs[0].node ||
+              variable.defs[0].node.type !== 'VariableDeclarator' ||
+              !variable.defs[0].node.init
             ) {
-              context.report({
-                node: messageNode,
-                messageId: 'usePlaceholders',
-              });
+              return;
             }
+
+            messageNode = variable.defs[0].node.init;
+          }
+
+          if (
+            (messageNode.type === 'TemplateLiteral' && messageNode.expressions.length > 0) ||
+            (messageNode.type === 'BinaryExpression' && messageNode.operator === '+')
+          ) {
+            context.report({
+              node: messageNode,
+              messageId: 'usePlaceholders',
+            });
           }
         }
       },

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest-explorer
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -15,7 +15,7 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-tslib_1.__exportStar(require("./rest-explorer.component"), exports);
-tslib_1.__exportStar(require("./rest-explorer.keys"), exports);
-tslib_1.__exportStar(require("./rest-explorer.types"), exports);
+(0, tslib_1.__exportStar)(require("./rest-explorer.component"), exports);
+(0, tslib_1.__exportStar)(require("./rest-explorer.keys"), exports);
+(0, tslib_1.__exportStar)(require("./rest-explorer.types"), exports);
 //# sourceMappingURL=index.js.map

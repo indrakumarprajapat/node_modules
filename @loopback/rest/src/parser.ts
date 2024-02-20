@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -71,7 +71,7 @@ async function buildOperationArguments(
       throw new Error('$ref requestBody is not supported yet.');
     }
     const i = operationSpec.requestBody[REQUEST_BODY_INDEX];
-    requestBodyIndex = i != null ? i : 0;
+    requestBodyIndex = i ? i : 0;
   }
 
   const paramArgs: OperationArgs = [];
@@ -79,12 +79,12 @@ async function buildOperationArguments(
   for (const paramSpec of operationSpec.parameters ?? []) {
     if (isReferenceObject(paramSpec)) {
       // TODO(bajtos) implement $ref parameters
-      // See https://github.com/loopbackio/loopback-next/issues/435
+      // See https://github.com/strongloop/loopback-next/issues/435
       throw new Error('$ref parameters are not supported yet.');
     }
     const spec = paramSpec as ParameterObject;
     const rawValue = getParamFromRequest(spec, request, pathParams);
-    const coercedValue = await coerceParameter(rawValue, spec, options);
+    const coercedValue = await coerceParameter(rawValue, spec);
     paramArgs.push(coercedValue);
   }
 
@@ -96,9 +96,7 @@ async function buildOperationArguments(
     options,
   );
 
-  if (requestBodyIndex >= 0) {
-    paramArgs.splice(requestBodyIndex, 0, body.value);
-  }
+  if (requestBodyIndex > -1) paramArgs.splice(requestBodyIndex, 0, body.value);
   return paramArgs;
 }
 
@@ -116,7 +114,7 @@ function getParamFromRequest(
       // @jannyhou TBD: check edge cases
       return request.headers[spec.name.toLowerCase()];
     // TODO(jannyhou) to support `cookie`,
-    // see issue https://github.com/loopbackio/loopback-next/issues/997
+    // see issue https://github.com/strongloop/loopback-next/issues/997
     default:
       throw RestHttpErrors.invalidParamLocation(spec.in);
   }

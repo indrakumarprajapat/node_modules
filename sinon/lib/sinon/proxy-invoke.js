@@ -1,20 +1,20 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const proxyCallUtil = require("./proxy-call-util");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var proxyCallUtil = require("./proxy-call-util");
 
-const push = arrayProto.push;
-const forEach = arrayProto.forEach;
-const concat = arrayProto.concat;
-const ErrorConstructor = Error.prototype.constructor;
-const bind = Function.prototype.bind;
+var push = arrayProto.push;
+var forEach = arrayProto.forEach;
+var concat = arrayProto.concat;
+var ErrorConstructor = Error.prototype.constructor;
+var bind = Function.prototype.bind;
 
-let callId = 0;
+var callId = 0;
 
 module.exports = function invoke(func, thisValue, args) {
-    const matchings = this.matchingFakes(args);
-    const currentCallId = callId++;
-    let exception, returnValue;
+    var matchings = this.matchingFakes(args);
+    var currentCallId = callId++;
+    var exception, returnValue;
 
     proxyCallUtil.incrementCallCount(this);
     push(this.thisValues, thisValue);
@@ -34,7 +34,7 @@ module.exports = function invoke(func, thisValue, args) {
     try {
         this.invoking = true;
 
-        const thisCall = this.getCall(this.callCount - 1);
+        var thisCall = this.getCall(this.callCount - 1);
 
         if (thisCall.calledWithNew()) {
             // Call through with `new`
@@ -62,7 +62,7 @@ module.exports = function invoke(func, thisValue, args) {
         push(matching.returnValues, returnValue);
     });
 
-    const err = new ErrorConstructor();
+    var err = new ErrorConstructor();
     // 1. Please do not get stack at this point. It may be so very slow, and not actually used
     // 2. PhantomJS does not serialize the stack trace until the error has been thrown:
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack

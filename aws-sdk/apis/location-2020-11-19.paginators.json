@@ -21,13 +21,6 @@
     "ListGeofences": {
       "input_token": "NextToken",
       "output_token": "NextToken",
-      "limit_key": "MaxResults",
-      "result_key": "Entries"
-    },
-    "ListKeys": {
-      "input_token": "NextToken",
-      "output_token": "NextToken",
-      "limit_key": "MaxResults",
       "result_key": "Entries"
     },
     "ListMaps": {

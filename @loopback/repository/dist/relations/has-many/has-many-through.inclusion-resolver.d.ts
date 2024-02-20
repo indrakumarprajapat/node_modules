@@ -13,6 +13,4 @@ import { Getter, HasManyDefinition, InclusionResolver } from '../relation.types'
  * @param getTargetRepo - target repository getter i.e where target instances
  * are
  */
-export declare function createHasManyThroughInclusionResolver<Through extends Entity, ThroughID, ThroughRelations extends object, Target extends Entity, TargetID, TargetRelations extends object>(meta: HasManyDefinition, getThroughRepo: Getter<EntityCrudRepository<Through, ThroughID, ThroughRelations>>, getTargetRepoDict: {
-    [repoType: string]: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>;
-}): InclusionResolver<Entity, Target>;
+export declare function createHasManyThroughInclusionResolver<Through extends Entity, ThroughID, ThroughRelations extends object, Target extends Entity, TargetID, TargetRelations extends object>(meta: HasManyDefinition, getThroughRepo: Getter<EntityCrudRepository<Through, ThroughID, ThroughRelations>>, getTargetRepo: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>): InclusionResolver<Entity, Target>;

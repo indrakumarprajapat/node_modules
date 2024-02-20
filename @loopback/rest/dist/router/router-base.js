@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -23,7 +23,7 @@ class BaseRouter {
         return this.getKey(route.verb, route.path);
     }
     add(route) {
-        if (!(0, openapi_path_1.getPathVariables)(route.path)) {
+        if (!openapi_path_1.getPathVariables(route.path)) {
             const key = this.getKeyForRoute(route);
             this.routesWithoutPathVars[key] = route;
         }
@@ -58,7 +58,7 @@ class BaseRouter {
         const key = this.getKey(verb, path);
         const route = this.routesWithoutPathVars[key];
         if (route)
-            return (0, route_entry_1.createResolvedRoute)(route, {});
+            return route_entry_1.createResolvedRoute(route, {});
         else
             return this.findRouteWithPathVars(verb, path);
     }

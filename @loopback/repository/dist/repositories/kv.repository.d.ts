@@ -1,10 +1,10 @@
-import { DataObject, Options } from '../common-types';
-import { Model } from '../model';
 import { Repository } from './repository';
+import { Options, DataObject } from '../common-types';
+import { Model } from '../model';
 /**
  * Filter for keys
  */
-export type KeyValueFilter = {
+export declare type KeyValueFilter = {
     /**
      * Glob string to use to filter returned keys (i.e. `userid.*`). All
      * connectors are required to support `*` and `?`. They may also support

@@ -8,10 +8,7 @@ import { Getter, HasOneDefinition, InclusionResolver } from '../relation.types';
  *
  * Notice: scope field for inclusion is not supported yet.
  *
- * @param meta - resolved HasOneMetadata
- * @param getTargetRepoDict - dictionary of target model type - target repository
- * i.e where related instances for different types are
+ * @param meta
+ * @param getTargetRepo
  */
-export declare function createHasOneInclusionResolver<Target extends Entity, TargetID, TargetRelations extends object>(meta: HasOneDefinition, getTargetRepoDict: {
-    [repoType: string]: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>;
-}): InclusionResolver<Entity, Target>;
+export declare function createHasOneInclusionResolver<Target extends Entity, TargetID, TargetRelations extends object>(meta: HasOneDefinition, getTargetRepo: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>): InclusionResolver<Entity, Target>;

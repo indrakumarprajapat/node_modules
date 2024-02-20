@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { Request, RequestBodyParserOptions } from '../types';
 import { BodyParser, RequestBody } from './types';
 /**

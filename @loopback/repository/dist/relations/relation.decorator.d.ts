@@ -31,3 +31,9 @@ export declare function embedsMany(definition?: Object): PropertyDecorator;
  * @returns A property decorator
  */
 export declare function referencesOne(definition?: Object): PropertyDecorator;
+/**
+ * Decorator for referencesMany
+ * @param definition
+ * @returns A property decorator
+ */
+export declare function referencesMany(definition?: Object): PropertyDecorator;

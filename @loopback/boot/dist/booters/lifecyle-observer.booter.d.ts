@@ -1,7 +1,8 @@
-import { Application, Constructor, LifeCycleObserver } from '@loopback/core';
+import { Constructor } from '@loopback/core';
+import { Application, LifeCycleObserver } from '@loopback/core';
 import { ArtifactOptions } from '../types';
 import { BaseArtifactBooter } from './base-artifact.booter';
-type LifeCycleObserverClass = Constructor<LifeCycleObserver>;
+declare type LifeCycleObserverClass = Constructor<LifeCycleObserver>;
 /**
  * A class that extends BaseArtifactBooter to boot the 'LifeCycleObserver' artifact type.
  *

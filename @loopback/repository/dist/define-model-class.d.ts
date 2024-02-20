@@ -49,7 +49,7 @@ export declare function defineModelClass<BaseCtor extends typeof Model, Props ex
  * - all prototype fields from `BaseCtor` prototype are inherited and available
  *   as prototype fields on the dynamic class
  */
-export type DynamicModelCtor<BaseCtor extends typeof Model, Props extends object> = {
+export declare type DynamicModelCtor<BaseCtor extends typeof Model, Props extends object> = {
     /** Model constructor accepting partial model data. */
     new (data?: DataObject<PrototypeOf<BaseCtor> & Props>): PrototypeOf<BaseCtor> & Props;
 } & BaseCtor;

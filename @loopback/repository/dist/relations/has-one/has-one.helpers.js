@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolveHasOneMetadata = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = tslib_1.__importDefault(require("debug"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
 const lodash_1 = require("lodash");
 const errors_1 = require("../../errors");
 const type_resolver_1 = require("../../type-resolver");
@@ -32,7 +32,7 @@ function resolveHasOneMetadata(relationMeta) {
     const targetModel = relationMeta.target();
     const targetModelProperties = (_a = targetModel.definition) === null || _a === void 0 ? void 0 : _a.properties;
     const sourceModel = relationMeta.source;
-    if (!(sourceModel === null || sourceModel === void 0 ? void 0 : sourceModel.modelName)) {
+    if (!sourceModel || !sourceModel.modelName) {
         const reason = 'source model must be defined';
         throw new errors_1.InvalidRelationError(reason, relationMeta);
     }
@@ -45,46 +45,20 @@ function resolveHasOneMetadata(relationMeta) {
     else {
         keyFrom = sourceModel.getIdProperties()[0];
     }
-    let keyTo;
     // Make sure that if it already keys to the foreign key property,
     // the key exists in the target model
     if (relationMeta.keyTo && targetModelProperties[relationMeta.keyTo]) {
         // The explicit cast is needed because of a limitation of type inference
-        keyTo = relationMeta.keyTo;
+        return Object.assign(relationMeta, { keyFrom });
     }
-    else {
-        debug('Resolved model %s from given metadata: %o', targetModel.modelName, targetModel);
-        keyTo = (0, lodash_1.camelCase)(sourceModel.modelName + '_id');
-        const hasDefaultFkProperty = targetModelProperties[keyTo];
-        if (!hasDefaultFkProperty) {
-            const reason = `target model ${targetModel.name} is missing definition of foreign key ${keyTo}`;
-            throw new errors_1.InvalidRelationError(reason, relationMeta);
-        }
+    debug('Resolved model %s from given metadata: %o', targetModel.modelName, targetModel);
+    const defaultFkName = (0, lodash_1.camelCase)(sourceModel.modelName + '_id');
+    const hasDefaultFkProperty = targetModelProperties[defaultFkName];
+    if (!hasDefaultFkProperty) {
+        const reason = `target model ${targetModel.name} is missing definition of foreign key ${defaultFkName}`;
+        throw new errors_1.InvalidRelationError(reason, relationMeta);
     }
-    let polymorphic;
-    if (relationMeta.polymorphic === undefined ||
-        relationMeta.polymorphic === false ||
-        !relationMeta.polymorphic) {
-        const polymorphicFalse = false;
-        polymorphic = polymorphicFalse;
-    }
-    else {
-        if (relationMeta.polymorphic === true) {
-            const polymorphicObject = {
-                discriminator: (0, lodash_1.camelCase)(relationMeta.target().name + '_type'),
-            };
-            polymorphic = polymorphicObject;
-        }
-        else {
-            const polymorphicObject = relationMeta.polymorphic;
-            polymorphic = polymorphicObject;
-        }
-    }
-    return Object.assign(relationMeta, {
-        keyFrom: keyFrom,
-        keyTo: keyTo,
-        polymorphic: polymorphic,
-    });
+    return Object.assign(relationMeta, { keyFrom, keyTo: defaultFkName });
 }
 exports.resolveHasOneMetadata = resolveHasOneMetadata;
 //# sourceMappingURL=has-one.helpers.js.map

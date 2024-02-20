@@ -3,7 +3,7 @@ import { ModelDefinition, ModelDefinitionSyntax, PropertyDefinition, PropertyTyp
 export declare const MODEL_KEY: MetadataAccessor<Partial<ModelDefinitionSyntax>, ClassDecorator>;
 export declare const MODEL_PROPERTIES_KEY: MetadataAccessor<PropertyDefinition, PropertyDecorator>;
 export declare const MODEL_WITH_PROPERTIES_KEY: MetadataAccessor<ModelDefinition, ClassDecorator>;
-export type PropertyMap = MetadataMap<Partial<PropertyDefinition>>;
+export declare type PropertyMap = MetadataMap<Partial<PropertyDefinition>>;
 /**
  * Decorator for model definitions
  * @param definition

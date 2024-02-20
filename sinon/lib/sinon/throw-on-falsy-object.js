@@ -1,9 +1,9 @@
 "use strict";
-const valueToString = require("@sinonjs/commons").valueToString;
+var valueToString = require("@sinonjs/commons").valueToString;
 
 function throwOnFalsyObject(object, property) {
     if (property && !object) {
-        const type = object === null ? "null" : "undefined";
+        var type = object === null ? "null" : "undefined";
         throw new Error(
             `Trying to stub property '${valueToString(property)}' of ${type}`
         );

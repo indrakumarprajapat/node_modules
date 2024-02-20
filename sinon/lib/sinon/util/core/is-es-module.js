@@ -8,6 +8,7 @@
  * on weird error messages.
  *
  * @param {object} object The object to examine
+ *
  * @returns {boolean} true when the object is a module
  */
 module.exports = function (object) {

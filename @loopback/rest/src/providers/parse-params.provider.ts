@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -21,24 +21,25 @@ const debug = debugFactory('loopback:rest:parse-param');
  *
  * @returns The handler function that will parse request args.
  */
-export class ParseParamsProvider {
-  static value(
+export class ParseParamsProvider implements Provider<ParseParams> {
+  constructor(
     @inject(RestBindings.REQUEST_BODY_PARSER)
-    requestBodyParser: RequestBodyParser,
+    private requestBodyParser: RequestBodyParser,
     @inject(
       RestBindings.REQUEST_BODY_PARSER_OPTIONS.deepProperty('validation'),
       {optional: true},
     )
-    validationOptions: ValidationOptions = DEFAULT_AJV_VALIDATION_OPTIONS,
+    private validationOptions: ValidationOptions = DEFAULT_AJV_VALIDATION_OPTIONS,
     @inject(RestBindings.AJV_FACTORY, {optional: true})
-    ajvFactory: AjvFactory,
-  ): ParseParams {
-    const parseParams: ParseParams = (request: Request, route: ResolvedRoute) =>
-      parseOperationArgs(request, route, requestBodyParser, {
-        ajvFactory: ajvFactory,
-        ...validationOptions,
+    private ajvFactory?: AjvFactory,
+  ) {}
+
+  value(): ParseParams {
+    return (request: Request, route: ResolvedRoute) =>
+      parseOperationArgs(request, route, this.requestBodyParser, {
+        ajvFactory: this.ajvFactory,
+        ...this.validationOptions,
       });
-    return parseParams;
   }
 }
 

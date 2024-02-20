@@ -3,7 +3,7 @@ import { Model } from '@loopback/repository';
  * Configuration settings for individual model files. This type describes
  * content of `public-models/{model-name}.config.json` files.
  */
-export type ModelApiConfig = {
+export declare type ModelApiConfig = {
     /**
      * The model class that the repository and controller are to be built from.
      * e.g. Product (a Model class)

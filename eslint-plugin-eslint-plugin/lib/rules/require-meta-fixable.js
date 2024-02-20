@@ -12,7 +12,6 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'problem',
@@ -20,7 +19,6 @@ module.exports = {
       description: 'require rules to implement a `meta.fixable` property',
       category: 'Rules',
       recommended: true,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/require-meta-fixable.md',
     },
     schema: [
       {
@@ -36,100 +34,75 @@ module.exports = {
     ],
     messages: {
       invalid: '`meta.fixable` must be either `code`, `whitespace`, or `null`.',
-      missing:
-        '`meta.fixable` must be either `code` or `whitespace` for fixable rules.',
-      noFixerButFixableValue:
-        '`meta.fixable` is enabled but no fixer detected.',
+      missing: '`meta.fixable` must be either `code` or `whitespace` for fixable rules.',
+      noFixerButFixableValue: '`meta.fixable` is enabled but no fixer detected.',
     },
   },
 
-  create(context) {
-    const catchNoFixerButFixableProperty =
-      context.options[0] && context.options[0].catchNoFixerButFixableProperty;
+  create (context) {
+    const catchNoFixerButFixableProperty = context.options[0] && context.options[0].catchNoFixerButFixableProperty;
 
     const sourceCode = context.getSourceCode();
-    const { scopeManager } = sourceCode;
     const ruleInfo = utils.getRuleInfo(sourceCode);
     let contextIdentifiers;
     let usesFixFunctions;
 
-    if (!ruleInfo) {
-      return {};
-    }
+    // ----------------------------------------------------------------------
+    // Helpers
+    // ----------------------------------------------------------------------
+
+    // ----------------------------------------------------------------------
+    // Public
+    // ----------------------------------------------------------------------
 
     return {
-      Program(ast) {
-        contextIdentifiers = utils.getContextIdentifiers(scopeManager, ast);
+      Program (node) {
+        contextIdentifiers = utils.getContextIdentifiers(context, node);
       },
-      CallExpression(node) {
+      CallExpression (node) {
         if (
           node.callee.type === 'MemberExpression' &&
           contextIdentifiers.has(node.callee.object) &&
           node.callee.property.type === 'Identifier' &&
           node.callee.property.name === 'report' &&
-          (node.arguments.length > 4 ||
-            (node.arguments.length === 1 &&
-              utils
-                .evaluateObjectProperties(node.arguments[0], scopeManager)
-                .some((prop) => utils.getKeyName(prop) === 'fix')))
+          (node.arguments.length > 4 || (
+            node.arguments.length === 1 &&
+            node.arguments[0].type === 'ObjectExpression' &&
+            node.arguments[0].properties.some(prop => utils.getKeyName(prop) === 'fix')
+          ))
         ) {
           usesFixFunctions = true;
         }
       },
-      'Program:exit'() {
-        const metaFixableProp =
-          ruleInfo &&
-          utils
-            .evaluateObjectProperties(ruleInfo.meta, scopeManager)
-            .find((prop) => utils.getKeyName(prop) === 'fixable');
+      'Program:exit' () {
+        const metaFixableProp = ruleInfo &&
+          ruleInfo.meta &&
+          ruleInfo.meta.type === 'ObjectExpression' &&
+          ruleInfo.meta.properties.find(prop => utils.getKeyName(prop) === 'fixable');
 
         if (metaFixableProp) {
-          const staticValue = getStaticValue(
-            metaFixableProp.value,
-            context.getScope()
-          );
+          const staticValue = getStaticValue(metaFixableProp.value, context.getScope());
           if (!staticValue) {
             // Ignore non-static values since we can't determine what they look like.
             return;
           }
 
-          if (
-            !['code', 'whitespace', null, undefined].includes(staticValue.value)
-          ) {
+          if (!['code', 'whitespace', null, undefined].includes(staticValue.value)) {
             // `fixable` property has an invalid value.
-            context.report({
-              node: metaFixableProp.value,
-              messageId: 'invalid',
-            });
+            context.report({ node: metaFixableProp.value, messageId: 'invalid' });
             return;
           }
 
-          if (
-            usesFixFunctions &&
-            !['code', 'whitespace'].includes(staticValue.value)
-          ) {
+          if (usesFixFunctions && !['code', 'whitespace'].includes(staticValue.value)) {
             // Rule is fixable but `fixable` property does not have a fixable value.
-            context.report({
-              node: metaFixableProp.value,
-              messageId: 'missing',
-            });
-          } else if (
-            catchNoFixerButFixableProperty &&
-            !usesFixFunctions &&
-            ['code', 'whitespace'].includes(staticValue.value)
-          ) {
+            context.report({ node: metaFixableProp.value, messageId: 'missing' });
+          } else if (catchNoFixerButFixableProperty && !usesFixFunctions && ['code', 'whitespace'].includes(staticValue.value)) {
             // Rule is NOT fixable but `fixable` property has a fixable value.
-            context.report({
-              node: metaFixableProp.value,
-              messageId: 'noFixerButFixableValue',
-            });
+            context.report({ node: metaFixableProp.value, messageId: 'noFixerButFixableValue' });
           }
         } else if (!metaFixableProp && usesFixFunctions) {
           // Rule is fixable but is missing the `fixable` property.
-          context.report({
-            node: ruleInfo.meta || ruleInfo.create,
-            messageId: 'missing',
-          });
+          context.report({ node: ruleInfo.meta || ruleInfo.create, messageId: 'missing' });
         }
       },
     };

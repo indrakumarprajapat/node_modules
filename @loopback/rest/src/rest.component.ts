@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -49,13 +49,18 @@ import {AjvFactoryProvider} from './validation/ajv-factory.provider';
 
 export class RestComponent implements Component {
   providers: ProviderMap = {
+    [RestBindings.SequenceActions.LOG_ERROR.key]: LogErrorProvider,
+    [RestBindings.SequenceActions.FIND_ROUTE.key]: FindRouteProvider,
+    [RestBindings.SequenceActions.INVOKE_METHOD.key]: InvokeMethodProvider,
+    [RestBindings.SequenceActions.REJECT.key]: RejectProvider,
+    [RestBindings.SequenceActions.PARSE_PARAMS.key]: ParseParamsProvider,
+    [RestBindings.SequenceActions.SEND.key]: SendProvider,
     [RestBindings.AJV_FACTORY.key]: AjvFactoryProvider,
   };
   /**
    * Add built-in body parsers
    */
   bindings: Binding[] = [
-    ...createActionBindings(),
     // FIXME(rfeng): We now register request body parsers in TRANSIENT scope
     // so that they can be bound at application or server level
     Binding.bind(RestBindings.REQUEST_BODY_PARSER).toClass(RequestBodyParser),
@@ -130,22 +135,6 @@ function getRestMiddlewareBindings() {
     ParseParamsMiddlewareProvider,
     InvokeMethodMiddlewareProvider,
   ].map(cls => createBindingFromClass(cls));
-}
-
-function createActionBindings() {
-  const bindings: Binding[] = [];
-  const providers = {
-    [RestBindings.SequenceActions.LOG_ERROR.key]: LogErrorProvider,
-    [RestBindings.SequenceActions.FIND_ROUTE.key]: FindRouteProvider,
-    [RestBindings.SequenceActions.INVOKE_METHOD.key]: InvokeMethodProvider,
-    [RestBindings.SequenceActions.REJECT.key]: RejectProvider,
-    [RestBindings.SequenceActions.PARSE_PARAMS.key]: ParseParamsProvider,
-    [RestBindings.SequenceActions.SEND.key]: SendProvider,
-  };
-  for (const k in providers) {
-    bindings.push(createBindingFromClass(providers[k], {key: k}));
-  }
-  return bindings;
 }
 
 // TODO(kevin): Extend this interface def to include multiple servers?

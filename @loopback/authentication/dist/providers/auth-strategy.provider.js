@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2019. All Rights Reserved.
+// Copyright IBM Corp. 2019. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -51,12 +51,12 @@ let AuthenticationStrategyProvider = class AuthenticationStrategyProvider {
         return strategies;
     }
 };
-AuthenticationStrategyProvider = tslib_1.__decorate([
+AuthenticationStrategyProvider = (0, tslib_1.__decorate)([
     (0, core_1.extensionPoint)(keys_1.AuthenticationBindings.AUTHENTICATION_STRATEGY_EXTENSION_POINT_NAME, { scope: core_1.BindingScope.TRANSIENT }) //this needs to be transient, e.g. for request level context.
     ,
-    tslib_1.__param(0, (0, core_1.extensions)()),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.AuthenticationBindings.METADATA)),
-    tslib_1.__metadata("design:paramtypes", [Function, Array])
+    (0, tslib_1.__param)(0, (0, core_1.extensions)()),
+    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.AuthenticationBindings.METADATA)),
+    (0, tslib_1.__metadata)("design:paramtypes", [Function, Array])
 ], AuthenticationStrategyProvider);
 exports.AuthenticationStrategyProvider = AuthenticationStrategyProvider;
 //# sourceMappingURL=auth-strategy.provider.js.map

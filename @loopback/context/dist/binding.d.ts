@@ -155,55 +155,55 @@ export declare enum BindingType {
 /**
  * Binding source for `to`
  */
-export type ConstantBindingSource<T> = {
+export declare type ConstantBindingSource<T> = {
     type: BindingType.CONSTANT;
     value: T;
 };
 /**
  * Binding source for `toDynamicValue`
  */
-export type DynamicValueBindingSource<T> = {
+export declare type DynamicValueBindingSource<T> = {
     type: BindingType.DYNAMIC_VALUE;
     value: ValueFactory<T> | DynamicValueProviderClass<T>;
 };
 /**
  * Binding source for `toClass`
  */
-export type ClassBindingSource<T> = {
+export declare type ClassBindingSource<T> = {
     type: BindingType.CLASS;
     value: Constructor<T>;
 };
 /**
  * Binding source for `toProvider`
  */
-export type ProviderBindingSource<T> = {
+export declare type ProviderBindingSource<T> = {
     type: BindingType.PROVIDER;
     value: Constructor<Provider<T>>;
 };
 /**
  * Binding source for `toAlias`
  */
-export type AliasBindingSource<T> = {
+export declare type AliasBindingSource<T> = {
     type: BindingType.ALIAS;
     value: BindingAddress<T>;
 };
 /**
  * Source for the binding, including the type and value
  */
-export type BindingSource<T> = ConstantBindingSource<T> | DynamicValueBindingSource<T> | ClassBindingSource<T> | ProviderBindingSource<T> | AliasBindingSource<T>;
-export type TagMap = MapObject<any>;
+export declare type BindingSource<T> = ConstantBindingSource<T> | DynamicValueBindingSource<T> | ClassBindingSource<T> | ProviderBindingSource<T> | AliasBindingSource<T>;
+export declare type TagMap = MapObject<any>;
 /**
  * Binding tag can be a simple name or name/value pairs
  */
-export type BindingTag = TagMap | string;
+export declare type BindingTag = TagMap | string;
 /**
  * A function as the template to configure bindings
  */
-export type BindingTemplate<T = unknown> = (binding: Binding<T>) => void;
+export declare type BindingTemplate<T = unknown> = (binding: Binding<T>) => void;
 /**
  * Information for a binding event
  */
-export type BindingEvent = {
+export declare type BindingEvent = {
     /**
      * Event type
      */
@@ -220,7 +220,7 @@ export type BindingEvent = {
 /**
  * Event listeners for binding events
  */
-export type BindingEventListener = (
+export declare type BindingEventListener = (
 /**
  * Binding event
  */
@@ -228,7 +228,7 @@ event: BindingEvent) => void;
 /**
  * A factory function for `toDynamicValue`
  */
-export type ValueFactory<T = unknown> = (resolutionCtx: ResolutionContext) => ValueOrPromise<T | undefined>;
+export declare type ValueFactory<T = unknown> = (resolutionCtx: ResolutionContext) => ValueOrPromise<T | undefined>;
 /**
  * A class with a static `value` method as the factory function for
  * `toDynamicValue`.
@@ -466,7 +466,7 @@ export declare class Binding<T = BoundValue> extends EventEmitter {
      *   arguments must be annotated with `@inject` so that
      *   we can resolve them from the context.
      */
-    toClass<C extends T & object>(ctor: Constructor<C>): this;
+    toClass(ctor: Constructor<T>): this;
     /**
      * Bind to a class optionally decorated with `@injectable`. Based on the
      * introspection of the class, it calls `toClass/toProvider/toDynamicValue`

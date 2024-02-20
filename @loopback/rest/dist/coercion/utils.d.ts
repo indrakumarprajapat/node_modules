@@ -1,13 +1,13 @@
 /**
  * Options for function coerceDatetime
  */
-export type DateCoercionOptions = {
+export declare type DateCoercionOptions = {
     dateOnly?: boolean;
 };
 /**
  * Options for function coerceInteger
  */
-export type IntegerCoercionOptions = {
+export declare type IntegerCoercionOptions = {
     isLong?: boolean;
 };
 export declare function isEmpty(data: string): boolean;
@@ -40,4 +40,4 @@ export declare function matchDateFormat(date: string): boolean;
  * @param type - The type in an OpenAPI schema specification
  * @param format - The format in an OpenAPI schema specification
  */
-export declare function getOAIPrimitiveType(type?: string, format?: string): "object" | "binary" | "boolean" | "string" | "number" | "integer" | "array" | "float" | "double" | "byte" | "date" | "date-time" | "password" | "long" | undefined;
+export declare function getOAIPrimitiveType(type?: string, format?: string): "object" | "boolean" | "string" | "number" | "integer" | "array" | "float" | "double" | "byte" | "binary" | "date" | "date-time" | "password" | "long" | undefined;

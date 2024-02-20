@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2019. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/metadata
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -120,7 +120,7 @@ export class NamespacedReflect {
       for (const key of keys) {
         if (key.indexOf(prefix) === 0) {
           // Only add keys with the namespace prefix
-          metaKeys.push(key.slice(prefix.length));
+          metaKeys.push(key.substr(prefix.length));
         }
       }
     }
@@ -141,7 +141,7 @@ export class NamespacedReflect {
       for (const key of keys) {
         if (key.indexOf(prefix) === 0) {
           // Only add keys with the namespace prefix
-          metaKeys.push(key.slice(prefix.length));
+          metaKeys.push(key.substr(prefix.length));
         }
       }
     }

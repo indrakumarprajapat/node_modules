@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -17,15 +17,15 @@ const tslib_1 = require("tslib");
  * @packageDocumentation
  */
 // Re-export public Core API coming from dependencies
-tslib_1.__exportStar(require("@loopback/context"), exports);
+(0, tslib_1.__exportStar)(require("@loopback/context"), exports);
 // Export APIs
-tslib_1.__exportStar(require("./application"), exports);
-tslib_1.__exportStar(require("./component"), exports);
-tslib_1.__exportStar(require("./extension-point"), exports);
-tslib_1.__exportStar(require("./keys"), exports);
-tslib_1.__exportStar(require("./lifecycle"), exports);
-tslib_1.__exportStar(require("./lifecycle-registry"), exports);
-tslib_1.__exportStar(require("./mixin-target"), exports);
-tslib_1.__exportStar(require("./server"), exports);
-tslib_1.__exportStar(require("./service"), exports);
+(0, tslib_1.__exportStar)(require("./application"), exports);
+(0, tslib_1.__exportStar)(require("./component"), exports);
+(0, tslib_1.__exportStar)(require("./extension-point"), exports);
+(0, tslib_1.__exportStar)(require("./keys"), exports);
+(0, tslib_1.__exportStar)(require("./lifecycle"), exports);
+(0, tslib_1.__exportStar)(require("./lifecycle-registry"), exports);
+(0, tslib_1.__exportStar)(require("./mixin-target"), exports);
+(0, tslib_1.__exportStar)(require("./server"), exports);
+(0, tslib_1.__exportStar)(require("./service"), exports);
 //# sourceMappingURL=index.js.map

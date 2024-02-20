@@ -8,11 +8,11 @@ declare class StrongGlobalize {
     setLanguage: typeof noop;
     getLanguage(): string;
     c(value: any, currencySymbol: string, options: AnyObject): string;
-    formatCurrency: (value: any, currencySymbol: string, options: AnyObject<any>) => string;
-    d: (value: Date, options: AnyObject<any>) => string;
-    formatDate: (value: Date, options: AnyObject<any>) => string;
-    n: (value: number, options: AnyObject<any>) => string;
-    formatNumber: (value: number, options: AnyObject<any>) => string;
+    formatCurrency: (value: any, currencySymbol: string, options: AnyObject) => string;
+    d: (value: Date, options: AnyObject) => string;
+    formatDate: (value: Date, options: AnyObject) => string;
+    n: (value: number, options: AnyObject) => string;
+    formatNumber: (value: number, options: AnyObject) => string;
     m: (path: string, variables: any) => any;
     formatMessage: (path: string, variables: any) => any;
     t: (path: string, variables: any) => any;

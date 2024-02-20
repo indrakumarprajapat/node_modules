@@ -1,4 +1,3 @@
-/// <reference types="express" />
 import { Context } from '@loopback/core';
 import { HandlerContext, MiddlewareContext, Request, Response } from '@loopback/express';
 import { RestServerResolvedConfig } from './rest.server';

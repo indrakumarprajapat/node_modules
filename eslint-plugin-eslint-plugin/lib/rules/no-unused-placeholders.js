@@ -12,7 +12,6 @@ const { getStaticValue } = require('eslint-utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'problem',
@@ -20,104 +19,64 @@ module.exports = {
       description: 'disallow unused placeholders in rule report messages',
       category: 'Rules',
       recommended: true,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/no-unused-placeholders.md',
     },
     fixable: null,
     schema: [],
     messages: {
-      placeholderUnused:
-        'The placeholder {{{{unusedKey}}}} is unused (does not exist in the actual message).',
+      placeholderUnused: 'The placeholder {{{{unusedKey}}}} is unused.',
     },
   },
 
-  create(context) {
-    const sourceCode = context.getSourceCode();
-    const { scopeManager } = sourceCode;
-
+  create (context) {
     let contextIdentifiers;
 
-    const ruleInfo = utils.getRuleInfo(sourceCode);
-    if (!ruleInfo) {
-      return {};
-    }
-    const messagesNode = utils.getMessagesNode(ruleInfo, scopeManager);
+    // ----------------------------------------------------------------------
+    // Public
+    // ----------------------------------------------------------------------
 
     return {
-      Program(ast) {
-        contextIdentifiers = utils.getContextIdentifiers(scopeManager, ast);
+      Program (ast) {
+        contextIdentifiers = utils.getContextIdentifiers(context, ast);
       },
-      CallExpression(node) {
+      CallExpression (node) {
         if (
           node.callee.type === 'MemberExpression' &&
-          contextIdentifiers.has(node.callee.object) &&
-          node.callee.property.type === 'Identifier' &&
-          node.callee.property.name === 'report'
+            contextIdentifiers.has(node.callee.object) &&
+            node.callee.property.type === 'Identifier' && node.callee.property.name === 'report'
         ) {
           const reportInfo = utils.getReportInfo(node.arguments, context);
-          if (!reportInfo) {
+          if (!reportInfo || !reportInfo.message) {
             return;
           }
 
-          const reportMessagesAndDataArray =
-            utils.collectReportViolationAndSuggestionData(reportInfo);
+          const messageStaticValue = getStaticValue(reportInfo.message, context.getScope());
+          if (
+            (
+              (reportInfo.message.type === 'Literal' && typeof reportInfo.message.value === 'string') ||
+              (messageStaticValue && typeof messageStaticValue.value === 'string')
+            ) &&
+            reportInfo.data &&
+            reportInfo.data.type === 'ObjectExpression'
+          ) {
+            const message = reportInfo.message.value || messageStaticValue.value;
+            // https://github.com/eslint/eslint/blob/2874d75ed8decf363006db25aac2d5f8991bd969/lib/linter.js#L986
+            const PLACEHOLDER_MATCHER = /{{\s*([^{}]+?)\s*}}/g;
+            const placeholdersInMessage = new Set();
 
-          if (messagesNode) {
-            // Check for any potential instances where we can use the messageId to fill in the message for convenience.
-            reportMessagesAndDataArray.forEach((obj) => {
-              if (
-                !obj.message &&
-                obj.messageId &&
-                obj.messageId.type === 'Literal' &&
-                typeof obj.messageId.value === 'string'
-              ) {
-                const correspondingMessage = utils.getMessageIdNodeById(
-                  obj.messageId.value,
-                  ruleInfo,
-                  scopeManager,
-                  context.getScope()
-                );
-                if (correspondingMessage) {
-                  obj.message = correspondingMessage.value;
-                }
+            message.replace(PLACEHOLDER_MATCHER, (fullMatch, term) => {
+              placeholdersInMessage.add(term);
+            });
+
+            reportInfo.data.properties.forEach(prop => {
+              const key = utils.getKeyName(prop);
+              if (!placeholdersInMessage.has(key)) {
+                context.report({
+                  node: reportInfo.message,
+                  messageId: 'placeholderUnused',
+                  data: { unusedKey: key },
+                });
               }
             });
-          }
-
-          for (const { message, data } of reportMessagesAndDataArray.filter(
-            (obj) => obj.message
-          )) {
-            const messageStaticValue = getStaticValue(
-              message,
-              context.getScope()
-            );
-            if (
-              ((message.type === 'Literal' &&
-                typeof message.value === 'string') ||
-                (messageStaticValue &&
-                  typeof messageStaticValue.value === 'string')) &&
-              data &&
-              data.type === 'ObjectExpression'
-            ) {
-              const messageValue = message.value || messageStaticValue.value;
-              // https://github.com/eslint/eslint/blob/2874d75ed8decf363006db25aac2d5f8991bd969/lib/linter.js#L986
-              const PLACEHOLDER_MATCHER = /{{\s*([^{}]+?)\s*}}/g;
-              const placeholdersInMessage = new Set();
-
-              messageValue.replace(PLACEHOLDER_MATCHER, (fullMatch, term) => {
-                placeholdersInMessage.add(term);
-              });
-
-              data.properties.forEach((prop) => {
-                const key = utils.getKeyName(prop);
-                if (!placeholdersInMessage.has(key)) {
-                  context.report({
-                    node: prop,
-                    messageId: 'placeholderUnused',
-                    data: { unusedKey: key },
-                  });
-                }
-              });
-            }
           }
         }
       },

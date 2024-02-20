@@ -16,15 +16,13 @@ const { getStaticValue } = require('eslint-utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'problem',
     docs: {
       description: 'require fixer functions to return a fix',
-      category: 'Rules',
+      category: 'Possible Errors',
       recommended: true,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/fixer-return.md',
     },
     fixable: null,
     schema: [],
@@ -33,7 +31,7 @@ module.exports = {
     },
   },
 
-  create(context) {
+  create (context) {
     let funcInfo = {
       upper: null,
       codePath: null,
@@ -52,10 +50,7 @@ module.exports = {
      * @param {Location} loc - Optional location to report violation on.
      * @returns {void}
      */
-    function ensureFunctionReturnedFix(
-      node,
-      loc = (node.id || node).loc.start
-    ) {
+    function ensureFunctionReturnedFix (node, loc = (node.id || node).loc.start) {
       if (
         (node.generator && !funcInfo.hasYieldWithFixer) || // Generator function never yielded a fix
         (!node.generator && !funcInfo.hasReturnWithFixer) // Non-generator function never returned a fix
@@ -75,7 +70,7 @@ module.exports = {
      * @param {Context} context
      * @returns {boolean}
      */
-    function isFix(node) {
+    function isFix (node) {
       if (node.type === 'ArrayExpression' && node.elements.length === 0) {
         // An empty array is not a fix.
         return false;
@@ -97,56 +92,60 @@ module.exports = {
     }
 
     return {
-      Program(ast) {
-        const sourceCode = context.getSourceCode();
-        contextIdentifiers = utils.getContextIdentifiers(
-          sourceCode.scopeManager,
-          ast
-        );
+      Program (node) {
+        contextIdentifiers = utils.getContextIdentifiers(context, node);
       },
 
       // Stacks this function's information.
-      onCodePathStart(codePath, node) {
+      onCodePathStart (codePath, node) {
+        const parent = node.parent;
+
+        // Whether we are inside the fixer function we care about.
+        const shouldCheck = ['FunctionExpression', 'ArrowFunctionExpression'].includes(node.type) &&
+          parent.parent.type === 'ObjectExpression' &&
+          parent.parent.parent.type === 'CallExpression' &&
+          contextIdentifiers.has(parent.parent.parent.callee.object) &&
+          parent.parent.parent.callee.property.name === 'report' &&
+          utils.getReportInfo(parent.parent.parent.arguments).fix === node;
+
         funcInfo = {
           upper: funcInfo,
           codePath,
           hasYieldWithFixer: false,
           hasReturnWithFixer: false,
-          shouldCheck:
-            utils.isAutoFixerFunction(node, contextIdentifiers) ||
-            utils.isSuggestionFixerFunction(node, contextIdentifiers),
+          shouldCheck,
           node,
         };
       },
 
       // Pops this function's information.
-      onCodePathEnd() {
+      onCodePathEnd () {
         funcInfo = funcInfo.upper;
       },
 
       // Yield in generators
-      YieldExpression(node) {
+      YieldExpression (node) {
         if (funcInfo.shouldCheck && node.argument && isFix(node.argument)) {
           funcInfo.hasYieldWithFixer = true;
         }
       },
 
       // Checks the return statement is valid.
-      ReturnStatement(node) {
+      ReturnStatement (node) {
         if (funcInfo.shouldCheck && node.argument && isFix(node.argument)) {
           funcInfo.hasReturnWithFixer = true;
         }
       },
 
       // Ensure the current fixer function returned or yielded a fix.
-      'FunctionExpression:exit'(node) {
+      'FunctionExpression:exit' (node) {
         if (funcInfo.shouldCheck) {
           ensureFunctionReturnedFix(node);
         }
       },
 
       // Ensure the current (arrow) fixer function returned a fix.
-      'ArrowFunctionExpression:exit'(node) {
+      'ArrowFunctionExpression:exit' (node) {
         if (funcInfo.shouldCheck) {
           const loc = context.getSourceCode().getTokenBefore(node.body).loc; // Show violation on arrow (=>).
           if (node.expression) {

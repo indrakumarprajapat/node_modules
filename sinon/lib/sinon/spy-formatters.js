@@ -1,32 +1,31 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const color = require("./color");
-const match = require("@sinonjs/samsam").createMatcher;
-const timesInWords = require("./util/core/times-in-words");
-const inspect = require("util").inspect;
-const jsDiff = require("diff");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var color = require("./color");
+var match = require("@sinonjs/samsam").createMatcher;
+var timesInWords = require("./util/core/times-in-words");
+var sinonFormat = require("./util/core/format");
+var jsDiff = require("diff");
 
-const join = arrayProto.join;
-const map = arrayProto.map;
-const push = arrayProto.push;
-const slice = arrayProto.slice;
+var join = arrayProto.join;
+var map = arrayProto.map;
+var push = arrayProto.push;
+var slice = arrayProto.slice;
 
 function colorSinonMatchText(matcher, calledArg, calledArgMessage) {
-    let calledArgumentMessage = calledArgMessage;
-    let matcherMessage = matcher.message;
+    var calledArgumentMessage = calledArgMessage;
     if (!matcher.test(calledArg)) {
-        matcherMessage = color.red(matcher.message);
+        matcher.message = color.red(matcher.message);
         if (calledArgumentMessage) {
             calledArgumentMessage = color.green(calledArgumentMessage);
         }
     }
-    return `${calledArgumentMessage} ${matcherMessage}`;
+    return `${calledArgumentMessage} ${matcher.message}`;
 }
 
 function colorDiffText(diff) {
-    const objects = map(diff, function (part) {
-        let text = part.value;
+    var objects = map(diff, function (part) {
+        var text = part.value;
         if (part.added) {
             text = color.green(text);
         } else if (part.removed) {
@@ -58,45 +57,45 @@ module.exports = {
     },
 
     D: function (spyInstance, args) {
-        let message = "";
+        var message = "";
 
-        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
+        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
             // describe multiple calls
             if (l > 1) {
                 message += `\nCall ${i + 1}:`;
             }
-            const calledArgs = spyInstance.getCall(i).args;
-            const expectedArgs = slice(args);
+            var calledArgs = spyInstance.getCall(i).args;
+            var expectedArgs = slice(args);
 
             for (
-                let j = 0;
+                var j = 0;
                 j < calledArgs.length || j < expectedArgs.length;
                 ++j
             ) {
-                let calledArg = calledArgs[j];
-                let expectedArg = expectedArgs[j];
-                if (calledArg) {
-                    calledArg = quoteStringValue(calledArg);
+                if (calledArgs[j]) {
+                    calledArgs[j] = quoteStringValue(calledArgs[j]);
                 }
 
-                if (expectedArg) {
-                    expectedArg = quoteStringValue(expectedArg);
+                if (expectedArgs[j]) {
+                    expectedArgs[j] = quoteStringValue(expectedArgs[j]);
                 }
 
                 message += "\n";
 
-                const calledArgMessage =
-                    j < calledArgs.length ? inspect(calledArg) : "";
-                if (match.isMatcher(expectedArg)) {
+                var calledArgMessage =
+                    j < calledArgs.length ? sinonFormat(calledArgs[j]) : "";
+                if (match.isMatcher(expectedArgs[j])) {
                     message += colorSinonMatchText(
-                        expectedArg,
-                        calledArg,
+                        expectedArgs[j],
+                        calledArgs[j],
                         calledArgMessage
                     );
                 } else {
-                    const expectedArgMessage =
-                        j < expectedArgs.length ? inspect(expectedArg) : "";
-                    const diff = jsDiff.diffJson(
+                    var expectedArgMessage =
+                        j < expectedArgs.length
+                            ? sinonFormat(expectedArgs[j])
+                            : "";
+                    var diff = jsDiff.diffJson(
                         calledArgMessage,
                         expectedArgMessage
                     );
@@ -109,11 +108,11 @@ module.exports = {
     },
 
     C: function (spyInstance) {
-        const calls = [];
+        var calls = [];
 
-        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
+        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
             // eslint-disable-next-line @sinonjs/no-prototype-methods/no-prototype-methods
-            let stringifiedCall = `    ${spyInstance.getCall(i).toString()}`;
+            var stringifiedCall = `    ${spyInstance.getCall(i).toString()}`;
             if (/\n/.test(calls[i - 1])) {
                 stringifiedCall = `\n${stringifiedCall}`;
             }
@@ -124,10 +123,10 @@ module.exports = {
     },
 
     t: function (spyInstance) {
-        const objects = [];
+        var objects = [];
 
-        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
-            push(objects, inspect(spyInstance.thisValues[i]));
+        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
+            push(objects, sinonFormat(spyInstance.thisValues[i]));
         }
 
         return join(objects, ", ");
@@ -136,7 +135,7 @@ module.exports = {
     "*": function (spyInstance, args) {
         return join(
             map(args, function (arg) {
-                return inspect(arg);
+                return sinonFormat(arg);
             }),
             ", "
         );

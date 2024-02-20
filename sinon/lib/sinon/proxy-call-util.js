@@ -1,6 +1,6 @@
 "use strict";
 
-const push = require("@sinonjs/commons").prototypes.array.push;
+var push = require("@sinonjs/commons").prototypes.array.push;
 
 exports.incrementCallCount = function incrementCallCount(proxy) {
     proxy.called = true;
@@ -39,13 +39,13 @@ exports.delegateToCalls = function delegateToCalls(
             return false;
         }
 
-        let currentCall;
-        let matches = 0;
-        const returnValues = [];
+        var currentCall;
+        var matches = 0;
+        var returnValues = [];
 
-        for (let i = 0, l = this.callCount; i < l; i += 1) {
+        for (var i = 0, l = this.callCount; i < l; i += 1) {
             currentCall = this.getCall(i);
-            const returnValue = currentCall[actual || method].apply(
+            var returnValue = currentCall[actual || method].apply(
                 currentCall,
                 arguments
             );

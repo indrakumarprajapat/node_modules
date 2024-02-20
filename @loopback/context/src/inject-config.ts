@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2019. All Rights Reserved.
+// Copyright IBM Corp. 2019. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -175,15 +175,14 @@ function resolveAsGetterFromConfig(
 ) {
   assertTargetType(injection, Function, 'Getter function');
   const bindingKey = getTargetBindingKey(injection, session);
+  // We need to clone the session for the getter as it will be resolved later
+  const forkedSession = ResolutionSession.fork(session);
   const meta = injection.metadata;
   return async function getter() {
     // Return `undefined` if no current binding is present
     if (!bindingKey) return undefined;
     return ctx.getConfigAsValueOrPromise(bindingKey, meta.propertyPath, {
-      // https://github.com/loopbackio/loopback-next/issues/9041
-      // We should start with a new session for `getter` resolution to avoid
-      // possible circular dependencies
-      session: undefined,
+      session: forkedSession,
       optional: meta.optional,
     });
   };

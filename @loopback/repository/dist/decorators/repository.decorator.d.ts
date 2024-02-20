@@ -6,7 +6,7 @@ import { juggler } from '../repositories/legacy-juggler-bridge';
 /**
  * Type definition for decorators returned by `@repository` decorator factory
  */
-export type RepositoryDecorator = (target: Object, key?: string, descriptorOrIndex?: TypedPropertyDescriptor<any> | number) => void;
+export declare type RepositoryDecorator = (target: Object, key?: string, descriptorOrIndex?: TypedPropertyDescriptor<any> | number) => void;
 /**
  * Metadata for a repository
  */

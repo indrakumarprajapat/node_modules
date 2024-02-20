@@ -56,12 +56,12 @@ export declare namespace config {
      * @param propertyPath - Optional property path of the config object
      * @param metadata - Injection metadata
      */
-    const getter: (propertyPath?: string | ConfigInjectionMetadata, metadata?: ConfigInjectionMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const getter: (propertyPath?: string | ConfigInjectionMetadata | undefined, metadata?: ConfigInjectionMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * `@inject.view` decorator to inject a config context view to allow dynamic
      * changes in configuration
      * @param propertyPath - Optional property path of the config object
      * @param metadata - Injection metadata
      */
-    const view: (propertyPath?: string | ConfigInjectionMetadata, metadata?: ConfigInjectionMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const view: (propertyPath?: string | ConfigInjectionMetadata | undefined, metadata?: ConfigInjectionMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
 }

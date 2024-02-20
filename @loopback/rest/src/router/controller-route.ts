@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -44,7 +44,7 @@ export type ControllerClass<T extends ControllerInstance> = Constructor<T>;
 /**
  * A route backed by a controller
  */
-export class ControllerRoute<T extends object> extends BaseRoute {
+export class ControllerRoute<T> extends BaseRoute {
   protected readonly _controllerCtor: ControllerClass<T>;
   protected readonly _controllerName: string;
   protected readonly _methodName: string;
@@ -152,7 +152,7 @@ export class ControllerRoute<T extends object> extends BaseRoute {
  * Create a controller factory function for a given binding key
  * @param key - Binding key
  */
-export function createControllerFactoryForBinding<T extends object>(
+export function createControllerFactoryForBinding<T>(
   key: string,
 ): ControllerFactory<T> {
   return ctx => ctx.get<T>(key);
@@ -162,7 +162,7 @@ export function createControllerFactoryForBinding<T extends object>(
  * Create a controller factory function for a given class
  * @param controllerCtor - Controller class
  */
-export function createControllerFactoryForClass<T extends object>(
+export function createControllerFactoryForClass<T>(
   controllerCtor: ControllerClass<T>,
 ): ControllerFactory<T> {
   return async ctx => {
@@ -182,7 +182,7 @@ export function createControllerFactoryForClass<T extends object>(
  * Create a controller factory function for a given instance
  * @param controllerCtor - Controller instance
  */
-export function createControllerFactoryForInstance<T extends object>(
+export function createControllerFactoryForInstance<T>(
   controllerInst: T,
 ): ControllerFactory<T> {
   return ctx => controllerInst;
@@ -194,7 +194,7 @@ export function createControllerFactoryForInstance<T extends object>(
  * @param controllerCtor - Controller class
  * @param controllerFactory - Controller factory
  */
-export function createRoutesForController<T extends object>(
+export function createRoutesForController<T>(
   spec: ControllerSpec,
   controllerCtor: ControllerClass<T>,
   controllerFactory?: ControllerFactory<T>,

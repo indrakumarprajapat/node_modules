@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -45,7 +45,7 @@ result) {
             }
             else {
                 // TODO(ritch) remove this, should be configurable
-                // See https://github.com/loopbackio/loopback-next/issues/436
+                // See https://github.com/strongloop/loopback-next/issues/436
                 response.setHeader('Content-Type', 'application/json');
                 // TODO(bajtos) handle errors - JSON.stringify can throw
                 result = JSON.stringify(result);

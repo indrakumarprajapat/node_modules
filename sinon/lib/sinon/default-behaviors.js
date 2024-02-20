@@ -1,21 +1,21 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const isPropertyConfigurable = require("./util/core/is-property-configurable");
-const exportAsyncBehaviors = require("./util/core/export-async-behaviors");
-const extend = require("./util/core/extend");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var isPropertyConfigurable = require("./util/core/is-property-configurable");
+var exportAsyncBehaviors = require("./util/core/export-async-behaviors");
+var extend = require("./util/core/extend");
 
-const slice = arrayProto.slice;
+var slice = arrayProto.slice;
 
-const useLeftMostCallback = -1;
-const useRightMostCallback = -2;
+var useLeftMostCallback = -1;
+var useRightMostCallback = -2;
 
 function throwsException(fake, error, message) {
     if (typeof error === "function") {
         fake.exceptionCreator = error;
     } else if (typeof error === "string") {
         fake.exceptionCreator = function () {
-            const newException = new Error(message || "");
+            var newException = new Error(message || "");
             newException.name = error;
             return newException;
         };
@@ -28,11 +28,9 @@ function throwsException(fake, error, message) {
     }
 }
 
-const defaultBehaviors = {
+var defaultBehaviors = {
     callsFake: function callsFake(fake, fn) {
         fake.fakeFn = fn;
-        fake.exception = undefined;
-        fake.exceptionCreator = undefined;
     },
 
     callsArg: function callsArg(fake, index) {
@@ -192,7 +190,7 @@ const defaultBehaviors = {
     },
 
     rejects: function rejects(fake, error, message) {
-        let reason;
+        var reason;
         if (typeof error === "string") {
             reason = new Error(message || "");
             reason.name = error;
@@ -233,7 +231,7 @@ const defaultBehaviors = {
     },
 
     get: function get(fake, getterFunction) {
-        const rootStub = fake.stub || fake;
+        var rootStub = fake.stub || fake;
 
         Object.defineProperty(rootStub.rootObj, rootStub.propName, {
             get: getterFunction,
@@ -247,7 +245,7 @@ const defaultBehaviors = {
     },
 
     set: function set(fake, setterFunction) {
-        const rootStub = fake.stub || fake;
+        var rootStub = fake.stub || fake;
 
         Object.defineProperty(
             rootStub.rootObj,
@@ -266,12 +264,11 @@ const defaultBehaviors = {
     },
 
     value: function value(fake, newVal) {
-        const rootStub = fake.stub || fake;
+        var rootStub = fake.stub || fake;
 
         Object.defineProperty(rootStub.rootObj, rootStub.propName, {
             value: newVal,
             enumerable: true,
-            writable: true,
             configurable:
                 rootStub.shadowsPropOnPrototype ||
                 isPropertyConfigurable(rootStub.rootObj, rootStub.propName),
@@ -281,6 +278,6 @@ const defaultBehaviors = {
     },
 };
 
-const asyncBehaviors = exportAsyncBehaviors(defaultBehaviors);
+var asyncBehaviors = exportAsyncBehaviors(defaultBehaviors);
 
 module.exports = extend({}, defaultBehaviors, asyncBehaviors);

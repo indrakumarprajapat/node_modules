@@ -5,12 +5,6 @@
  */
 const methods = require('methods');
 const http = require('http');
-let http2;
-try {
-  http2 = require('http2'); // eslint-disable-line global-require
-} catch (_) {
-  // eslint-disable-line no-empty
-}
 const Test = require('./lib/test.js');
 const agent = require('./lib/agent.js');
 
@@ -22,29 +16,16 @@ const agent = require('./lib/agent.js');
  * @return {Test}
  * @api public
  */
-module.exports = function(app, options = {}) {
+module.exports = function(app) {
   const obj = {};
 
   if (typeof app === 'function') {
-    if (options.http2) {
-      if (!http2) {
-        throw new Error(
-          'supertest: this version of Node.js does not support http2'
-        );
-      }
-      app = http2.createServer(app); // eslint-disable-line no-param-reassign
-    } else {
-      app = http.createServer(app); // eslint-disable-line no-param-reassign
-    }
+    app = http.createServer(app); // eslint-disable-line no-param-reassign
   }
 
   methods.forEach(function(method) {
     obj[method] = function(url) {
-      var test = new Test(app, method, url);
-      if (options.http2) {
-        test.http2();
-      }
-      return test;
+      return new Test(app, method, url);
     };
   });
 

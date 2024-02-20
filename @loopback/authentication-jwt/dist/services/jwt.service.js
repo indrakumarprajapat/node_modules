@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,8 +12,8 @@ const security_1 = require("@loopback/security");
 const util_1 = require("util");
 const keys_1 = require("../keys");
 const jwt = require('jsonwebtoken');
-const signAsync = (0, util_1.promisify)(jwt.sign);
-const verifyAsync = (0, util_1.promisify)(jwt.verify);
+const signAsync = util_1.promisify(jwt.sign);
+const verifyAsync = util_1.promisify(jwt.verify);
 let JWTService = class JWTService {
     constructor(jwtSecret, jwtExpiresIn) {
         this.jwtSecret = jwtSecret;
@@ -62,8 +62,8 @@ let JWTService = class JWTService {
     }
 };
 JWTService = tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(keys_1.TokenServiceBindings.TOKEN_SECRET)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.TokenServiceBindings.TOKEN_EXPIRES_IN)),
+    tslib_1.__param(0, core_1.inject(keys_1.TokenServiceBindings.TOKEN_SECRET)),
+    tslib_1.__param(1, core_1.inject(keys_1.TokenServiceBindings.TOKEN_EXPIRES_IN)),
     tslib_1.__metadata("design:paramtypes", [String, String])
 ], JWTService);
 exports.JWTService = JWTService;

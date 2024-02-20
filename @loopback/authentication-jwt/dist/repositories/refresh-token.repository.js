@@ -12,7 +12,7 @@ let RefreshTokenRepository = class RefreshTokenRepository extends repository_1.D
     }
 };
 RefreshTokenRepository = tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(`datasources.${keys_1.RefreshTokenServiceBindings.DATASOURCE_NAME}`)),
+    tslib_1.__param(0, core_1.inject(`datasources.${keys_1.RefreshTokenServiceBindings.DATASOURCE_NAME}`)),
     tslib_1.__metadata("design:paramtypes", [repository_1.juggler.DataSource])
 ], RefreshTokenRepository);
 exports.RefreshTokenRepository = RefreshTokenRepository;

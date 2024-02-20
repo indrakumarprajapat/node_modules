@@ -1,13 +1,13 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseArtifactBooter = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = tslib_1.__importDefault(require("debug"));
-const path_1 = tslib_1.__importDefault(require("path"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const path_1 = (0, tslib_1.__importDefault)(require("path"));
 const booter_utils_1 = require("./booter-utils");
 const debug = (0, debug_1.default)('loopback:boot:base-artifact-booter');
 /**
@@ -56,13 +56,11 @@ class BaseArtifactBooter {
                 ? this.options.extensions
                 : [this.options.extensions]
             : [];
-        let joinedDirs = this.dirs.join(',');
-        if (this.dirs.length > 1)
-            joinedDirs = `{${joinedDirs}}`;
-        const joinedExts = `@(${this.extensions.join('|')})`;
+        const joinedDirs = this.dirs.join('|');
+        const joinedExts = this.extensions.join('|');
         this.glob = this.options.glob
             ? this.options.glob
-            : `/${joinedDirs}/${this.options.nested ? '**/*' : '*'}${joinedExts}`;
+            : `/@(${joinedDirs})/${this.options.nested ? '**/*' : '*'}@(${joinedExts})`;
     }
     /**
      * Discover files based on the 'glob' property relative to the 'projectRoot'.

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -15,17 +15,19 @@ import debugFactory from 'debug';
 import {RestBindings, RestTags} from '../keys';
 import {RouteEntry} from '../router';
 import {RestMiddlewareGroups} from '../sequence';
-import {InvokeMethod, OperationArgs} from '../types';
+import {InvokeMethod, OperationArgs, OperationRetval} from '../types';
 
 const debug = debugFactory('loopback:rest:invoke-method');
 
-export class InvokeMethodProvider {
-  static value(
-    @inject(RestBindings.Http.CONTEXT) context: Context,
-  ): InvokeMethod {
-    const invokeMethod: InvokeMethod = (route, args) =>
-      route.invokeHandler(context, args);
-    return invokeMethod;
+export class InvokeMethodProvider implements Provider<InvokeMethod> {
+  constructor(@inject(RestBindings.Http.CONTEXT) protected context: Context) {}
+
+  value(): InvokeMethod {
+    return (route, args) => this.action(route, args);
+  }
+
+  action(route: RouteEntry, args: OperationArgs): Promise<OperationRetval> {
+    return route.invokeHandler(this.context, args);
   }
 }
 

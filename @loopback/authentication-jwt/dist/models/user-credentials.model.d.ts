@@ -8,4 +8,4 @@ export declare class UserCredentials extends Entity {
 }
 export interface UserCredentialsRelations {
 }
-export type UserCredentialsWithRelations = UserCredentials & UserCredentialsRelations;
+export declare type UserCredentialsWithRelations = UserCredentials & UserCredentialsRelations;

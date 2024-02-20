@@ -1,6 +1,4 @@
 /// <reference types="node" />
-/// <reference types="node" />
-/// <reference types="express" />
 import { BindingKey, Context } from '@loopback/core';
 import { InvokeMiddleware } from '@loopback/express';
 import { HttpProtocol } from '@loopback/http-server';
@@ -44,7 +42,7 @@ export declare namespace RestBindings {
     /**
      * Binding key for HTTPS options
      */
-    const HTTPS_OPTIONS: BindingKey<https.ServerOptions<typeof import("http").IncomingMessage, typeof import("http").ServerResponse>>;
+    const HTTPS_OPTIONS: BindingKey<https.ServerOptions>;
     /**
      * Binding key for the server itself
      */
@@ -66,7 +64,7 @@ export declare namespace RestBindings {
      * Binding key for setting and injecting Reject action's error handling
      * options.
      *
-     * See https://github.com/loopbackio/strong-error-handler#options for
+     * See https://github.com/strongloop/strong-error-handler#options for
      * the list of available options. Please note that the flag `log` is not used
      * by `@loopback/rest`.
      */
@@ -169,7 +167,7 @@ export declare namespace RestBindings {
         /**
          * Binding key for setting and injecting the http response
          */
-        const RESPONSE: BindingKey<Response<any, Record<string, any>>>;
+        const RESPONSE: BindingKey<Response<any>>;
         /**
          * Binding key for setting and injecting the http request context
          */

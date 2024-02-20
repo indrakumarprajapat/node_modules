@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,7 +8,7 @@ import {AjvFormat} from '../types';
 /**
  * int32: [-2147483648, 21474836 47]
  */
-export const int32Format: AjvFormat<number> = {
+export const int32Format: AjvFormat = {
   name: 'int32',
   type: 'number',
   validate: (value: number) => {
@@ -22,7 +22,7 @@ export const int32Format: AjvFormat<number> = {
 /**
  * int64: [-9223372036854775808, 9223372036854775807]
  */
-export const int64Format: AjvFormat<number> = {
+export const int64Format: AjvFormat = {
   name: 'int64',
   type: 'number',
   validate: (value: number) => {
@@ -36,7 +36,7 @@ export const int64Format: AjvFormat<number> = {
 /**
  * float: [-2^128, 2^128]
  */
-export const floatFormat: AjvFormat<number> = {
+export const floatFormat: AjvFormat = {
   name: 'float',
   type: 'number',
   validate: (value: number) => {
@@ -48,7 +48,7 @@ export const floatFormat: AjvFormat<number> = {
 /**
  * double: [-2^1024, 2^1024]
  */
-export const doubleFormat: AjvFormat<number> = {
+export const doubleFormat: AjvFormat = {
   name: 'double',
   type: 'number',
   validate: (value: number) => {
@@ -82,7 +82,7 @@ export const binaryFormat: AjvFormat = {
   async: false,
 };
 
-export const openapiFormats: (AjvFormat<string> | AjvFormat<number>)[] = [
+export const openapiFormats: AjvFormat[] = [
   int32Format,
   int64Format,
   floatFormat,

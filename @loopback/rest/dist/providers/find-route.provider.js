@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,26 +12,28 @@ const debug_1 = tslib_1.__importDefault(require("debug"));
 const http_handler_1 = require("../http-handler");
 const keys_1 = require("../keys");
 const sequence_1 = require("../sequence");
-const debug = (0, debug_1.default)('loopback:rest:find-route');
-class FindRouteProvider {
-    static value(context, handler) {
-        const findRoute = request => {
-            const found = handler.findRoute(request);
-            debug('Route found for %s %s', request.method, request.originalUrl, found);
-            found.updateBindings(context);
-            return found;
-        };
-        return findRoute;
+const debug = debug_1.default('loopback:rest:find-route');
+let FindRouteProvider = class FindRouteProvider {
+    constructor(context, handler) {
+        this.context = context;
+        this.handler = handler;
     }
-}
-tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(keys_1.RestBindings.Http.CONTEXT)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.RestBindings.HANDLER)),
-    tslib_1.__metadata("design:type", Function),
+    value() {
+        return request => this.action(request);
+    }
+    action(request) {
+        const found = this.handler.findRoute(request);
+        debug('Route found for %s %s', request.method, request.originalUrl, found);
+        found.updateBindings(this.context);
+        return found;
+    }
+};
+FindRouteProvider = tslib_1.__decorate([
+    tslib_1.__param(0, core_1.inject(keys_1.RestBindings.Http.CONTEXT)),
+    tslib_1.__param(1, core_1.inject(keys_1.RestBindings.HANDLER)),
     tslib_1.__metadata("design:paramtypes", [core_1.Context,
-        http_handler_1.HttpHandler]),
-    tslib_1.__metadata("design:returntype", Function)
-], FindRouteProvider, "value", null);
+        http_handler_1.HttpHandler])
+], FindRouteProvider);
 exports.FindRouteProvider = FindRouteProvider;
 let FindRouteMiddlewareProvider = class FindRouteMiddlewareProvider {
     value() {
@@ -48,7 +50,7 @@ let FindRouteMiddlewareProvider = class FindRouteMiddlewareProvider {
     }
 };
 FindRouteMiddlewareProvider = tslib_1.__decorate([
-    (0, core_1.injectable)((0, express_1.asMiddleware)({
+    core_1.injectable(express_1.asMiddleware({
         group: sequence_1.RestMiddlewareGroups.FIND_ROUTE,
         chain: keys_1.RestTags.REST_MIDDLEWARE_CHAIN,
     }), { scope: core_1.BindingScope.SINGLETON })

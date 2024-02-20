@@ -8,7 +8,7 @@ import { Constructor } from './value-promise';
  *
  * @typeParam T - Value type
  */
-export type BindingMetadata<T = unknown> = {
+export declare type BindingMetadata<T = unknown> = {
     /**
      * An array of template functions to configure a binding
      */
@@ -25,14 +25,14 @@ export declare const BINDING_METADATA_KEY: MetadataAccessor<BindingMetadata<unkn
 /**
  * An object to configure binding scope and tags
  */
-export type BindingScopeAndTags = {
+export declare type BindingScopeAndTags = {
     scope?: BindingScope;
     tags?: BindingTag | BindingTag[];
 };
 /**
  * Specification of parameters for `@injectable()`
  */
-export type BindingSpec<T = unknown> = BindingTemplate<T> | BindingScopeAndTags;
+export declare type BindingSpec<T = unknown> = BindingTemplate<T> | BindingScopeAndTags;
 /**
  * Check if a class implements `Provider` interface
  * @param cls - A class
@@ -93,14 +93,14 @@ export declare function bindingTemplateFor<T>(cls: Constructor<T | Provider<T>> 
  * }
  * ```
  */
-export type TypeNamespaceMapping = {
+export declare type TypeNamespaceMapping = {
     [name: string]: string;
 };
 export declare const DEFAULT_TYPE_NAMESPACES: TypeNamespaceMapping;
 /**
  * Options to customize the binding created from a class
  */
-export type BindingFromClassOptions = {
+export declare type BindingFromClassOptions = {
     /**
      * Binding key
      */

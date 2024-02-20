@@ -1,14 +1,11 @@
 "use strict";
 
-// eslint-disable-next-line no-empty-function
-const noop = () => {};
-const getPropertyDescriptor = require("./get-property-descriptor");
-const extend = require("./extend");
-const sinonType = require("./sinon-type");
-const hasOwnProperty =
+var getPropertyDescriptor = require("./get-property-descriptor");
+var extend = require("./extend");
+var hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-const valueToString = require("@sinonjs/commons").valueToString;
-const push = require("@sinonjs/commons").prototypes.array.push;
+var valueToString = require("@sinonjs/commons").valueToString;
+var push = require("@sinonjs/commons").prototypes.array.push;
 
 function isFunction(obj) {
     return (
@@ -18,7 +15,7 @@ function isFunction(obj) {
 }
 
 function mirrorProperties(target, source) {
-    for (const prop in source) {
+    for (var prop in source) {
         if (!hasOwnProperty(target, prop)) {
             target[prop] = source[prop];
         }
@@ -26,10 +23,10 @@ function mirrorProperties(target, source) {
 }
 
 function getAccessor(object, property, method) {
-    const accessors = ["get", "set"];
-    const descriptor = getPropertyDescriptor(object, property);
+    var accessors = ["get", "set"];
+    var descriptor = getPropertyDescriptor(object, property);
 
-    for (let i = 0; i < accessors.length; i++) {
+    for (var i = 0; i < accessors.length; i++) {
         if (
             descriptor[accessors[i]] &&
             descriptor[accessors[i]].name === method.name
@@ -41,7 +38,7 @@ function getAccessor(object, property, method) {
 }
 
 // Cheap way to detect if we have ES5 support.
-const hasES5Support = "keys" in Object;
+var hasES5Support = "keys" in Object;
 
 module.exports = function wrapMethod(object, property, method) {
     if (!object) {
@@ -55,7 +52,7 @@ module.exports = function wrapMethod(object, property, method) {
     }
 
     function checkWrappedMethod(wrappedMethod) {
-        let error;
+        var error;
 
         if (!isFunction(wrappedMethod)) {
             error = new TypeError(
@@ -70,7 +67,7 @@ module.exports = function wrapMethod(object, property, method) {
                 )} which is already wrapped`
             );
         } else if (wrappedMethod.calledBefore) {
-            const verb = wrappedMethod.returns ? "stubbed" : "spied on";
+            var verb = wrappedMethod.returns ? "stubbed" : "spied on";
             error = new TypeError(
                 `Attempted to wrap ${valueToString(
                     property
@@ -86,9 +83,15 @@ module.exports = function wrapMethod(object, property, method) {
         }
     }
 
-    let error, wrappedMethod, i, wrappedMethodDesc, target, accessor;
+    var error,
+        wrappedMethods,
+        wrappedMethod,
+        i,
+        wrappedMethodDesc,
+        target,
+        accessor;
 
-    const wrappedMethods = [];
+    wrappedMethods = [];
 
     function simplePropertyAssignment() {
         wrappedMethod = object[property];
@@ -98,12 +101,12 @@ module.exports = function wrapMethod(object, property, method) {
     }
 
     // Firefox has a problem when using hasOwn.call on objects from other frames.
-    const owned = object.hasOwnProperty
+    var owned = object.hasOwnProperty
         ? object.hasOwnProperty(property) // eslint-disable-line @sinonjs/no-prototype-methods/no-prototype-methods
         : hasOwnProperty(object, property);
 
     if (hasES5Support) {
-        const methodDesc =
+        var methodDesc =
             typeof method === "function" ? { value: method } : method;
         wrappedMethodDesc = getPropertyDescriptor(object, property);
 
@@ -126,7 +129,7 @@ module.exports = function wrapMethod(object, property, method) {
             throw error;
         }
 
-        const types = Object.keys(methodDesc);
+        var types = Object.keys(methodDesc);
         for (i = 0; i < types.length; i++) {
             wrappedMethod = wrappedMethodDesc[types[i]];
             checkWrappedMethod(wrappedMethod);
@@ -137,13 +140,6 @@ module.exports = function wrapMethod(object, property, method) {
         for (i = 0; i < types.length; i++) {
             mirrorProperties(methodDesc[types[i]], wrappedMethodDesc[types[i]]);
         }
-
-        // you are not allowed to flip the configurable prop on an
-        // existing descriptor to anything but false (#2514)
-        if (!owned) {
-            methodDesc.configurable = true;
-        }
-
         Object.defineProperty(object, property, methodDesc);
 
         // catch failing assignment
@@ -184,7 +180,7 @@ module.exports = function wrapMethod(object, property, method) {
 
     function restore() {
         accessor = getAccessor(object, property, this.wrappedMethod);
-        let descriptor;
+        var descriptor;
         // For prototype properties try to reset by delete first.
         // If this fails (ex: localStorage on mobile safari) then force a reset
         // via direct assignment.
@@ -233,11 +229,6 @@ module.exports = function wrapMethod(object, property, method) {
                     object[property] = this.wrappedMethod;
                 }
             }
-        }
-        if (sinonType.get(object) === "stub-instance") {
-            // this is simply to avoid errors after restoring if something should
-            // traverse the object in a cleanup phase, ref #2477
-            object[property] = noop;
         }
     }
 

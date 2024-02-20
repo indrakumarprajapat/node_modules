@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/metadata
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -23,8 +23,8 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-tslib_1.__exportStar(require("./decorator-factory"), exports);
-tslib_1.__exportStar(require("./inspector"), exports);
-tslib_1.__exportStar(require("./reflect"), exports);
-tslib_1.__exportStar(require("./types"), exports);
+(0, tslib_1.__exportStar)(require("./decorator-factory"), exports);
+(0, tslib_1.__exportStar)(require("./inspector"), exports);
+(0, tslib_1.__exportStar)(require("./reflect"), exports);
+(0, tslib_1.__exportStar)(require("./types"), exports);
 //# sourceMappingURL=index.js.map

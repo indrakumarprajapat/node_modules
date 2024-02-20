@@ -13,4 +13,4 @@ export declare class User extends Entity {
 }
 export interface UserRelations {
 }
-export type UserWithRelations = User & UserRelations;
+export declare type UserWithRelations = User & UserRelations;

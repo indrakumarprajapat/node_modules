@@ -5,7 +5,7 @@ export interface BelongsToAccessor<Target extends Entity, SourceId> {
     /**
      * Invoke the function to obtain HasManyRepository.
      */
-    (sourceId: SourceId, polymorphicTypes?: string | string[]): Promise<Target>;
+    (sourceId: SourceId): Promise<Target>;
     /**
      * Use `resolver` property to obtain an InclusionResolver for this relation.
      */
@@ -13,9 +13,5 @@ export interface BelongsToAccessor<Target extends Entity, SourceId> {
 }
 /**
  * Enforces a BelongsTo constraint on a repository
- * If the target model is polymorphic, i.e. stored within different repositories,
- * supply the targetRepositoryGetter with a dictionary in the form of {[typeName: string]: repositoryGetter}
  */
-export declare function createBelongsToAccessor<Target extends Entity, TargetId, Source extends Entity, SourceId>(belongsToMetadata: BelongsToDefinition, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetId>> | {
-    [repoType: string]: Getter<EntityCrudRepository<Target, TargetId>>;
-}, sourceRepository: EntityCrudRepository<Source, SourceId>): BelongsToAccessor<Target, SourceId>;
+export declare function createBelongsToAccessor<Target extends Entity, TargetId, Source extends Entity, SourceId>(belongsToMetadata: BelongsToDefinition, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>, sourceRepository: EntityCrudRepository<Source, SourceId>): BelongsToAccessor<Target, SourceId>;

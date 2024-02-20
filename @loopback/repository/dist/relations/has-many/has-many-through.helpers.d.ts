@@ -1,13 +1,10 @@
 import { DataObject, Entity, HasManyDefinition } from '../..';
-export type HasManyThroughResolvedDefinition = HasManyDefinition & {
+export declare type HasManyThroughResolvedDefinition = HasManyDefinition & {
     keyTo: string;
     keyFrom: string;
     through: {
         keyTo: string;
         keyFrom: string;
-        polymorphic: false | {
-            discriminator: string;
-        };
     };
 };
 /**

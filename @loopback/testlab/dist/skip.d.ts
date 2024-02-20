@@ -1,7 +1,7 @@
 /**
  * A function defining a new test case or a test suite, e.g. `it` or `describe`.
  */
-export type TestDefinition<ARGS extends unknown[], RETVAL> = (name: string, ...args: ARGS) => RETVAL;
+export declare type TestDefinition<ARGS extends unknown[], RETVAL> = (name: string, ...args: ARGS) => RETVAL;
 /**
  * Helper function for skipping tests when a certain condition is met.
  *

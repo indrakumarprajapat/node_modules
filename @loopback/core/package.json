@@ -1,19 +1,19 @@
 {
   "name": "@loopback/core",
   "description": "Define and implement core constructs such as Application and Component",
-  "version": "4.0.10",
+  "version": "2.18.0",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "IBM Corp. and LoopBack contributors",
-  "copyright.owner": "IBM Corp. and LoopBack contributors",
+  "author": "IBM Corp.",
+  "copyright.owner": "IBM Corp.",
   "repository": {
     "type": "git",
     "url": "https://github.com/loopbackio/loopback-next.git",
     "directory": "packages/core"
   },
   "engines": {
-    "node": "14 || 16 || 18 || 19"
+    "node": "^10.16 || 12 || 14 || 16"
   },
   "scripts": {
     "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
@@ -35,16 +35,16 @@
     "!*/__tests__"
   ],
   "dependencies": {
-    "@loopback/context": "^5.0.10",
-    "debug": "^4.3.4",
-    "tslib": "^2.5.0"
+    "@loopback/context": "^3.18.0",
+    "debug": "^4.3.2",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
-    "@loopback/build": "^9.0.10",
-    "@loopback/eslint-config": "^13.0.10",
-    "@loopback/testlab": "^5.0.10",
+    "@loopback/build": "^7.0.2",
+    "@loopback/eslint-config": "^11.0.2",
+    "@loopback/testlab": "^3.4.4",
     "@types/debug": "^4.1.7",
-    "@types/node": "^14.18.42"
+    "@types/node": "^10.17.60"
   },
-  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+  "gitHead": "d9a29c85dbe38f12ba219d8c495cf6038bbc3590"
 }

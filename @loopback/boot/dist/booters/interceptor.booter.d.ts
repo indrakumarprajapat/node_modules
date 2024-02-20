@@ -1,7 +1,7 @@
 import { Application, Constructor, Interceptor, Provider } from '@loopback/core';
 import { ArtifactOptions } from '../types';
 import { BaseArtifactBooter } from './base-artifact.booter';
-type InterceptorProviderClass = Constructor<Provider<Interceptor>>;
+declare type InterceptorProviderClass = Constructor<Provider<Interceptor>>;
 /**
  * A class that extends BaseArtifactBooter to boot the 'InterceptorProvider' artifact type.
  *

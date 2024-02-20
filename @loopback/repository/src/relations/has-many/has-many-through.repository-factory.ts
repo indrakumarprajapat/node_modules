@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -59,22 +59,10 @@ export function createHasManyThroughRepositoryFactory<
   SourceID,
 >(
   relationMetadata: HasManyDefinition,
-  targetRepositoryGetter:
-    | Getter<EntityCrudRepository<Target, TargetID>>
-    | {
-        [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-      },
+  targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>>,
   throughRepositoryGetter: Getter<EntityCrudRepository<Through, ThroughID>>,
 ): HasManyThroughRepositoryFactory<Target, TargetID, Through, SourceID> {
   const meta = resolveHasManyThroughMetadata(relationMetadata);
-  // resolve the repositoryGetter into a dictionary
-  if (typeof targetRepositoryGetter === 'function') {
-    targetRepositoryGetter = {
-      [meta.target().name]: targetRepositoryGetter as Getter<
-        EntityCrudRepository<Target, TargetID>
-      >,
-    };
-  }
   const result = function (fkValue: SourceID) {
     function getTargetConstraintFromThroughModels(
       throughInstances: Through[],
@@ -115,25 +103,19 @@ export function createHasManyThroughRepositoryFactory<
       ThroughID,
       EntityCrudRepository<Through, ThroughID>
     >(
-      targetRepositoryGetter as {
-        [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-      },
+      targetRepositoryGetter,
       throughRepositoryGetter,
       getTargetConstraintFromThroughModels,
       getTargetKeys,
       getThroughConstraintFromSource,
       getTargetIds,
       getThroughConstraintFromTarget,
-      relationMetadata.target,
-      relationMetadata.through!.model,
     );
   };
   result.inclusionResolver = createHasManyThroughInclusionResolver(
     meta,
     throughRepositoryGetter,
-    targetRepositoryGetter as {
-      [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
-    },
+    targetRepositoryGetter,
   );
   return result;
 }

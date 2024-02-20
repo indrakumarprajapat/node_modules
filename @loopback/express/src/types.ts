@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -59,12 +59,6 @@ export class MiddlewareContext extends Context implements HandlerContext {
   ) {
     super(parent, name);
     this.scope = BindingScope.REQUEST;
-
-    // Set the request context as a property of Express request object so that
-    // downstream Express native integration can access `RequestContext`
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (request as any)[MIDDLEWARE_CONTEXT] = this;
-
     this.setupBindings();
     onFinished(this.response, () => {
       this.responseFinished = true;
@@ -78,19 +72,6 @@ export class MiddlewareContext extends Context implements HandlerContext {
   protected setupBindings() {
     this.bind(MiddlewareBindings.CONTEXT).to(this).lock();
   }
-}
-
-/**
- * A helper function to retrieve the MiddlewareContext/RequestContext from the
- * request object
- * @param request - Express request object
- */
-export function getMiddlewareContext<
-  T extends MiddlewareContext = MiddlewareContext,
->(request?: Request): T | undefined {
-  if (request == null) return undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (request as any)[MIDDLEWARE_CONTEXT];
 }
 
 /**
@@ -146,7 +127,9 @@ export interface Middleware extends GenericInterceptor<MiddlewareContext> {}
  * An interceptor chain of middleware. This represents a list of cascading
  * middleware functions to be executed by the order of `group` names.
  */
-export class MiddlewareChain extends GenericInterceptorChain<MiddlewareContext> {}
+export class MiddlewareChain extends GenericInterceptorChain<
+  MiddlewareContext
+> {}
 
 /**
  * A middleware function or binding key
@@ -325,10 +308,9 @@ export interface ExpressMiddlewareFactory<C> {
 }
 
 /**
- * A symbol to store `MiddlewareContext` on the request object.  This symbol
- * can be referenced by name, before it is created.
+ * A symbol to store `MiddlewareContext` on the request object
  */
-export const MIDDLEWARE_CONTEXT = Symbol.for('loopback.middleware.context');
+export const MIDDLEWARE_CONTEXT = Symbol('loopback.middleware.context');
 
 /**
  * Constants for middleware groups

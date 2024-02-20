@@ -8,6 +8,7 @@ Supports [draft-04/06/07/2019-09/2020-12](doc/Specification-support.md) and the
 [![Node CI Status](https://github.com/ExodusMovement/schemasafe/workflows/Node%20CI/badge.svg)](https://github.com/ExodusMovement/schemasafe/actions)
 [![npm](https://img.shields.io/npm/v/@exodus/schemasafe.svg)](https://www.npmjs.com/package/@exodus/schemasafe)
 [![codecov](https://codecov.io/gh/ExodusMovement/schemasafe/branch/master/graph/badge.svg)](https://codecov.io/gh/ExodusMovement/schemasafe)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ExodusMovement/schemasafe.svg?logo=github)](https://lgtm.com/projects/g/ExodusMovement/schemasafe/alerts/)
 
 ## Features
 
@@ -19,12 +20,12 @@ Supports [draft-04/06/07/2019-09/2020-12](doc/Specification-support.md) and the
   _That is implemented by tracking processed keywords and ensuring that none remain uncovered._
 * Does not fail open on schema problems — instead throws at build time.\
   _E.g. it will detect mistakes like `{type: "array", "maxLength": 2}`._
-* [About 2000 lines of code](./doc/Auditable.md), non-minified.
+* [Less than 2000 lines of code](./doc/Auditable.md), non-minified.
 * Uses [secure code generation](./doc/Secure-code-generation.md) approach to prevent data from schema from leaking into
   the generated code without being JSON-wrapped.
 * [0 dependencies](./doc/Auditable.md)
 * [Very fast](./doc/Performance.md)
-* Supports JSON Schema [draft-04/06/07/2019-09/2020-12](./doc/Specification-support.md) and a strict subset of the
+* Supports JSON Schema [draft-04/06/07/2019-09](./doc/Specification-support.md) and a strict subset of the
   [`discriminator` OpenAPI keyword](./doc/Discriminator-support.md).
 * Can assign defaults and/or remove additional properties when schema allows to do that safely.
   Throws at build time if those options are used with schemas that don't allow to do that safely.
@@ -60,7 +61,7 @@ Or use the [parser API](./doc/Parser-not-validator.md) (running in
 [strong mode](./doc/Strong-mode.md) by default):
 
 ```js
-const { parser } = require('@exodus/schemasafe')
+const { parser } = require('.')
 
 const parse = parser({
   $schema: 'https://json-schema.org/draft/2019-09/schema',
@@ -196,8 +197,8 @@ See [Error handling](./doc/Error-handling.md) for more information.
 
 ## Generate Modules
 
-See the [doc/samples](./doc/samples/) directory to see how `@exodus/schemasafe` compiles
-supported test suites.
+See the [doc/samples](./doc/samples/README.md) directory to see how `@exodus/schemasafe` compiles
+the `draft/2019-09` test suite.
 
 To compile a validator function to an IIFE, call `validate.toModule()`:
 

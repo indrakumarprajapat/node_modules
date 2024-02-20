@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -39,12 +39,12 @@ let ControllerBooter = class ControllerBooter extends base_artifact_booter_1.Bas
         });
     }
 };
-ControllerBooter = tslib_1.__decorate([
+ControllerBooter = (0, tslib_1.__decorate)([
     (0, types_1.booter)('controllers'),
-    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
-    tslib_1.__param(2, (0, core_1.config)()),
-    tslib_1.__metadata("design:paramtypes", [core_1.Application, String, Object])
+    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
+    (0, tslib_1.__param)(2, (0, core_1.config)()),
+    (0, tslib_1.__metadata)("design:paramtypes", [core_1.Application, String, Object])
 ], ControllerBooter);
 exports.ControllerBooter = ControllerBooter;
 /**

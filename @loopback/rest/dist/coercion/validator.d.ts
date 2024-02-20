@@ -2,13 +2,13 @@ import { ParameterObject } from '@loopback/openapi-v3';
 /**
  * A set of options to pass into the validator functions
  */
-export type ValidationOptions = {
+export declare type ValidationOptions = {
     required?: boolean;
 };
 /**
  * The context information that a validator needs
  */
-export type ValidationContext = {
+export declare type ValidationContext = {
     parameterSpec: ParameterObject;
 };
 /**

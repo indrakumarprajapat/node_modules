@@ -5,7 +5,7 @@
  * @author Alexander Afanasyev
  */
 
-const { isNil } = require('rambda');
+const isNil = require('ramda/src/isNil');
 const createAstUtils = require('../util/ast');
 
 const defaultSuiteLimit = 1;
@@ -18,8 +18,7 @@ module.exports = {
     meta: {
         type: 'suggestion',
         docs: {
-            description: 'Limit the number of top-level suites in a single file',
-            url: 'https://github.com/lo1tuma/eslint-plugin-mocha/blob/master/docs/rules/max-top-level-suites.md'
+            description: 'Limit the number of top-level suites in a single file'
         },
         schema: [
             {

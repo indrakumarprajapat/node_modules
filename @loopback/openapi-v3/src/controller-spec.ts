@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -217,10 +217,10 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
       }
       endpoint.spec = operationSpec;
     } else if (decoratedResponses) {
-      operationSpec.responses = buildResponsesFromMetadata(
+      operationSpec = buildResponsesFromMetadata(
         decoratedResponses,
         operationSpec,
-      ).responses;
+      );
     }
 
     if (classTags && !operationSpec.tags) {
@@ -377,7 +377,7 @@ function resolveControllerSpec(constructor: Function): ControllerSpec {
     }
 
     debug(`  adding ${endpointName}`, operationSpec);
-    spec.paths[path][verb] = {...endpoint.spec, ...operationSpec};
+    spec.paths[path][verb] = operationSpec;
 
     debug(`  inferring schema object for method %s`, op);
     const opMetadata = MetadataInspector.getDesignTypeForMethod(

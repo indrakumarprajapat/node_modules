@@ -1,39 +1,37 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const behavior = require("./behavior");
-const behaviors = require("./default-behaviors");
-const createProxy = require("./proxy");
-const functionName = require("@sinonjs/commons").functionName;
-const hasOwnProperty =
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var behavior = require("./behavior");
+var behaviors = require("./default-behaviors");
+var createProxy = require("./proxy");
+var functionName = require("@sinonjs/commons").functionName;
+var hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-const isNonExistentProperty = require("./util/core/is-non-existent-property");
-const spy = require("./spy");
-const extend = require("./util/core/extend");
-const getPropertyDescriptor = require("./util/core/get-property-descriptor");
-const isEsModule = require("./util/core/is-es-module");
-const sinonType = require("./util/core/sinon-type");
-const wrapMethod = require("./util/core/wrap-method");
-const throwOnFalsyObject = require("./throw-on-falsy-object");
-const valueToString = require("@sinonjs/commons").valueToString;
-const walkObject = require("./util/core/walk-object");
+var isNonExistentProperty = require("./util/core/is-non-existent-property");
+var spy = require("./spy");
+var extend = require("./util/core/extend");
+var getPropertyDescriptor = require("./util/core/get-property-descriptor");
+var isEsModule = require("./util/core/is-es-module");
+var wrapMethod = require("./util/core/wrap-method");
+var throwOnFalsyObject = require("./throw-on-falsy-object");
+var valueToString = require("@sinonjs/commons").valueToString;
+var walkObject = require("./util/core/walk-object");
 
-const forEach = arrayProto.forEach;
-const pop = arrayProto.pop;
-const slice = arrayProto.slice;
-const sort = arrayProto.sort;
+var forEach = arrayProto.forEach;
+var pop = arrayProto.pop;
+var slice = arrayProto.slice;
+var sort = arrayProto.sort;
 
-let uuid = 0;
+var uuid = 0;
 
 function createStub(originalFunc) {
-    // eslint-disable-next-line prefer-const
-    let proxy;
+    var proxy;
 
     function functionStub() {
-        const args = slice(arguments);
-        const matchings = proxy.matchingFakes(args);
+        var args = slice(arguments);
+        var matchings = proxy.matchingFakes(args);
 
-        const fnStub =
+        var fnStub =
             pop(
                 sort(matchings, function (a, b) {
                     return (
@@ -50,7 +48,7 @@ function createStub(originalFunc) {
     // Inherit stub API:
     extend.nonEnum(proxy, stub);
 
-    const name = originalFunc ? functionName(originalFunc) : null;
+    var name = originalFunc ? functionName(originalFunc) : null;
     extend.nonEnum(proxy, {
         fakes: [],
         instantiateFake: createStub,
@@ -59,8 +57,6 @@ function createStub(originalFunc) {
         behaviors: [],
         id: `stub#${uuid++}`,
     });
-
-    sinonType.set(proxy, "stub");
 
     return proxy;
 }
@@ -84,16 +80,13 @@ function stub(object, property) {
         );
     }
 
-    const actualDescriptor = getPropertyDescriptor(object, property);
-
-    assertValidPropertyDescriptor(actualDescriptor, property);
-
-    const isObjectOrFunction =
+    var actualDescriptor = getPropertyDescriptor(object, property);
+    var isObjectOrFunction =
         typeof object === "object" || typeof object === "function";
-    const isStubbingEntireObject =
+    var isStubbingEntireObject =
         typeof property === "undefined" && isObjectOrFunction;
-    const isCreatingNewStub = !object && typeof property === "undefined";
-    const isStubbingNonFuncProperty =
+    var isCreatingNewStub = !object && typeof property === "undefined";
+    var isStubbingNonFuncProperty =
         isObjectOrFunction &&
         typeof property !== "undefined" &&
         (typeof actualDescriptor === "undefined" ||
@@ -107,11 +100,11 @@ function stub(object, property) {
         return createStub();
     }
 
-    const func =
+    var func =
         typeof actualDescriptor.value === "function"
             ? actualDescriptor.value
             : null;
-    const s = createStub(func);
+    var s = createStub(func);
 
     extend.nonEnum(s, {
         rootObj: object,
@@ -130,35 +123,29 @@ function stub(object, property) {
     return isStubbingNonFuncProperty ? s : wrapMethod(object, property, s);
 }
 
-function assertValidPropertyDescriptor(descriptor, property) {
-    if (!descriptor || !property) {
-        return;
+stub.createStubInstance = function (constructor, overrides) {
+    if (typeof constructor !== "function") {
+        throw new TypeError("The constructor should be a function.");
     }
-    if (descriptor.isOwn && !descriptor.configurable && !descriptor.writable) {
-        throw new TypeError(
-            `Descriptor for property ${property} is non-configurable and non-writable`
-        );
-    }
-    if ((descriptor.get || descriptor.set) && !descriptor.configurable) {
-        throw new TypeError(
-            `Descriptor for accessor property ${property} is non-configurable`
-        );
-    }
-    if (isDataDescriptor(descriptor) && !descriptor.writable) {
-        throw new TypeError(
-            `Descriptor for data property ${property} is non-writable`
-        );
-    }
-}
 
-function isDataDescriptor(descriptor) {
-    return (
-        !descriptor.value &&
-        !descriptor.writable &&
-        !descriptor.set &&
-        !descriptor.get
-    );
-}
+    var stubbedObject = stub(Object.create(constructor.prototype));
+
+    forEach(Object.keys(overrides || {}), function (propertyName) {
+        if (propertyName in stubbedObject) {
+            var value = overrides[propertyName];
+            if (value && value.createStubInstance) {
+                stubbedObject[propertyName] = value;
+            } else {
+                stubbedObject[propertyName].returns(value);
+            }
+        } else {
+            throw new Error(
+                `Cannot stub ${propertyName}. Property does not exist!`
+            );
+        }
+    });
+    return stubbedObject;
+};
 
 /*eslint-disable no-use-before-define*/
 function getParentBehaviour(stubInstance) {
@@ -174,14 +161,14 @@ function getDefaultBehavior(stubInstance) {
 }
 
 function getCurrentBehavior(stubInstance) {
-    const currentBehavior = stubInstance.behaviors[stubInstance.callCount - 1];
+    var currentBehavior = stubInstance.behaviors[stubInstance.callCount - 1];
     return currentBehavior && currentBehavior.isPresent()
         ? currentBehavior
         : getDefaultBehavior(stubInstance);
 }
 /*eslint-enable no-use-before-define*/
 
-const proto = {
+var proto = {
     resetBehavior: function () {
         this.defaultBehavior = null;
         this.behaviors = [];
@@ -225,7 +212,7 @@ const proto = {
     },
 
     withArgs: function withArgs() {
-        const fake = spy.withArgs.apply(this, arguments);
+        var fake = spy.withArgs.apply(this, arguments);
         if (this.defaultBehavior && this.defaultBehavior.promiseLibrary) {
             fake.defaultBehavior =
                 fake.defaultBehavior || behavior.create(fake);

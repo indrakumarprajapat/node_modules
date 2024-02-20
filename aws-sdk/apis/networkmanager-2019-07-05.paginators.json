@@ -18,12 +18,6 @@
       "limit_key": "MaxResults",
       "result_key": "Connections"
     },
-    "GetCoreNetworkChangeEvents": {
-      "input_token": "NextToken",
-      "output_token": "NextToken",
-      "limit_key": "MaxResults",
-      "result_key": "CoreNetworkChangeEvents"
-    },
     "GetCoreNetworkChangeSet": {
       "input_token": "NextToken",
       "output_token": "NextToken",
@@ -119,12 +113,6 @@
       "output_token": "NextToken",
       "limit_key": "MaxResults",
       "result_key": "CoreNetworks"
-    },
-    "ListPeerings": {
-      "input_token": "NextToken",
-      "output_token": "NextToken",
-      "limit_key": "MaxResults",
-      "result_key": "Peerings"
     }
   }
 }

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -28,10 +28,10 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-tslib_1.__exportStar(require("./boot.component"), exports);
-tslib_1.__exportStar(require("./booters"), exports);
-tslib_1.__exportStar(require("./bootstrapper"), exports);
-tslib_1.__exportStar(require("./keys"), exports);
-tslib_1.__exportStar(require("./mixins"), exports);
-tslib_1.__exportStar(require("./types"), exports);
+(0, tslib_1.__exportStar)(require("./boot.component"), exports);
+(0, tslib_1.__exportStar)(require("./booters"), exports);
+(0, tslib_1.__exportStar)(require("./bootstrapper"), exports);
+(0, tslib_1.__exportStar)(require("./keys"), exports);
+(0, tslib_1.__exportStar)(require("./mixins"), exports);
+(0, tslib_1.__exportStar)(require("./types"), exports);
 //# sourceMappingURL=index.js.map

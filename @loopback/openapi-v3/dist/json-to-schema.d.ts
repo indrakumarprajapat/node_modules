@@ -20,7 +20,7 @@ import { ReferenceObject, SchemaObject, SchemasObject } from './types';
  * }
  * ```
  */
-export type SchemaRef = ReferenceObject & {
+export declare type SchemaRef = ReferenceObject & {
     definitions: SchemasObject;
 };
 /**

@@ -30,8 +30,8 @@ export declare class Application extends Context implements LifeCycleObserver {
      *   - !started -> starting -> started
      *   - started -> started (no-op)
      * 2. stop
-     *   - (started | initialized) -> stopping -> stopped
-     *   - ! (started || initialized) -> stopped (no-op)
+     *   - started -> stopping -> stopped
+     *   - !started -> stopped (no-op)
      *
      * Two types of states are expected:
      * - stable, such as `started` and `stopped`
@@ -301,7 +301,7 @@ export declare class Application extends Context implements LifeCycleObserver {
 /**
  * Options to set up application shutdown
  */
-export type ShutdownOptions = {
+export declare type ShutdownOptions = {
     /**
      * An array of signals to be trapped for graceful shutdown
      */
@@ -329,8 +329,8 @@ export interface ApplicationConfig {
      */
     [prop: string]: any;
 }
-export type ControllerClass<T = any> = Constructor<T>;
-export type ServiceOrProviderClass<T = any> = Constructor<T | Provider<T>> | DynamicValueProviderClass<T>;
+export declare type ControllerClass<T = any> = Constructor<T>;
+export declare type ServiceOrProviderClass<T = any> = Constructor<T | Provider<T>> | DynamicValueProviderClass<T>;
 /**
  * Type description for `package.json`
  */

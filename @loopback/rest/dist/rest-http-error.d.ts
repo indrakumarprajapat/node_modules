@@ -1,7 +1,7 @@
 import HttpErrors from 'http-errors';
 export declare namespace RestHttpErrors {
     function invalidData<T, Props extends object = {}>(data: T, name: string, extraProperties?: Props): HttpErrors.HttpError & Props;
-    function unsupportedMediaType(contentType: string, allowedTypes?: string[]): HttpErrors.HttpError<415> & {
+    function unsupportedMediaType(contentType: string, allowedTypes?: string[]): HttpErrors.HttpError & {
         code: string;
         contentType: string;
         allowedMediaTypes: string[];

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -36,8 +36,9 @@ export namespace RestBindings {
   /**
    * Binding key for setting and injecting RestComponentConfig
    */
-  export const CONFIG: BindingKey<RestServerConfig> =
-    CoreBindings.APPLICATION_CONFIG.deepProperty('rest');
+  export const CONFIG: BindingKey<RestServerConfig> = CoreBindings.APPLICATION_CONFIG.deepProperty(
+    'rest',
+  );
   /**
    * Binding key for setting and injecting the host name of RestServer
    */
@@ -61,8 +62,9 @@ export namespace RestBindings {
   /**
    * Binding key for HTTPS options
    */
-  export const HTTPS_OPTIONS =
-    BindingKey.create<https.ServerOptions>('rest.httpsOptions');
+  export const HTTPS_OPTIONS = BindingKey.create<https.ServerOptions>(
+    'rest.httpsOptions',
+  );
 
   /**
    * Binding key for the server itself
@@ -92,7 +94,7 @@ export namespace RestBindings {
    * Binding key for setting and injecting Reject action's error handling
    * options.
    *
-   * See https://github.com/loopbackio/strong-error-handler#options for
+   * See https://github.com/strongloop/strong-error-handler#options for
    * the list of available options. Please note that the flag `log` is not used
    * by `@loopback/rest`.
    */
@@ -103,10 +105,9 @@ export namespace RestBindings {
   /**
    * Binding key for request body parser options
    */
-  export const REQUEST_BODY_PARSER_OPTIONS =
-    BindingKey.create<RequestBodyParserOptions>(
-      'rest.requestBodyParserOptions',
-    );
+  export const REQUEST_BODY_PARSER_OPTIONS = BindingKey.create<
+    RequestBodyParserOptions
+  >('rest.requestBodyParserOptions');
 
   /**
    * Binding key for request body parser
@@ -164,8 +165,9 @@ export namespace RestBindings {
   /**
    * Binding key for setting and injecting an OpenAPI spec
    */
-  export const API_SPEC: BindingKey<OpenApiSpec> =
-    BindingKey.create<OpenApiSpec>('rest.apiSpec');
+  export const API_SPEC: BindingKey<OpenApiSpec> = BindingKey.create<
+    OpenApiSpec
+  >('rest.apiSpec');
 
   /**
    * Binding key for setting and injecting an OpenAPI operation spec
@@ -254,8 +256,9 @@ export namespace RestBindings {
     /**
      * Binding key for setting and injecting the http request
      */
-    export const REQUEST: BindingKey<Request> =
-      BindingKey.create<Request>('rest.http.request');
+    export const REQUEST: BindingKey<Request> = BindingKey.create<Request>(
+      'rest.http.request',
+    );
     /**
      * Binding key for setting and injecting the http response
      */

@@ -1,10 +1,9 @@
 "use strict";
 
-const forEach = require("@sinonjs/commons").prototypes.array.forEach;
+var forEach = require("@sinonjs/commons").prototypes.array.forEach;
 
 function walkInternal(obj, iterator, context, originalObj, seen) {
-    let prop;
-    const proto = Object.getPrototypeOf(obj);
+    var proto, prop;
 
     if (typeof Object.getOwnPropertyNames !== "function") {
         // We explicitly want to enumerate through all of the prototype's properties
@@ -20,7 +19,7 @@ function walkInternal(obj, iterator, context, originalObj, seen) {
     forEach(Object.getOwnPropertyNames(obj), function (k) {
         if (seen[k] !== true) {
             seen[k] = true;
-            const target =
+            var target =
                 typeof Object.getOwnPropertyDescriptor(obj, k).get ===
                 "function"
                     ? originalObj
@@ -29,6 +28,7 @@ function walkInternal(obj, iterator, context, originalObj, seen) {
         }
     });
 
+    proto = Object.getPrototypeOf(obj);
     if (proto) {
         walkInternal(proto, iterator, context, originalObj, seen);
     }

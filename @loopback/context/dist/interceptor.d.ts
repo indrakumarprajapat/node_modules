@@ -56,7 +56,7 @@ export interface Interceptor extends GenericInterceptor<InvocationContext> {
  * Interceptor function or binding key that can be used as parameters for
  * `@intercept()`
  */
-export type InterceptorOrKey = GenericInterceptorOrKey<InvocationContext>;
+export declare type InterceptorOrKey = GenericInterceptorOrKey<InvocationContext>;
 /**
  * Metadata key for method-level interceptors
  */
@@ -102,7 +102,7 @@ export declare const INTERCEPT_CLASS_KEY: MetadataAccessor<InterceptorOrKey[], C
  * @param interceptorOrKeys - One or more interceptors or binding keys that are
  * resolved to be interceptors
  */
-export declare function intercept(...interceptorOrKeys: InterceptorOrKey[]): (target: any, method?: string, methodDescriptor?: TypedPropertyDescriptor<any>) => any;
+export declare function intercept(...interceptorOrKeys: InterceptorOrKey[]): (target: any, method?: string | undefined, methodDescriptor?: TypedPropertyDescriptor<any> | undefined) => any;
 /**
  * Invoke a method with the given context
  * @param context - Context object

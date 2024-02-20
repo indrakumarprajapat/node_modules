@@ -1,18 +1,11 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
 import {HandlerContext, Request, Response} from '@loopback/express';
 import {ReferenceObject, SchemaObject} from '@loopback/openapi-v3';
-import Ajv, {
-  ErrorObject,
-  FormatDefinition,
-  KeywordDefinition,
-  Options as AjvOptions,
-  ValidateFunction,
-} from 'ajv';
-import {ErrorMessageOptions} from 'ajv-errors';
+import ajv, {Ajv, FormatDefinition, KeywordDefinition} from 'ajv';
 import {
   Options,
   OptionsJson,
@@ -89,29 +82,31 @@ export type LogError = (
  */
 export type SchemaValidatorCache = WeakMap<
   SchemaObject | ReferenceObject, // First keyed by schema object
-  Map<string, ValidateFunction> // Second level keyed by stringified AJV options
+  Map<string, ajv.ValidateFunction> // Second level keyed by stringified AJV options
 >;
 
 /**
  * Options for AJV errors
  */
-export type AjvErrorOptions = ErrorMessageOptions;
+export type AjvErrorOptions = {
+  keepErrors?: boolean;
+  singleError?: boolean;
+};
 
 /**
  * Factory function for Ajv instances
  */
-export type AjvFactory = (options?: AjvOptions) => Ajv;
+export type AjvFactory = (options?: ajv.Options) => Ajv;
 
 /**
  * Ajv keyword definition with a name
  */
-export type AjvKeyword = KeywordDefinition;
+export type AjvKeyword = KeywordDefinition & {name: string};
 
 /**
  * Ajv format definition with a name
  */
-export type AjvFormat<T extends string | number = string> =
-  FormatDefinition<T> & {name: string};
+export type AjvFormat = FormatDefinition & {name: string};
 
 /**
  * Options for any value validation using AJV
@@ -132,7 +127,7 @@ export interface ValueValidationOptions extends ValidationOptions {
 /**
  * Options for request body validation using AJV
  */
-export interface ValidationOptions extends AjvOptions {
+export interface ValidationOptions extends ajv.Options {
   /**
    * Custom cache for compiled schemas by AJV. This setting makes it possible
    * to skip the default cache.
@@ -140,31 +135,27 @@ export interface ValidationOptions extends AjvOptions {
   compiledSchemaCache?: SchemaValidatorCache;
   /**
    * Enable additional AJV keywords from https://github.com/epoberezkin/ajv-keywords
+   * - `true`: Add all keywords from `ajv-keywords`
    * - `string[]`: Add an array of keywords from `ajv-keywords`
    */
-  ajvKeywords?: string[];
+  ajvKeywords?: true | string[];
   /**
    * Enable custom error messages in JSON-Schema for AJV validator
    * from https://github.com/epoberezkin/ajv-errors
    * - `true`: Enable `ajv-errors`
    * - `AjvErrorOptions`: Enable `ajv-errors` with options
    */
-  ajvErrors?: AjvErrorOptions;
+  ajvErrors?: true | AjvErrorOptions;
   /**
    * A function that transform the `ErrorObject`s reported by AJV.
    * This could be used for error messages customization, localization, etc.
    */
-  ajvErrorTransformer?: (errors: ErrorObject[]) => ErrorObject[];
+  ajvErrorTransformer?: (errors: ajv.ErrorObject[]) => ajv.ErrorObject[];
 
   /**
    * A factory to create Ajv instance
    */
-  ajvFactory?: (options: AjvOptions) => Ajv;
-
-  /**
-   * An array of keys to be rejected, such as `__proto__`.
-   */
-  prohibitedKeys?: string[];
+  ajvFactory?: (options: ajv.Options) => Ajv;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

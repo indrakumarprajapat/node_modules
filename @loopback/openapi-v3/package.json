@@ -1,7 +1,7 @@
 {
   "name": "@loopback/openapi-v3",
   "description": "Decorators that annotate LoopBack artifacts with OpenAPI v3 metadata and utilities that transform LoopBack metadata to OpenAPI v3 specifications",
-  "version": "8.0.10",
+  "version": "5.3.1",
   "keywords": [
     "Swagger",
     "OpenAPI Spec",
@@ -10,15 +10,15 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "IBM Corp. and LoopBack contributors",
-  "copyright.owner": "IBM Corp. and LoopBack contributors",
+  "author": "IBM Corp.",
+  "copyright.owner": "IBM Corp.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/loopbackio/loopback-next.git",
+    "url": "https://github.com/strongloop/loopback-next.git",
     "directory": "packages/openapi-v3"
   },
   "engines": {
-    "node": "14 || 16 || 18 || 19"
+    "node": "^10.16 || 12 || 14 || 16"
   },
   "scripts": {
     "build": "lb-tsc",
@@ -39,28 +39,28 @@
     "!*/__tests__"
   ],
   "peerDependencies": {
-    "@loopback/core": "^4.0.10"
+    "@loopback/core": "^2.16.1"
   },
   "dependencies": {
-    "@loopback/repository-json-schema": "^6.1.4",
-    "debug": "^4.3.4",
-    "http-status": "^1.6.2",
-    "json-merge-patch": "^1.0.2",
+    "@loopback/repository-json-schema": "^3.4.1",
+    "debug": "^4.3.1",
+    "http-status": "^1.5.0",
+    "json-merge-patch": "^1.0.1",
     "lodash": "^4.17.21",
-    "openapi3-ts": "^2.0.2",
-    "tslib": "^2.5.0"
+    "openapi3-ts": "^2.0.1",
+    "tslib": "^2.2.0"
   },
   "devDependencies": {
-    "@loopback/build": "^9.0.10",
-    "@loopback/core": "^4.0.10",
-    "@loopback/eslint-config": "^13.0.10",
-    "@loopback/openapi-spec-builder": "^5.0.10",
-    "@loopback/repository": "^5.1.5",
-    "@loopback/testlab": "^5.0.10",
-    "@types/debug": "^4.1.7",
-    "@types/json-merge-patch": "0.0.8",
-    "@types/lodash": "^4.14.192",
-    "@types/node": "^14.18.42"
+    "@loopback/build": "^6.4.1",
+    "@loopback/core": "^2.16.1",
+    "@loopback/eslint-config": "^10.2.1",
+    "@loopback/openapi-spec-builder": "^3.2.1",
+    "@loopback/repository": "^3.7.0",
+    "@loopback/testlab": "^3.4.1",
+    "@types/debug": "^4.1.5",
+    "@types/json-merge-patch": "0.0.5",
+    "@types/lodash": "^4.14.170",
+    "@types/node": "^10.17.60"
   },
-  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
+  "gitHead": "2a3b684ec76fa299d80b099abbf101358538cb75"
 }

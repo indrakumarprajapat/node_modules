@@ -1,5 +1,5 @@
 import { AnyObject, DataObject, Options, PrototypeOf } from './common-types';
-import { BelongsToDefinition, HasManyDefinition, HasOneDefinition, JsonSchema, ReferencesManyDefinition, RelationMetadata } from './index';
+import { BelongsToDefinition, HasManyDefinition, HasOneDefinition, JsonSchema, RelationMetadata } from './index';
 import { TypeResolver } from './type-resolver';
 import { Type } from './types';
 /**
@@ -10,7 +10,7 @@ import { Type } from './types';
 export interface JsonSchemaWithExtensions extends JsonSchema {
     [attributes: string]: any;
 }
-export type PropertyType = string | Function | object | Type<any> | TypeResolver<Model>;
+export declare type PropertyType = string | Function | object | Type<any> | TypeResolver<Model>;
 /**
  * Property definition for a model
  */
@@ -67,7 +67,7 @@ export interface PropertyForm {
  * A key-value map describing model relations.
  * A relation name is used as the key, a relation definition is the value.
  */
-export type RelationDefinitionMap = {
+export declare type RelationDefinitionMap = {
     [relationName: string]: RelationMetadata;
 };
 /**
@@ -130,12 +130,6 @@ export declare class ModelDefinition {
      * @param definition - The definition of the hasMany relation.
      */
     hasMany(name: string, definition: Omit<HasManyDefinition, 'name' | 'type' | 'targetsMany'>): this;
-    /**
-     * Define a new referencesMany relation.
-     * @param name - The name of the referencesMany relation.
-     * @param definition - The definition of the referencesMany relation.
-     */
-    referencesMany(name: string, definition: Omit<ReferencesManyDefinition, 'name' | 'type' | 'targetsMany'>): this;
     /**
      * Get an array of names of ID properties, which are specified in
      * the model settings or properties with `id` attribute.
@@ -225,8 +219,8 @@ export declare class Event {
     source: any;
     type: string;
 }
-export type EntityData = DataObject<Entity>;
-export type EntityResolver<T extends Entity> = TypeResolver<T, typeof Entity>;
+export declare type EntityData = DataObject<Entity>;
+export declare type EntityResolver<T extends Entity> = TypeResolver<T, typeof Entity>;
 /**
  * Check model data for navigational properties linking to related models.
  * Throw a descriptive error if any such property is found.

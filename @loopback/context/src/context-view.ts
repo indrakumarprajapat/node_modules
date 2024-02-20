@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -205,10 +205,7 @@ export class ContextView<T = unknown>
         ...this.resolutionOptions,
         ...asResolutionOptions(session),
       };
-      // https://github.com/loopbackio/loopback-next/issues/9041
-      // We should start with a new session for `view` resolution to avoid
-      // possible circular dependencies
-      options.session = undefined;
+      options.session = ResolutionSession.fork(options.session);
       return b.getValue(this.context, options);
     });
     if (isPromiseLike(result)) {

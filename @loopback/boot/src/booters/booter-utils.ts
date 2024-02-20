@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. 2018,2019. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -6,7 +6,8 @@
 import {Constructor} from '@loopback/core';
 import debugFactory from 'debug';
 import path from 'path';
-import {glob} from 'glob';
+import {promisify} from 'util';
+const glob = promisify(require('glob'));
 
 const debug = debugFactory('loopback:boot:booter-utils');
 

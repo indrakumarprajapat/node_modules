@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -15,7 +15,7 @@ import debugFactory from 'debug';
 import express from 'express';
 import {toExpressMiddleware} from './middleware';
 import {BaseMiddlewareRegistry} from './middleware-registry';
-import {getMiddlewareContext, MiddlewareContext, Request} from './types';
+import {MiddlewareContext, MIDDLEWARE_CONTEXT, Request} from './types';
 
 const debug = debugFactory('loopback:middleware');
 
@@ -119,6 +119,7 @@ export class ExpressServer extends BaseMiddlewareRegistry implements Server {
    * @param request - Request object
    */
   getMiddlewareContext(request: Request): MiddlewareContext | undefined {
-    return getMiddlewareContext(request);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (request as any)[MIDDLEWARE_CONTEXT];
   }
 }

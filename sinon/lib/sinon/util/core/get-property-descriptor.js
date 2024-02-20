@@ -1,9 +1,9 @@
 "use strict";
 
 module.exports = function getPropertyDescriptor(object, property) {
-    let proto = object;
-    let descriptor;
-    const isOwn = Boolean(
+    var proto = object;
+    var descriptor;
+    var isOwn = Boolean(
         object && Object.getOwnPropertyDescriptor(object, property)
     );
 

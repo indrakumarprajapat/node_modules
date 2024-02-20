@@ -2,11 +2,11 @@ import { AnyObject } from './types';
 /**
  * Operators for where clauses
  */
-export type Operators = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'inq' | 'nin' | 'between' | 'exists' | 'and' | 'or' | 'like' | 'nlike' | 'ilike' | 'nilike' | 'regexp';
+export declare type Operators = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'inq' | 'nin' | 'between' | 'exists' | 'and' | 'or' | 'like' | 'nlike' | 'ilike' | 'nilike' | 'regexp';
 /**
  * Matching predicate comparison
  */
-export type PredicateComparison<PT> = {
+export declare type PredicateComparison<PT> = {
     eq?: PT;
     neq?: PT;
     gt?: PT;
@@ -26,11 +26,11 @@ export type PredicateComparison<PT> = {
 /**
  * Value types for `{propertyName: value}`
  */
-export type ShortHandEqualType = string | number | boolean | Date;
+export declare type ShortHandEqualType = string | number | boolean | Date;
 /**
  * Key types of a given model, excluding operators
  */
-export type KeyOf<MT extends object> = Exclude<Extract<keyof MT, string>, Operators>;
+export declare type KeyOf<MT extends object> = Exclude<Extract<keyof MT, string>, Operators>;
 /**
  * Condition clause
  *
@@ -43,7 +43,7 @@ export type KeyOf<MT extends object> = Exclude<Extract<keyof MT, string>, Operat
  * }
  * ```
  */
-export type Condition<MT extends object> = {
+export declare type Condition<MT extends object> = {
     [P in KeyOf<MT>]?: PredicateComparison<MT[P]> | (MT[P] & ShortHandEqualType);
 };
 /**
@@ -59,7 +59,7 @@ export type Condition<MT extends object> = {
  * }
  * ```
  */
-export type Where<MT extends object = AnyObject> = Condition<MT> | AndClause<MT> | OrClause<MT>;
+export declare type Where<MT extends object = AnyObject> = Condition<MT> | AndClause<MT> | OrClause<MT>;
 /**
  * And clause
  *
@@ -89,14 +89,14 @@ export interface OrClause<MT extends object> {
 /**
  * Order by direction
  */
-export type Direction = 'ASC' | 'DESC';
+export declare type Direction = 'ASC' | 'DESC';
 /**
  * Order by
  *
  * Example:
  * `{afieldname: 'ASC'}`
  */
-export type Order<MT = AnyObject> = {
+export declare type Order<MT = AnyObject> = {
     [P in keyof MT]: Direction;
 };
 /**
@@ -105,7 +105,7 @@ export type Order<MT = AnyObject> = {
  * Example:
  * `{afieldname: true}`
  */
-export type Fields<MT = AnyObject> = {
+export declare type Fields<MT = AnyObject> = {
     [P in keyof MT]?: boolean;
 } | Extract<keyof MT, string>[];
 /**
@@ -118,11 +118,10 @@ export type Fields<MT = AnyObject> = {
  */
 export interface Inclusion {
     relation: string;
-    targetType?: string;
     scope?: Filter<AnyObject> & {
         /**
          * Global maximum number of inclusions. This is just to remain backward
-         * compatibility. This totalLimit props takes precedence over limit
+         * compatability. This totalLimit props takes precedence over limit
          * https://github.com/loopbackio/loopback-next/issues/6832
          */
         totalLimit?: number;
@@ -169,11 +168,11 @@ export interface Filter<MT extends object = AnyObject> {
 /**
  * Inclusion filter type e.g. 'property', {relation: 'property'}
  */
-export type InclusionFilter = string | Inclusion;
+export declare type InclusionFilter = string | Inclusion;
 /**
  * Filter without `where` property
  */
-export type FilterExcludingWhere<MT extends object = AnyObject> = Omit<Filter<MT>, 'where'>;
+export declare type FilterExcludingWhere<MT extends object = AnyObject> = Omit<Filter<MT>, 'where'>;
 /**
  * TypeGuard for Filter
  * @param candidate

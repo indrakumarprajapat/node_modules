@@ -12,8 +12,8 @@ const models_1 = require("../models");
 const repositories_1 = require("../repositories");
 const user_service_1 = require("./user.service");
 const jwt = require('jsonwebtoken');
-const signAsync = (0, util_1.promisify)(jwt.sign);
-const verifyAsync = (0, util_1.promisify)(jwt.verify);
+const signAsync = util_1.promisify(jwt.sign);
+const verifyAsync = util_1.promisify(jwt.verify);
 let RefreshtokenService = class RefreshtokenService {
     constructor(refreshSecret, refreshExpiresIn, refreshIssure, refreshTokenRepository, userService, jwtService) {
         this.refreshSecret = refreshSecret;
@@ -29,7 +29,7 @@ let RefreshtokenService = class RefreshtokenService {
      */
     async generateToken(userProfile, token) {
         const data = {
-            token: (0, core_1.uuid)(),
+            token: core_1.uuid(),
         };
         const refreshToken = await signAsync(data, this.refreshSecret, {
             expiresIn: Number(this.refreshExpiresIn),
@@ -98,13 +98,13 @@ let RefreshtokenService = class RefreshtokenService {
     }
 };
 RefreshtokenService = tslib_1.__decorate([
-    (0, core_1.injectable)({ scope: core_1.BindingScope.TRANSIENT }),
-    tslib_1.__param(0, (0, core_1.inject)(keys_1.RefreshTokenServiceBindings.REFRESH_SECRET)),
-    tslib_1.__param(1, (0, core_1.inject)(keys_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN)),
-    tslib_1.__param(2, (0, core_1.inject)(keys_1.RefreshTokenServiceBindings.REFRESH_ISSUER)),
-    tslib_1.__param(3, (0, repository_1.repository)(repositories_1.RefreshTokenRepository)),
-    tslib_1.__param(4, (0, core_1.inject)(keys_1.UserServiceBindings.USER_SERVICE)),
-    tslib_1.__param(5, (0, core_1.inject)(keys_1.TokenServiceBindings.TOKEN_SERVICE)),
+    core_1.injectable({ scope: core_1.BindingScope.TRANSIENT }),
+    tslib_1.__param(0, core_1.inject(keys_1.RefreshTokenServiceBindings.REFRESH_SECRET)),
+    tslib_1.__param(1, core_1.inject(keys_1.RefreshTokenServiceBindings.REFRESH_EXPIRES_IN)),
+    tslib_1.__param(2, core_1.inject(keys_1.RefreshTokenServiceBindings.REFRESH_ISSUER)),
+    tslib_1.__param(3, repository_1.repository(repositories_1.RefreshTokenRepository)),
+    tslib_1.__param(4, core_1.inject(keys_1.UserServiceBindings.USER_SERVICE)),
+    tslib_1.__param(5, core_1.inject(keys_1.TokenServiceBindings.TOKEN_SERVICE)),
     tslib_1.__metadata("design:paramtypes", [String, String, String, repositories_1.RefreshTokenRepository,
         user_service_1.MyUserService, Object])
 ], RefreshtokenService);

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2019. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -44,7 +44,7 @@ const getTargetName = DecoratorFactory.getTargetName;
  * @param session - Optional session for binding and dependency resolution
  * @param nonInjectedArgs - Optional array of args for non-injected parameters
  */
-export function instantiateClass<T extends object>(
+export function instantiateClass<T>(
   ctor: Constructor<T>,
   ctx: Context,
   session?: ResolutionSession,
@@ -81,9 +81,7 @@ export function instantiateClass<T extends object>(
     if (debug.enabled) {
       debug('Injected properties for %s:', ctor.name, props);
     }
-    return transformValueOrPromise<T, T>(inst, obj =>
-      Object.assign(obj, props),
-    );
+    return transformValueOrPromise(inst, obj => Object.assign(obj, props));
   });
 }
 

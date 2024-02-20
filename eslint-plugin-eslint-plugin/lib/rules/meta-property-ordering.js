@@ -10,7 +10,6 @@ const { getKeyName, getRuleInfo } = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -18,50 +17,40 @@ module.exports = {
       description: 'enforce the order of meta properties',
       category: 'Rules',
       recommended: false,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/meta-property-ordering.md',
     },
     fixable: 'code',
-    schema: [
-      {
-        type: 'array',
-        elements: { type: 'string' },
-      },
-    ],
+    schema: [{
+      type: 'array',
+      elements: { type: 'string' },
+    }],
     messages: {
-      inconsistentOrder:
-        'The meta properties should be placed in a consistent order: [{{order}}].',
+      inconsistentOrder: 'The meta properties should be placed in a consistent order: [{{order}}].',
     },
   },
 
-  create(context) {
+  create (context) {
     const sourceCode = context.getSourceCode();
-    const ruleInfo = getRuleInfo(sourceCode);
-    if (!ruleInfo) {
-      return {};
-    }
+    const info = getRuleInfo(sourceCode);
 
-    const order = context.options[0] || [
-      'type',
-      'docs',
-      'fixable',
-      'hasSuggestions',
-      'schema',
-      'messages',
-    ];
+    const order = context.options[0] || ['type', 'docs', 'fixable', 'schema', 'messages'];
 
     const orderMap = new Map(order.map((name, i) => [name, i]));
 
     return {
-      Program() {
-        if (!ruleInfo.meta || ruleInfo.meta.properties.length < 2) {
+      Program () {
+        if (
+          !info ||
+          !info.meta ||
+          info.meta.properties.length < 2
+        ) {
           return;
         }
 
-        const props = ruleInfo.meta.properties;
+        const props = info.meta.properties;
 
         let last;
 
-        const violatingProps = props.filter((prop) => {
+        const violatingProps = props.filter(prop => {
           const curr = orderMap.has(getKeyName(prop))
             ? orderMap.get(getKeyName(prop))
             : Number.POSITIVE_INFINITY;
@@ -73,13 +62,9 @@ module.exports = {
         }
 
         const knownProps = props
-          .filter((prop) => orderMap.has(getKeyName(prop)))
-          .sort(
-            (a, b) => orderMap.get(getKeyName(a)) - orderMap.get(getKeyName(b))
-          );
-        const unknownProps = props.filter(
-          (prop) => !orderMap.has(getKeyName(prop))
-        );
+          .filter(prop => orderMap.has(getKeyName(prop)))
+          .sort((a, b) => orderMap.get(getKeyName(a)) - orderMap.get(getKeyName(b)));
+        const unknownProps = props.filter(prop => !orderMap.has(getKeyName(prop)));
 
         for (const violatingProp of violatingProps) {
           context.report({
@@ -88,7 +73,7 @@ module.exports = {
             data: {
               order: knownProps.map(getKeyName).join(', '),
             },
-            fix(fixer) {
+            fix (fixer) {
               const expectedProps = [...knownProps, ...unknownProps];
               return props.map((prop, k) => {
                 return fixer.replaceText(

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,8 +19,7 @@ import {RestServerResolvedConfig} from './rest.server';
  */
 export class RequestContext
   extends MiddlewareContext
-  implements HandlerContext
-{
+  implements HandlerContext {
   /**
    * Get the protocol used by the client to make the request.
    * Please note this protocol may be different from what we are observing

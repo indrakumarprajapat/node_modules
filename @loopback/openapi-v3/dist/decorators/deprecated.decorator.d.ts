@@ -34,4 +34,4 @@
  * }
  * ```
  */
-export declare function deprecated(isDeprecated?: boolean): (target: any, method?: string, methodDescriptor?: TypedPropertyDescriptor<any>) => any;
+export declare function deprecated(isDeprecated?: boolean): (target: any, method?: string | undefined, methodDescriptor?: TypedPropertyDescriptor<any> | undefined) => any;

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -88,8 +88,8 @@ export class Application extends Context implements LifeCycleObserver {
    *   - !started -> starting -> started
    *   - started -> started (no-op)
    * 2. stop
-   *   - (started | initialized) -> stopping -> stopped
-   *   - ! (started || initialized) -> stopped (no-op)
+   *   - started -> stopping -> stopped
+   *   - !started -> stopped (no-op)
    *
    * Two types of states are expected:
    * - stable, such as `started` and `stopped`
@@ -399,7 +399,7 @@ export class Application extends Context implements LifeCycleObserver {
     if (this._state === 'stopping') return this.awaitState('stopped');
     this.assertNotInProcess('stop');
     // No-op if it's created or stopped
-    if (this._state !== 'started' && this._state !== 'initialized') return;
+    if (this._state !== 'started') return;
     this.setState('stopping');
     if (!this._isShuttingDown) {
       // Explicit stop is called, let's remove signal listeners to avoid

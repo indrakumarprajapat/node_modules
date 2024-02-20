@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,8 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Application = void 0;
 const tslib_1 = require("tslib");
 const context_1 = require("@loopback/context");
-const assert_1 = tslib_1.__importDefault(require("assert"));
-const debug_1 = tslib_1.__importDefault(require("debug"));
+const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
 const events_1 = require("events");
 const component_1 = require("./component");
 const keys_1 = require("./keys");
@@ -42,28 +42,6 @@ function buildConstructorArgs(configOrParent, parent) {
  * and models.
  */
 class Application extends context_1.Context {
-    /**
-     * Get the state of the application. The initial state is `created` and it can
-     * transition as follows by `start` and `stop`:
-     *
-     * 1. start
-     *   - !started -> starting -> started
-     *   - started -> started (no-op)
-     * 2. stop
-     *   - (started | initialized) -> stopping -> stopped
-     *   - ! (started || initialized) -> stopped (no-op)
-     *
-     * Two types of states are expected:
-     * - stable, such as `started` and `stopped`
-     * - in process, such as `booting` and `starting`
-     *
-     * Operations such as `start` and `stop` can only be called at a stable state.
-     * The logic should immediately set the state to a new one indicating work in
-     * process, such as `starting` and `stopping`.
-     */
-    get state() {
-        return this._state;
-    }
     constructor(configOrParent, parent) {
         // super() has to be first statement for a constructor
         super(...buildConstructorArgs(configOrParent, parent));
@@ -92,6 +70,28 @@ class Application extends context_1.Context {
         // Also configure the application instance to allow `@config`
         this.configure(keys_1.CoreBindings.APPLICATION_INSTANCE).toAlias(keys_1.CoreBindings.APPLICATION_CONFIG);
         this._shutdownOptions = { signals: ['SIGTERM'], ...this.options.shutdown };
+    }
+    /**
+     * Get the state of the application. The initial state is `created` and it can
+     * transition as follows by `start` and `stop`:
+     *
+     * 1. start
+     *   - !started -> starting -> started
+     *   - started -> started (no-op)
+     * 2. stop
+     *   - started -> stopping -> stopped
+     *   - !started -> stopped (no-op)
+     *
+     * Two types of states are expected:
+     * - stable, such as `started` and `stopped`
+     * - in process, such as `booting` and `starting`
+     *
+     * Operations such as `start` and `stop` can only be called at a stable state.
+     * The logic should immediately set the state to a new one indicating work in
+     * process, such as `starting` and `stopping`.
+     */
+    get state() {
+        return this._state;
     }
     /**
      * Register a controller class with this application.
@@ -326,7 +326,7 @@ class Application extends context_1.Context {
             return this.awaitState('stopped');
         this.assertNotInProcess('stop');
         // No-op if it's created or stopped
-        if (this._state !== 'started' && this._state !== 'initialized')
+        if (this._state !== 'started')
             return;
         this.setState('stopping');
         if (!this._isShuttingDown) {

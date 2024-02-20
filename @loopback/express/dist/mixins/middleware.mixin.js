@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -28,7 +28,7 @@ function MiddlewareMixin(superClass) {
          */
         expressMiddleware(factoryOrKey, configOrHandlers, options = {}) {
             const key = factoryOrKey;
-            if ((0, core_1.isBindingAddress)(key)) {
+            if (core_1.isBindingAddress(key)) {
                 const handlers = Array.isArray(configOrHandlers)
                     ? configOrHandlers
                     : [configOrHandlers];
@@ -36,13 +36,13 @@ function MiddlewareMixin(superClass) {
                 if (handlers.length === 0) {
                     throw new Error('No Express middleware handler function is provided.');
                 }
-                return (0, middleware_1.registerMiddleware)(this, (0, middleware_1.toMiddleware)(handlers[0], ...handlers.slice(1)), {
+                return middleware_1.registerMiddleware(this, middleware_1.toMiddleware(handlers[0], ...handlers.slice(1)), {
                     ...options,
                     key,
                 });
             }
             else {
-                return (0, middleware_1.registerExpressMiddleware)(this, factoryOrKey, configOrHandlers, options);
+                return middleware_1.registerExpressMiddleware(this, factoryOrKey, configOrHandlers, options);
             }
         }
         /**
@@ -60,7 +60,7 @@ function MiddlewareMixin(superClass) {
          * @param options - Middleware binding options
          */
         middleware(middleware, options = {}) {
-            return (0, middleware_1.registerMiddleware)(this, middleware, options);
+            return middleware_1.registerMiddleware(this, middleware, options);
         }
     };
 }

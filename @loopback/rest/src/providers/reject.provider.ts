@@ -1,9 +1,9 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {BindingScope, inject, injectable} from '@loopback/core';
+import {BindingScope, inject, injectable, Provider} from '@loopback/core';
 import {HttpError} from 'http-errors';
 import {ErrorWriterOptions, writeErrorToResponse} from 'strong-error-handler';
 import {RestBindings} from '../keys';
@@ -16,27 +16,30 @@ const codeToStatusCodeMap: {[key: string]: number} = {
 };
 
 @injectable({scope: BindingScope.SINGLETON})
-export class RejectProvider {
-  static value(
+export class RejectProvider implements Provider<Reject> {
+  constructor(
     @inject(RestBindings.SequenceActions.LOG_ERROR)
-    logError: LogError,
+    protected logError: LogError,
     @inject(RestBindings.ERROR_WRITER_OPTIONS, {optional: true})
-    errorWriterOptions?: ErrorWriterOptions,
-  ): Reject {
-    const reject: Reject = ({request, response}: HandlerContext, error) => {
-      const err = <HttpError>error;
+    protected errorWriterOptions?: ErrorWriterOptions,
+  ) {}
 
-      if (!err.status && !err.statusCode && err.code) {
-        const customStatus = codeToStatusCodeMap[err.code];
-        if (customStatus) {
-          err.statusCode = customStatus;
-        }
+  value(): Reject {
+    return (context, error) => this.action(context, error);
+  }
+
+  action({request, response}: HandlerContext, error: Error) {
+    const err = <HttpError>error;
+
+    if (!err.status && !err.statusCode && err.code) {
+      const customStatus = codeToStatusCodeMap[err.code];
+      if (customStatus) {
+        err.statusCode = customStatus;
       }
+    }
 
-      const statusCode = err.statusCode || err.status || 500;
-      writeErrorToResponse(err, request, response, errorWriterOptions);
-      logError(error, statusCode, request);
-    };
-    return reject;
+    const statusCode = err.statusCode || err.status || 500;
+    writeErrorToResponse(err, request, response, this.errorWriterOptions);
+    this.logError(error, statusCode, request);
   }
 }

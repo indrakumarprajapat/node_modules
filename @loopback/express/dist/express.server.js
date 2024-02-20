@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,7 +13,7 @@ const express_1 = tslib_1.__importDefault(require("express"));
 const middleware_1 = require("./middleware");
 const middleware_registry_1 = require("./middleware-registry");
 const types_1 = require("./types");
-const debug = (0, debug_1.default)('loopback:middleware');
+const debug = debug_1.default('loopback:middleware');
 /**
  * An Express server that provides middleware composition and injection
  */
@@ -29,7 +29,7 @@ let ExpressServer = class ExpressServer extends middleware_registry_1.BaseMiddle
         if (basePath)
             basePath = '/' + basePath;
         this.basePath = basePath;
-        this.expressApp = (0, express_1.default)();
+        this.expressApp = express_1.default();
         if (config === null || config === void 0 ? void 0 : config.settings) {
             for (const p in config === null || config === void 0 ? void 0 : config.settings) {
                 this.expressApp.set(p, config === null || config === void 0 ? void 0 : config.settings[p]);
@@ -37,7 +37,7 @@ let ExpressServer = class ExpressServer extends middleware_registry_1.BaseMiddle
         }
         this.httpServer = new http_server_1.HttpServer(this.expressApp, config);
         // Set up the middleware chain as the 1st Express middleware
-        this.expressApp.use(this.basePath, (0, middleware_1.toExpressMiddleware)(this));
+        this.expressApp.use(this.basePath, middleware_1.toExpressMiddleware(this));
     }
     /**
      * Some of the methods below are copied from RestServer
@@ -79,12 +79,13 @@ let ExpressServer = class ExpressServer extends middleware_registry_1.BaseMiddle
      * @param request - Request object
      */
     getMiddlewareContext(request) {
-        return (0, types_1.getMiddlewareContext)(request);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return request[types_1.MIDDLEWARE_CONTEXT];
     }
 };
 ExpressServer = tslib_1.__decorate([
-    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_CONFIG.deepProperty('express'))),
-    tslib_1.__param(1, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__param(0, core_1.inject(core_1.CoreBindings.APPLICATION_CONFIG.deepProperty('express'))),
+    tslib_1.__param(1, core_1.inject(core_1.CoreBindings.APPLICATION_INSTANCE)),
     tslib_1.__metadata("design:paramtypes", [Object, core_1.Context])
 ], ExpressServer);
 exports.ExpressServer = ExpressServer;

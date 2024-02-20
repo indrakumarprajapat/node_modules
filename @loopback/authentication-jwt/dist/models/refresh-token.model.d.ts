@@ -8,4 +8,4 @@ export declare class RefreshToken extends Entity {
 }
 export interface RefreshTokenRelations {
 }
-export type RefereshTokenWithRelations = RefreshToken & RefreshTokenRelations;
+export declare type RefereshTokenWithRelations = RefreshToken & RefreshTokenRelations;

@@ -1,32 +1,31 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const logger = require("@sinonjs/commons").deprecated;
-const collectOwnMethods = require("./collect-own-methods");
-const getPropertyDescriptor = require("./util/core/get-property-descriptor");
-const isPropertyConfigurable = require("./util/core/is-property-configurable");
-const match = require("@sinonjs/samsam").createMatcher;
-const sinonAssert = require("./assert");
-const sinonClock = require("./util/fake-timers");
-const sinonMock = require("./mock");
-const sinonSpy = require("./spy");
-const sinonStub = require("./stub");
-const sinonCreateStubInstance = require("./create-stub-instance");
-const sinonFake = require("./fake");
-const valueToString = require("@sinonjs/commons").valueToString;
-const fakeServer = require("nise").fakeServer;
-const fakeXhr = require("nise").fakeXhr;
-const usePromiseLibrary = require("./util/core/use-promise-library");
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var logger = require("@sinonjs/commons").deprecated;
+var collectOwnMethods = require("./collect-own-methods");
+var getPropertyDescriptor = require("./util/core/get-property-descriptor");
+var isPropertyConfigurable = require("./util/core/is-property-configurable");
+var match = require("@sinonjs/samsam").createMatcher;
+var sinonAssert = require("./assert");
+var sinonClock = require("./util/fake-timers");
+var sinonMock = require("./mock");
+var sinonSpy = require("./spy");
+var sinonStub = require("./stub");
+var sinonFake = require("./fake");
+var valueToString = require("@sinonjs/commons").valueToString;
+var fakeServer = require("nise").fakeServer;
+var fakeXhr = require("nise").fakeXhr;
+var usePromiseLibrary = require("./util/core/use-promise-library");
 
-const DEFAULT_LEAK_THRESHOLD = 10000;
+var DEFAULT_LEAK_THRESHOLD = 10000;
 
-const filter = arrayProto.filter;
-const forEach = arrayProto.forEach;
-const push = arrayProto.push;
-const reverse = arrayProto.reverse;
+var filter = arrayProto.filter;
+var forEach = arrayProto.forEach;
+var push = arrayProto.push;
+var reverse = arrayProto.reverse;
 
 function applyOnEach(fakes, method) {
-    const matchingFakes = filter(fakes, function (fake) {
+    var matchingFakes = filter(fakes, function (fake) {
         return typeof fake[method] === "function";
     });
 
@@ -36,12 +35,12 @@ function applyOnEach(fakes, method) {
 }
 
 function Sandbox() {
-    const sandbox = this;
-    let fakeRestorers = [];
-    let promiseLib;
+    var sandbox = this;
+    var fakeRestorers = [];
+    var promiseLib;
 
-    let collection = [];
-    let loggedLeakWarning = false;
+    var collection = [];
+    var loggedLeakWarning = false;
     sandbox.leakThreshold = DEFAULT_LEAK_THRESHOLD;
 
     function addToCollection(object) {
@@ -72,9 +71,9 @@ function Sandbox() {
     };
 
     sandbox.createStubInstance = function createStubInstance() {
-        const stubbed = sinonCreateStubInstance.apply(null, arguments);
+        var stubbed = sinonStub.createStubInstance.apply(null, arguments);
 
-        const ownMethods = collectOwnMethods(stubbed);
+        var ownMethods = collectOwnMethods(stubbed);
 
         forEach(ownMethods, function (method) {
             addToCollection(method);
@@ -133,7 +132,7 @@ function Sandbox() {
     };
 
     sandbox.mock = function mock() {
-        const m = sinonMock.apply(null, arguments);
+        var m = sinonMock.apply(null, arguments);
 
         addToCollection(m);
         usePromiseLibrary(promiseLib, m);
@@ -152,7 +151,7 @@ function Sandbox() {
 
     sandbox.resetHistory = function resetHistory() {
         function privateResetHistory(f) {
-            const method = f.resetHistory || f.reset;
+            var method = f.resetHistory || f.reset;
             if (method) {
                 method.call(f);
             }
@@ -164,7 +163,7 @@ function Sandbox() {
                 return;
             }
 
-            const methods = [];
+            var methods = [];
             if (fake.get) {
                 push(methods, fake.get);
             }
@@ -197,8 +196,8 @@ function Sandbox() {
     };
 
     sandbox.restoreContext = function restoreContext() {
-        let injectedKeys = sandbox.injectedKeys;
-        const injectInto = sandbox.injectInto;
+        var injectedKeys = sandbox.injectedKeys;
+        var injectInto = sandbox.injectInto;
 
         if (!injectedKeys) {
             return;
@@ -212,7 +211,7 @@ function Sandbox() {
     };
 
     function getFakeRestorer(object, property) {
-        const descriptor = getPropertyDescriptor(object, property);
+        var descriptor = getPropertyDescriptor(object, property);
 
         function restorer() {
             if (descriptor.isOwn) {
@@ -240,7 +239,7 @@ function Sandbox() {
     }
 
     sandbox.replace = function replace(object, property, replacement) {
-        const descriptor = getPropertyDescriptor(object, property);
+        var descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -285,7 +284,7 @@ function Sandbox() {
         property,
         replacement
     ) {
-        const descriptor = getPropertyDescriptor(object, property);
+        var descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -323,7 +322,7 @@ function Sandbox() {
         property,
         replacement
     ) {
-        const descriptor = getPropertyDescriptor(object, property);
+        var descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -358,14 +357,14 @@ function Sandbox() {
     };
 
     function commonPostInitSetup(args, spy) {
-        const object = args[0];
-        const property = args[1];
+        var object = args[0];
+        var property = args[1];
 
-        const isSpyingOnEntireObject =
+        var isSpyingOnEntireObject =
             typeof property === "undefined" && typeof object === "object";
 
         if (isSpyingOnEntireObject) {
-            const ownMethods = collectOwnMethods(spy);
+            var ownMethods = collectOwnMethods(spy);
 
             forEach(ownMethods, function (method) {
                 addToCollection(method);
@@ -381,18 +380,18 @@ function Sandbox() {
     }
 
     sandbox.spy = function spy() {
-        const createdSpy = sinonSpy.apply(sinonSpy, arguments);
+        var createdSpy = sinonSpy.apply(sinonSpy, arguments);
         return commonPostInitSetup(arguments, createdSpy);
     };
 
     sandbox.stub = function stub() {
-        const createdStub = sinonStub.apply(sinonStub, arguments);
+        var createdStub = sinonStub.apply(sinonStub, arguments);
         return commonPostInitSetup(arguments, createdStub);
     };
 
     // eslint-disable-next-line no-unused-vars
     sandbox.fake = function fake(f) {
-        const s = sinonFake.apply(sinonFake, arguments);
+        var s = sinonFake.apply(sinonFake, arguments);
 
         addToCollection(s);
 
@@ -400,10 +399,10 @@ function Sandbox() {
     };
 
     forEach(Object.keys(sinonFake), function (key) {
-        const fakeBehavior = sinonFake[key];
+        var fakeBehavior = sinonFake[key];
         if (typeof fakeBehavior === "function") {
             sandbox.fake[key] = function () {
-                const s = fakeBehavior.apply(fakeBehavior, arguments);
+                var s = fakeBehavior.apply(fakeBehavior, arguments);
 
                 addToCollection(s);
 
@@ -413,7 +412,7 @@ function Sandbox() {
     });
 
     sandbox.useFakeTimers = function useFakeTimers(args) {
-        const clock = sinonClock.useFakeTimers.call(null, args);
+        var clock = sinonClock.useFakeTimers.call(null, args);
 
         sandbox.clock = clock;
         addToCollection(clock);
@@ -426,7 +425,7 @@ function Sandbox() {
     };
 
     sandbox.verifyAndRestore = function verifyAndRestore() {
-        let exception;
+        var exception;
 
         try {
             sandbox.verify();
@@ -442,7 +441,7 @@ function Sandbox() {
     };
 
     sandbox.useFakeServer = function useFakeServer() {
-        const proto = sandbox.serverPrototype || fakeServer;
+        var proto = sandbox.serverPrototype || fakeServer;
 
         if (!proto || !proto.create) {
             return null;
@@ -455,7 +454,7 @@ function Sandbox() {
     };
 
     sandbox.useFakeXMLHttpRequest = function useFakeXMLHttpRequest() {
-        const xhr = fakeXhr.useFakeXMLHttpRequest();
+        var xhr = fakeXhr.useFakeXMLHttpRequest();
         addToCollection(xhr);
         return xhr;
     };

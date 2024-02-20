@@ -6,7 +6,7 @@ import { MiddlewareContext, Request } from './types';
 /**
  * Configuration for a LoopBack based Express server
  */
-export type ExpressServerConfig = (HttpOptions | HttpsOptions) & {
+export declare type ExpressServerConfig = (HttpOptions | HttpsOptions) & {
     /**
      * Base path to mount the LoopBack middleware chain
      */
@@ -20,7 +20,25 @@ export type ExpressServerConfig = (HttpOptions | HttpsOptions) & {
  * An Express server that provides middleware composition and injection
  */
 export declare class ExpressServer extends BaseMiddlewareRegistry implements Server {
-    protected readonly config?: ExpressServerConfig | undefined;
+    protected readonly config?: (HttpOptions & {
+        /**
+         * Base path to mount the LoopBack middleware chain
+         */
+        basePath?: string | undefined;
+        /**
+         * Express settings
+         */
+        settings?: Record<string, unknown> | undefined;
+    }) | (HttpsOptions & {
+        /**
+         * Base path to mount the LoopBack middleware chain
+         */
+        basePath?: string | undefined;
+        /**
+         * Express settings
+         */
+        settings?: Record<string, unknown> | undefined;
+    }) | undefined;
     /**
      * Base path to mount middleware
      */
@@ -33,7 +51,25 @@ export declare class ExpressServer extends BaseMiddlewareRegistry implements Ser
      * HTTP/HTTPS server
      */
     protected httpServer: HttpServer;
-    constructor(config?: ExpressServerConfig | undefined, parent?: Context);
+    constructor(config?: (HttpOptions & {
+        /**
+         * Base path to mount the LoopBack middleware chain
+         */
+        basePath?: string | undefined;
+        /**
+         * Express settings
+         */
+        settings?: Record<string, unknown> | undefined;
+    }) | (HttpsOptions & {
+        /**
+         * Base path to mount the LoopBack middleware chain
+         */
+        basePath?: string | undefined;
+        /**
+         * Express settings
+         */
+        settings?: Record<string, unknown> | undefined;
+    }) | undefined, parent?: Context);
     /**
      * Some of the methods below are copied from RestServer
      * TODO(rfeng): We might want to refactor some methods from RestServer into

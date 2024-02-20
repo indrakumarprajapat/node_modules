@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -109,11 +109,7 @@ export function service(
         );
       }
       const view = new ContextView(ctx, filterByServiceInterface(serviceType));
-      const result = view.resolve({
-        optional: metadata?.optional,
-        asProxyWithInterceptors: metadata?.asProxyWithInterceptors,
-        session,
-      });
+      const result = view.resolve(session);
 
       const serviceTypeName =
         typeof serviceType === 'string'

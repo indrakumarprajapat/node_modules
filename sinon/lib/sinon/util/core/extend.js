@@ -1,15 +1,15 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const hasOwnProperty =
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
 
-const join = arrayProto.join;
-const push = arrayProto.push;
+var join = arrayProto.join;
+var push = arrayProto.push;
 
 // Adapted from https://developer.mozilla.org/en/docs/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-const hasDontEnumBug = (function () {
-    const obj = {
+var hasDontEnumBug = (function () {
+    var obj = {
         constructor: function () {
             return "0";
         },
@@ -42,8 +42,8 @@ const hasDontEnumBug = (function () {
         },
     };
 
-    const result = [];
-    for (const prop in obj) {
+    var result = [];
+    for (var prop in obj) {
         if (hasOwnProperty(obj, prop)) {
             push(result, obj[prop]());
         }
@@ -51,15 +51,8 @@ const hasDontEnumBug = (function () {
     return join(result, "") !== "0123456789";
 })();
 
-/**
- *
- * @param target
- * @param sources
- * @param doCopy
- * @returns {*} target
- */
 function extendCommon(target, sources, doCopy) {
-    let source, i, prop;
+    var source, i, prop;
 
     for (i = 0; i < sources.length; i++) {
         source = sources[i];
@@ -84,12 +77,12 @@ function extendCommon(target, sources, doCopy) {
     return target;
 }
 
-/**
- * Public: Extend target in place with all (own) properties, except 'name' when [[writable]] is false,
+/** Public: Extend target in place with all (own) properties, except 'name' when [[writable]] is false,
  *         from sources in-order. Thus, last source will override properties in previous sources.
  *
  * @param {object} target - The Object to extend
  * @param {object[]} sources - Objects to copy properties from.
+ *
  * @returns {object} the extended target
  */
 module.exports = function extend(target, ...sources) {
@@ -97,11 +90,11 @@ module.exports = function extend(target, ...sources) {
         target,
         sources,
         function copyValue(dest, source, prop) {
-            const destOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
+            var destOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
                 dest,
                 prop
             );
-            const sourceOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
+            var sourceOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
                 source,
                 prop
             );
@@ -115,7 +108,7 @@ module.exports = function extend(target, ...sources) {
             };
             /*
                 if the sorce has an Accessor property copy over the accessor functions (get and set)
-                data properties has writable attribute where as accessor property don't
+                data properties has writable attribute where as acessor property don't
                 REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#properties
             */
 
@@ -137,12 +130,12 @@ module.exports = function extend(target, ...sources) {
     );
 };
 
-/**
- * Public: Extend target in place with all (own) properties from sources in-order. Thus, last source will
+/** Public: Extend target in place with all (own) properties from sources in-order. Thus, last source will
  *         override properties in previous sources. Define the properties as non enumerable.
  *
  * @param {object} target - The Object to extend
  * @param {object[]} sources - Objects to copy properties from.
+ *
  * @returns {object} the extended target
  */
 module.exports.nonEnum = function extendNonEnum(target, ...sources) {

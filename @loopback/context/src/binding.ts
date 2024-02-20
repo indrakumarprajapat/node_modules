@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -870,7 +870,7 @@ export class Binding<T = BoundValue> extends EventEmitter {
    *   arguments must be annotated with `@inject` so that
    *   we can resolve them from the context.
    */
-  toClass<C extends T & object>(ctor: Constructor<C>): this {
+  toClass(ctor: Constructor<T>): this {
     /* istanbul ignore if */
     if (debug.enabled) {
       debug('Bind %s to class %s', this.key, ctor.name);

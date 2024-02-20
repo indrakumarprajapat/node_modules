@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -54,7 +54,7 @@ function tags(...tagNames) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target, method, 
     // Use `any` to for `TypedPropertyDescriptor`
-    // See https://github.com/loopbackio/loopback-next/pull/2704
+    // See https://github.com/strongloop/loopback-next/pull/2704
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     methodDescriptor) {
         if (method && methodDescriptor) {

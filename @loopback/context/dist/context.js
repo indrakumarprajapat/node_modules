@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BindingCreationPolicy = exports.Context = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = tslib_1.__importDefault(require("debug"));
+const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
 const events_1 = require("events");
 const binding_1 = require("./binding");
 const binding_config_1 = require("./binding-config");

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2017,2019. All Rights Reserved.
+// Copyright IBM Corp. 2017,2019. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,8 +11,8 @@ const tslib_1 = require("tslib");
  * https://github.com/hapijs/shot
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const express_1 = tslib_1.__importDefault(require("express"));
-const util_1 = tslib_1.__importDefault(require("util"));
+const express_1 = (0, tslib_1.__importDefault)(require("express"));
+const util_1 = (0, tslib_1.__importDefault)(require("util"));
 const inject = require('@hapi/shot');
 exports.inject = inject;
 const ShotRequest = require('@hapi/shot/lib/request');

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/filter
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -174,8 +174,6 @@ export type Fields<MT = AnyObject> =
 export interface Inclusion {
   relation: string;
 
-  targetType?: string;
-
   // Technically, we should restrict the filter to target model.
   // That is unfortunately rather difficult to achieve, because
   // an Entity does not provide type information about related models.
@@ -186,7 +184,7 @@ export interface Inclusion {
   scope?: Filter<AnyObject> & {
     /**
      * Global maximum number of inclusions. This is just to remain backward
-     * compatibility. This totalLimit props takes precedence over limit
+     * compatability. This totalLimit props takes precedence over limit
      * https://github.com/loopbackio/loopback-next/issues/6832
      */
     totalLimit?: number;
@@ -341,7 +339,7 @@ export class WhereBuilder<MT extends object = AnyObject> {
    */
   eq<K extends KeyOf<MT>>(key: K, val: MT[K]): this {
     const w: Where<MT> = {};
-    w[key] = val as ShortHandEqualType & MT[K];
+    w[key] = val;
     return this.add(w);
   }
 

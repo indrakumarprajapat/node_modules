@@ -1,31 +1,21 @@
 "use strict";
 
-const extend = require("./core/extend");
-const FakeTimers = require("@sinonjs/fake-timers");
-const globalObject = require("@sinonjs/commons").global;
+var extend = require("./core/extend");
+var FakeTimers = require("@sinonjs/fake-timers");
+var globalObject = require("@sinonjs/commons").global;
 
-/**
- *
- * @param config
- * @param globalCtx
- */
 function createClock(config, globalCtx) {
-    let FakeTimersCtx = FakeTimers;
+    var FakeTimersCtx = FakeTimers;
     if (globalCtx !== null && typeof globalCtx === "object") {
         FakeTimersCtx = FakeTimers.withGlobal(globalCtx);
     }
-    const clock = FakeTimersCtx.install(config);
+    var clock = FakeTimersCtx.install(config);
     clock.restore = clock.uninstall;
     return clock;
 }
 
-/**
- *
- * @param obj
- * @param globalPropName
- */
 function addIfDefined(obj, globalPropName) {
-    const globalProp = globalObject[globalPropName];
+    var globalProp = globalObject[globalPropName];
     if (typeof globalProp !== "undefined") {
         obj[globalPropName] = globalProp;
     }
@@ -36,11 +26,11 @@ function addIfDefined(obj, globalPropName) {
  * @returns {object} Returns a lolex clock instance
  */
 exports.useFakeTimers = function (dateOrConfig) {
-    const hasArguments = typeof dateOrConfig !== "undefined";
-    const argumentIsDateLike =
+    var hasArguments = typeof dateOrConfig !== "undefined";
+    var argumentIsDateLike =
         (typeof dateOrConfig === "number" || dateOrConfig instanceof Date) &&
         arguments.length === 1;
-    const argumentIsObject =
+    var argumentIsObject =
         dateOrConfig !== null &&
         typeof dateOrConfig === "object" &&
         arguments.length === 1;
@@ -58,8 +48,8 @@ exports.useFakeTimers = function (dateOrConfig) {
     }
 
     if (argumentIsObject) {
-        const config = extend.nonEnum({}, dateOrConfig);
-        const globalCtx = config.global;
+        var config = extend.nonEnum({}, dateOrConfig);
+        var globalCtx = config.global;
         delete config.global;
         return createClock(config, globalCtx);
     }
@@ -75,7 +65,7 @@ exports.clock = {
     },
 };
 
-const timers = {
+var timers = {
     setTimeout: setTimeout,
     clearTimeout: clearTimeout,
     setInterval: setInterval,

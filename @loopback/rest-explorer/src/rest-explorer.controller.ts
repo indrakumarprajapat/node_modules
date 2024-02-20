@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest-explorer
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -60,7 +60,7 @@ export class ExplorerController {
     // as a _relative_ URL
     const lastSlash = url.lastIndexOf('/');
     if (lastSlash >= 0) {
-      url = './' + url.slice(lastSlash + 1) + '/';
+      url = './' + url.substr(lastSlash + 1) + '/';
     }
     response.redirect(301, url);
   }

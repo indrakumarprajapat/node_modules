@@ -1,33 +1,28 @@
 "use strict";
 
-const arrayProto = require("@sinonjs/commons").prototypes.array;
-const match = require("@sinonjs/samsam").createMatcher;
-const deepEqual = require("@sinonjs/samsam").deepEqual;
-const functionName = require("@sinonjs/commons").functionName;
-const inspect = require("util").inspect;
-const valueToString = require("@sinonjs/commons").valueToString;
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var match = require("@sinonjs/samsam").createMatcher;
+var deepEqual = require("@sinonjs/samsam").deepEqual;
+var functionName = require("@sinonjs/commons").functionName;
+var sinonFormat = require("./util/core/format");
+var valueToString = require("@sinonjs/commons").valueToString;
 
-const concat = arrayProto.concat;
-const filter = arrayProto.filter;
-const join = arrayProto.join;
-const map = arrayProto.map;
-const reduce = arrayProto.reduce;
-const slice = arrayProto.slice;
+var concat = arrayProto.concat;
+var filter = arrayProto.filter;
+var join = arrayProto.join;
+var map = arrayProto.map;
+var reduce = arrayProto.reduce;
+var slice = arrayProto.slice;
 
-/**
- * @param proxy
- * @param text
- * @param args
- */
 function throwYieldError(proxy, text, args) {
-    let msg = functionName(proxy) + text;
+    var msg = functionName(proxy) + text;
     if (args.length) {
         msg += ` Received [${join(slice(args), ", ")}]`;
     }
     throw new Error(msg);
 }
 
-const callProto = {
+var callProto = {
     calledOn: function calledOn(thisValue) {
         if (match.isMatcher(thisValue)) {
             return thisValue.test(this.thisValue);
@@ -36,8 +31,8 @@ const callProto = {
     },
 
     calledWith: function calledWith() {
-        const self = this;
-        const calledWithArgs = slice(arguments);
+        var self = this;
+        var calledWithArgs = slice(arguments);
 
         if (calledWithArgs.length > self.args.length) {
             return false;
@@ -53,8 +48,8 @@ const callProto = {
     },
 
     calledWithMatch: function calledWithMatch() {
-        const self = this;
-        const calledWithMatchArgs = slice(arguments);
+        var self = this;
+        var calledWithMatchArgs = slice(arguments);
 
         if (calledWithMatchArgs.length > self.args.length) {
             return false;
@@ -63,7 +58,7 @@ const callProto = {
         return reduce(
             calledWithMatchArgs,
             function (prev, expectation, i) {
-                const actual = self.args[i];
+                var actual = self.args[i];
 
                 return prev && match(expectation).test(actual);
             },
@@ -137,7 +132,7 @@ const callProto = {
 
     callArgOnWith: function (pos, thisValue) {
         this.ensureArgIsAFunction(pos);
-        const args = slice(arguments, 2);
+        var args = slice(arguments, 2);
         return this.args[pos].apply(thisValue, args);
     },
 
@@ -156,8 +151,8 @@ const callProto = {
     },
 
     yieldOn: function (thisValue) {
-        const args = slice(this.args);
-        const yieldFn = filter(args, function (arg) {
+        var args = slice(this.args);
+        var yieldFn = filter(args, function (arg) {
             return typeof arg === "function";
         })[0];
 
@@ -180,11 +175,11 @@ const callProto = {
     },
 
     yieldToOn: function (prop, thisValue) {
-        const args = slice(this.args);
-        const yieldArg = filter(args, function (arg) {
+        var args = slice(this.args);
+        var yieldArg = filter(args, function (arg) {
             return arg && typeof arg[prop] === "function";
         })[0];
-        const yieldFn = yieldArg && yieldArg[prop];
+        var yieldFn = yieldArg && yieldArg[prop];
 
         if (!yieldFn) {
             throwYieldError(
@@ -200,19 +195,21 @@ const callProto = {
     },
 
     toString: function () {
+        var callStr = this.proxy ? `${String(this.proxy)}(` : "";
+        var formattedArgs;
+
         if (!this.args) {
             return ":(";
         }
 
-        let callStr = this.proxy ? `${String(this.proxy)}(` : "";
-        const formattedArgs = map(this.args, function (arg) {
-            return inspect(arg);
+        formattedArgs = map(this.args, function (arg) {
+            return sinonFormat(arg);
         });
 
         callStr = `${callStr + join(formattedArgs, ", ")})`;
 
         if (typeof this.returnValue !== "undefined") {
-            callStr += ` => ${inspect(this.returnValue)}`;
+            callStr += ` => ${sinonFormat(this.returnValue)}`;
         }
 
         if (this.exception) {
@@ -223,8 +220,7 @@ const callProto = {
             }
         }
         if (this.stack) {
-            // If we have a stack, add the first frame that's in end-user code
-            // Skip the first two frames because they will refer to Sinon code
+            // Omit the error message and the two top stack frames in sinon itself:
             callStr += (this.stack.split("\n")[3] || "unknown").replace(
                 /^\s*(?:at\s+|@)?/,
                 " at "
@@ -253,15 +249,6 @@ Object.defineProperty(callProto, "stack", {
 
 callProto.invokeCallback = callProto.yield;
 
-/**
- * @param proxy
- * @param thisValue
- * @param args
- * @param returnValue
- * @param exception
- * @param id
- * @param errorWithCallStack
- */
 function createProxyCall(
     proxy,
     thisValue,
@@ -275,15 +262,15 @@ function createProxyCall(
         throw new TypeError("Call id is not a number");
     }
 
-    let firstArg, lastArg;
+    var firstArg, lastArg;
 
     if (args.length > 0) {
         firstArg = args[0];
         lastArg = args[args.length - 1];
     }
 
-    const proxyCall = Object.create(callProto);
-    const callback =
+    var proxyCall = Object.create(callProto);
+    var callback =
         lastArg && typeof lastArg === "function" ? lastArg : undefined;
 
     proxyCall.proxy = proxy;

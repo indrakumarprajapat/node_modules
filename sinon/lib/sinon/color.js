@@ -1,6 +1,6 @@
 "use strict";
 
-const supportsColor = require("supports-color");
+var supportsColor = require("supports-color");
 
 function colorize(str, color) {
     if (supportsColor.stdout === false) {

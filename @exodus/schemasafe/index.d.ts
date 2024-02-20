@@ -102,7 +102,7 @@ interface Validate {
 interface ValidatorOptions {
   mode?: string
   useDefaults?: boolean
-  removeAdditional?: boolean | string
+  removeAdditional?: boolean
   includeErrors?: boolean
   allErrors?: boolean
   contentValidation?: boolean

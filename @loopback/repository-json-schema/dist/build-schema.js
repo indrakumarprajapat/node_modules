@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository-json-schema
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@ const repository_1 = require("@loopback/repository");
 const debug_1 = tslib_1.__importDefault(require("debug"));
 const util_1 = require("util");
 const keys_1 = require("./keys");
-const debug = (0, debug_1.default)('loopback:repository-json-schema:build-schema');
+const debug = debug_1.default('loopback:repository-json-schema:build-schema');
 /**
  * @internal
  */
@@ -35,9 +35,7 @@ exports.buildModelCacheKey = buildModelCacheKey;
 function getJsonSchema(ctor, options) {
     // In the near future the metadata will be an object with
     // different titles as keys
-    const cached = core_1.MetadataInspector.getClassMetadata(keys_1.JSON_SCHEMA_KEY, ctor, {
-        ownMetadataOnly: true,
-    });
+    const cached = core_1.MetadataInspector.getClassMetadata(keys_1.JSON_SCHEMA_KEY, ctor);
     const key = buildModelCacheKey(options);
     let schema = cached === null || cached === void 0 ? void 0 : cached[key];
     if (!schema) {
@@ -174,7 +172,7 @@ function metaToJsonProperty(meta) {
         result = propDef;
     }
     const wrappedType = stringTypeToWrapper(propertyType);
-    const resolvedType = (0, repository_1.resolveType)(wrappedType);
+    const resolvedType = repository_1.resolveType(wrappedType);
     if (resolvedType === Date) {
         Object.assign(propDef, {
             type: 'string',
@@ -184,7 +182,7 @@ function metaToJsonProperty(meta) {
     else if (propertyType === 'any') {
         // no-op, the json schema for any type is {}
     }
-    else if ((0, repository_1.isBuiltinType)(resolvedType)) {
+    else if (repository_1.isBuiltinType(resolvedType)) {
         Object.assign(propDef, {
             type: resolvedType.name.toLowerCase(),
         });
@@ -255,7 +253,7 @@ function getTitleSuffix(options = {}) {
     return suffix;
 }
 function stringifyOptions(modelSettings = {}) {
-    return (0, util_1.inspect)(modelSettings, {
+    return util_1.inspect(modelSettings, {
         depth: Infinity,
         maxArrayLength: Infinity,
         breakLength: Infinity,
@@ -285,11 +283,11 @@ function getDescriptionSuffix(typeName, rawOptions = {}) {
         tsType = `Partial<${tsType}>`;
     }
     if (options.exclude) {
-        const excludedProps = options.exclude.map(p => `'${String(p)}'`);
+        const excludedProps = options.exclude.map(p => `'${p}'`);
         tsType = `Omit<${tsType}, ${excludedProps.join(' | ')}>`;
     }
     if (options.optional) {
-        const optionalProps = options.optional.map(p => `'${String(p)}'`);
+        const optionalProps = options.optional.map(p => `'${p}'`);
         tsType = `@loopback/repository-json-schema#Optional<${tsType}, ${optionalProps.join(' | ')}>`;
     }
     return !isEmptyJson(options)
@@ -359,15 +357,13 @@ function modelToJsonSchema(ctor, jsonSchemaOptions = {}) {
         // populating JSON Schema 'definitions'
         // shimks: ugly type casting; this should be replaced by logic to throw
         // error if itemType/type is not a string or a function
-        const resolvedType = (0, repository_1.resolveType)(metaProperty.type);
+        const resolvedType = repository_1.resolveType(metaProperty.type);
         const referenceType = isArrayType(resolvedType)
             ? // shimks: ugly type casting; this should be replaced by logic to throw
                 // error if itemType/type is not a string or a function
-                typeof metaProperty.itemType === 'string'
-                    ? (0, repository_1.resolveType)(metaProperty.itemType)
-                    : (0, repository_1.resolveType)(metaProperty.itemType)
+                repository_1.resolveType(metaProperty.itemType)
             : resolvedType;
-        if (typeof referenceType !== 'function' || (0, repository_1.isBuiltinType)(referenceType)) {
+        if (typeof referenceType !== 'function' || repository_1.isBuiltinType(referenceType)) {
             continue;
         }
         const propOptions = { ...options };
@@ -375,16 +371,10 @@ function modelToJsonSchema(ctor, jsonSchemaOptions = {}) {
             // Do not cascade `partial` to nested properties
             delete propOptions.partial;
         }
-        if (propOptions.includeRelations === true) {
-            // Do not cascade `includeRelations` to nested properties
-            delete propOptions.includeRelations;
-        }
         // `title` is the unique identity of a schema,
         // it should be removed from the `options`
         // when generating the relation or property schemas
         delete propOptions.title;
-        // Do not cascade `exclude` to nested properties.
-        delete propOptions.exclude;
         const propSchema = getJsonSchema(referenceType, propOptions);
         // JSONSchema6Definition allows both boolean and JSONSchema6 types
         if (typeof result.properties[p] !== 'boolean') {
@@ -407,7 +397,7 @@ function modelToJsonSchema(ctor, jsonSchemaOptions = {}) {
         for (const r in meta.relations) {
             result.properties = (_g = result.properties) !== null && _g !== void 0 ? _g : {};
             const relMeta = meta.relations[r];
-            const targetType = (0, repository_1.resolveType)(relMeta.target);
+            const targetType = repository_1.resolveType(relMeta.target);
             // `title` is the unique identity of a schema,
             // it should be removed from the `options`
             // when generating the relation or property schemas

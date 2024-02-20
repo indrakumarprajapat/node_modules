@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -40,7 +40,7 @@ export class RoutingTable {
    * @param controllerCtor
    * @param controllerFactory
    */
-  registerController<T extends object>(
+  registerController<T>(
     spec: ControllerSpec,
     controllerCtor: ControllerClass<T>,
     controllerFactory?: ControllerFactory<T>,
@@ -61,7 +61,7 @@ export class RoutingTable {
    */
   registerRoute(route: RouteEntry) {
     // TODO(bajtos) handle the case where opSpec.parameters contains $ref
-    // See https://github.com/loopbackio/loopback-next/issues/435
+    // See https://github.com/strongloop/loopback-next/issues/435
     /* istanbul ignore if */
     if (debug.enabled) {
       debug(

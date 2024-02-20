@@ -11,16 +11,13 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
-/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
     docs: {
-      description:
-        'disallow the version of `context.report()` with multiple arguments',
+      description: 'disallow the version of `context.report()` with multiple arguments',
       category: 'Rules',
       recommended: true,
-      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/no-deprecated-report-api.md',
     },
     fixable: 'code', // or "code" or "whitespace"
     schema: [],
@@ -29,7 +26,7 @@ module.exports = {
     },
   },
 
-  create(context) {
+  create (context) {
     const sourceCode = context.getSourceCode();
     let contextIdentifiers;
 
@@ -38,26 +35,20 @@ module.exports = {
     // ----------------------------------------------------------------------
 
     return {
-      Program(ast) {
-        contextIdentifiers = utils.getContextIdentifiers(
-          sourceCode.scopeManager,
-          ast
-        );
+      Program (node) {
+        contextIdentifiers = utils.getContextIdentifiers(context, node);
       },
-      CallExpression(node) {
+      CallExpression (node) {
         if (
           node.callee.type === 'MemberExpression' &&
           contextIdentifiers.has(node.callee.object) &&
-          node.callee.property.type === 'Identifier' &&
-          node.callee.property.name === 'report' &&
-          (node.arguments.length > 1 ||
-            (node.arguments.length === 1 &&
-              node.arguments[0].type === 'SpreadElement'))
+          node.callee.property.type === 'Identifier' && node.callee.property.name === 'report' &&
+          (node.arguments.length > 1 || (node.arguments.length === 1 && node.arguments[0].type === 'SpreadElement'))
         ) {
           context.report({
             node: node.callee.property,
             messageId: 'useNewAPI',
-            fix(fixer) {
+            fix (fixer) {
               const openingParen = sourceCode.getTokenBefore(node.arguments[0]);
               const closingParen = sourceCode.getLastToken(node);
               const reportInfo = utils.getReportInfo(node.arguments, context);
@@ -68,11 +59,7 @@ module.exports = {
 
               return fixer.replaceTextRange(
                 [openingParen.range[1], closingParen.range[0]],
-                `{${Object.keys(reportInfo)
-                  .map(
-                    (key) => `${key}: ${sourceCode.getText(reportInfo[key])}`
-                  )
-                  .join(', ')}}`
+                `{${Object.keys(reportInfo).map(key => `${key}: ${sourceCode.getText(reportInfo[key])}`).join(', ')}}`
               );
             },
           });

@@ -2,7 +2,7 @@ import { UserProfile } from '@loopback/security';
 /**
  * Describes the token object that returned by the refresh token service functions.
  */
-export type TokenObject = {
+export declare type TokenObject = {
     accessToken: string;
     expiresIn?: string | undefined;
     refreshToken?: string | undefined;

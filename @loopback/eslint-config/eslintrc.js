@@ -1,4 +1,4 @@
-// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. 2019,2020. All Rights Reserved.
 // Node module: @loopback/eslint-config
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,17 +12,15 @@ const fs = require('fs');
  */
 module.exports = {
   root: true,
+  // Use the typescript-eslint parser
+  parser: '@typescript-eslint/parser',
+  // Enable eslint and typescript-eslint
+  plugins: ['eslint-plugin', '@typescript-eslint', 'mocha'],
   env: {
     es6: true,
     node: true,
     mocha: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-  ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
     /*
@@ -37,7 +35,15 @@ module.exports = {
     },
     noWatch: true,
   },
-  plugins: ['eslint-plugin', '@typescript-eslint', 'mocha'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    /**
+     * Use `prettier` to override default formatting related rules
+     * See https://github.com/prettier/eslint-config-prettier
+     */
+    'prettier',
+  ],
   rules: {
     'prefer-const': 'error',
     'no-mixed-operators': 'off',
@@ -131,10 +137,7 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 'error',
 
     '@typescript-eslint/prefer-optional-chain': 'error',
-    '@typescript-eslint/prefer-nullish-coalescing': [
-      'error',
-      {allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: true}, // See https://github.com/typescript-eslint/typescript-eslint/pull/6174
-    ],
+    '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/no-extra-non-null-assertion': 'error',
 
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/return-await.md#how-to-use
@@ -159,20 +162,38 @@ module.exports = {
       {
         selector: 'variable',
         format: null,
-        filter: '^_$',
+        filter: {
+          regex: '^_$',
+          match: true,
+        },
       },
 
       // For mixin functions
       {
         selector: 'function',
         format: ['PascalCase'],
-        filter: 'Mixin$',
+        filter: {
+          regex: 'Mixin$',
+          match: true,
+        },
       },
 
       {
         selector: 'parameter',
         format: ['camelCase'],
         leadingUnderscore: 'allow',
+      },
+
+      // For members such as `Content-Type`
+      {
+        selector: 'memberLike',
+        format: null,
+        filter: {
+          // you can expand this regex as you find more cases that require
+          // quoting that you want to allow
+          regex: '[- ]',
+          match: true,
+        },
       },
 
       // For enum members
@@ -222,15 +243,9 @@ module.exports = {
         selector: 'typeLike',
         format: ['PascalCase'],
       },
-
-      {
-        selector: 'objectLiteralProperty',
-        format: null,
-        // filter: '^([2-5]{1}[0-9]{2})$|[-/ ]',
-        modifiers: ['requiresQuotes'],
-      },
     ],
   },
+
   overrides: [
     {
       files: ['**/*.js'],

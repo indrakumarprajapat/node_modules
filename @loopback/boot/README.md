@@ -66,7 +66,7 @@ future without warning**
 
 To use `BootExecOptions` you must directly call `bootstrapper.boot()` and pass
 in `BootExecOptions`. `app.boot()` provided by `BootMixin` does not take any
-parameters.
+paramters.
 
 ```ts
 const bootstrapper: Bootstrapper = await this.get(

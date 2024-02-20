@@ -3,7 +3,7 @@ import { LifeCycleObserver } from './lifecycle';
 /**
  * A group of life cycle observers
  */
-export type LifeCycleObserverGroup = {
+export declare type LifeCycleObserverGroup = {
     /**
      * Observer group name
      */
@@ -13,7 +13,7 @@ export type LifeCycleObserverGroup = {
      */
     bindings: Readonly<Binding<LifeCycleObserver>>[];
 };
-export type LifeCycleObserverOptions = {
+export declare type LifeCycleObserverOptions = {
     /**
      * Control the order of observer groups for notifications. For example,
      * with `['datasource', 'server']`, the observers in `datasource` group are

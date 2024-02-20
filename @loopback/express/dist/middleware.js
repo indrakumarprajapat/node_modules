@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
+// Copyright IBM Corp. 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,7 +12,7 @@ const group_sorter_1 = require("./group-sorter");
 const keys_1 = require("./keys");
 const middleware_interceptor_1 = require("./middleware-interceptor");
 const types_1 = require("./types");
-const debug = (0, debug_1.default)('loopback:middleware');
+const debug = debug_1.default('loopback:middleware');
 /**
  * An adapter function to create a LoopBack middleware that invokes the list
  * of Express middleware handler functions in the order of their positions
@@ -28,9 +28,9 @@ const debug = (0, debug_1.default)('loopback:middleware');
  */
 function toMiddleware(firstHandler, ...additionalHandlers) {
     if (additionalHandlers.length === 0)
-        return (0, middleware_interceptor_1.toInterceptor)(firstHandler);
+        return middleware_interceptor_1.toInterceptor(firstHandler);
     const handlers = [firstHandler, ...additionalHandlers];
-    const middlewareList = handlers.map(handler => (0, middleware_interceptor_1.toInterceptor)(handler));
+    const middlewareList = handlers.map(handler => middleware_interceptor_1.toInterceptor(handler));
     return (middlewareCtx, next) => {
         if (middlewareList.length === 1) {
             return middlewareList[0](middlewareCtx, next);
@@ -50,7 +50,7 @@ exports.toMiddleware = toMiddleware;
  * @returns A LoopBack middleware function that wraps the Express middleware
  */
 function createMiddleware(middlewareFactory, middlewareConfig) {
-    return (0, middleware_interceptor_1.createInterceptor)(middlewareFactory, middlewareConfig);
+    return middleware_interceptor_1.createInterceptor(middlewareFactory, middlewareConfig);
 }
 exports.createMiddleware = createMiddleware;
 /**
@@ -71,7 +71,7 @@ function registerExpressMiddleware(ctx, middlewareFactory, middlewareConfig, opt
         const middleware = createMiddleware(middlewareFactory, middlewareConfig);
         return registerMiddleware(ctx, middleware, options);
     }
-    const providerClass = (0, middleware_interceptor_1.defineInterceptorProvider)(middlewareFactory, middlewareConfig, options);
+    const providerClass = middleware_interceptor_1.defineInterceptorProvider(middlewareFactory, middlewareConfig, options);
     return registerMiddleware(ctx, providerClass, options);
 }
 exports.registerExpressMiddleware = registerExpressMiddleware;
@@ -82,7 +82,7 @@ exports.registerExpressMiddleware = registerExpressMiddleware;
 function asMiddleware(options = {}) {
     return function middlewareBindingTemplate(binding) {
         var _a, _b;
-        binding.apply((0, core_1.extensionFor)((_a = options.chain) !== null && _a !== void 0 ? _a : types_1.DEFAULT_MIDDLEWARE_CHAIN));
+        binding.apply(core_1.extensionFor((_a = options.chain) !== null && _a !== void 0 ? _a : types_1.DEFAULT_MIDDLEWARE_CHAIN));
         if (!binding.tagMap.group) {
             binding.tag({ group: (_b = options.group) !== null && _b !== void 0 ? _b : keys_1.DEFAULT_MIDDLEWARE_GROUP });
         }
@@ -109,7 +109,7 @@ exports.asMiddleware = asMiddleware;
  */
 function registerMiddleware(ctx, middleware, options) {
     var _a;
-    if ((0, core_1.isProviderClass)(middleware)) {
+    if (core_1.isProviderClass(middleware)) {
         const binding = createMiddlewareBinding(middleware, options);
         ctx.add(binding);
         return binding;
@@ -131,7 +131,7 @@ exports.registerMiddleware = registerMiddleware;
 function createMiddlewareBinding(middlewareProviderClass, options = {}) {
     var _a;
     options.chain = (_a = options.chain) !== null && _a !== void 0 ? _a : types_1.DEFAULT_MIDDLEWARE_CHAIN;
-    const binding = (0, core_1.createBindingFromClass)(middlewareProviderClass, {
+    const binding = core_1.createBindingFromClass(middlewareProviderClass, {
         defaultScope: core_1.BindingScope.TRANSIENT,
         namespace: keys_1.MIDDLEWARE_NAMESPACE,
         key: options.key,
@@ -168,7 +168,7 @@ class MiddlewareView extends core_1.ContextView {
     constructor(ctx, options) {
         var _a;
         // Find extensions for the given extension point binding
-        const filter = (0, core_1.extensionFilter)((_a = options === null || options === void 0 ? void 0 : options.chain) !== null && _a !== void 0 ? _a : types_1.DEFAULT_MIDDLEWARE_CHAIN);
+        const filter = core_1.extensionFilter((_a = options === null || options === void 0 ? void 0 : options.chain) !== null && _a !== void 0 ? _a : types_1.DEFAULT_MIDDLEWARE_CHAIN);
         super(ctx, filter);
         this.options = {
             chain: types_1.DEFAULT_MIDDLEWARE_CHAIN,
@@ -204,7 +204,7 @@ class MiddlewareView extends core_1.ContextView {
             const groupsAfter = (_c = b.tagMap.downstreamGroups) !== null && _c !== void 0 ? _c : [];
             groupsAfter.forEach(d => ordersFromDependencies.push([group, d]));
         });
-        const order = (0, group_sorter_1.sortListOfGroups)(...ordersFromDependencies, this.options.orderedGroups);
+        const order = group_sorter_1.sortListOfGroups(...ordersFromDependencies, this.options.orderedGroups);
         /**
          * Validate sorted groups
          */
@@ -212,7 +212,7 @@ class MiddlewareView extends core_1.ContextView {
             this.options.validate(order);
         }
         this.keys = middlewareBindings
-            .sort((0, core_1.compareBindingsByTag)('group', order))
+            .sort(core_1.compareBindingsByTag('group', order))
             .map(b => b.key);
     }
 }
@@ -255,7 +255,7 @@ function invokeExpressMiddleware(middlewareCtx, ...handlers) {
     // Invoke the middleware with a no-op next()
     const result = middleware(middlewareCtx, () => undefined);
     // Check if the response is finished
-    return (0, core_1.transformValueOrPromise)(result, val => val === middlewareCtx.response);
+    return core_1.transformValueOrPromise(result, val => val === middlewareCtx.response);
 }
 exports.invokeExpressMiddleware = invokeExpressMiddleware;
 /**
@@ -264,25 +264,20 @@ exports.invokeExpressMiddleware = invokeExpressMiddleware;
  * @param ctx - Context object to discover registered middleware
  */
 function toExpressMiddleware(ctx) {
-    return (req, res, next) => {
+    return async (req, res, next) => {
         const middlewareCtx = new types_1.MiddlewareContext(req, res, ctx);
-        new Promise((resolve, reject) => {
-            // eslint-disable-next-line no-void
-            void (async () => {
-                try {
-                    const result = await invokeMiddleware(middlewareCtx);
-                    resolve(result);
-                }
-                catch (err) {
-                    reject(err);
-                }
-            })();
-        })
-            .then(result => {
-            if (result !== res)
+        // Set the middleware context to `request` object
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        req[types_1.MIDDLEWARE_CONTEXT] = middlewareCtx;
+        try {
+            const result = await invokeMiddleware(middlewareCtx);
+            if (result !== res) {
                 next();
-        })
-            .catch(next);
+            }
+        }
+        catch (err) {
+            next(err);
+        }
     };
 }
 exports.toExpressMiddleware = toExpressMiddleware;

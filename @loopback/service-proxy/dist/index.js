@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. 2018,2020. All Rights Reserved.
 // Node module: @loopback/service-proxy
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-tslib_1.__exportStar(require("./decorators/service.decorator"), exports);
-tslib_1.__exportStar(require("./legacy-juggler-bridge"), exports);
-tslib_1.__exportStar(require("./mixins"), exports);
+(0, tslib_1.__exportStar)(require("./decorators/service.decorator"), exports);
+(0, tslib_1.__exportStar)(require("./legacy-juggler-bridge"), exports);
+(0, tslib_1.__exportStar)(require("./mixins"), exports);
 //# sourceMappingURL=index.js.map

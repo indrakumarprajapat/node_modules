@@ -1,3 +1,63 @@
+2023-08-14, Version 4.28.9
+==========================
+
+ * chore: lock file maintenance (renovate[bot])
+
+ * chore: update dependency eslint to ^8.47.0 (renovate[bot])
+
+ * chore: update dependency @commitlint/cli to ^17.7.1 (renovate[bot])
+
+ * chore: update commitlint monorepo to ^17.7.0 (renovate[bot])
+
+ * chore: update dependency eslint to ^8.46.0 (renovate[bot])
+
+ * chore: update commitlint monorepo to ^17.6.7 (renovate[bot])
+
+ * chore: update dependency eslint to ^8.45.0 (renovate[bot])
+
+
+2023-07-11, Version 4.28.8
+==========================
+
+ * chore: lock file maintenance (renovate[bot])
+
+ * chore: update dependency eslint to ^8.44.0 (renovate[bot])
+
+ * chore: update dependency loopback-connector to ^5.3.3 (renovate[bot])
+
+
+2023-06-27, Version 4.28.7
+==========================
+
+ * fix: set nullable under jsonSchema in property to true in case of nullable property (Muhammad Aaqil)
+
+ * chore: lock file maintenance (renovate[bot])
+
+ * chore: update commitlint monorepo to ^17.6.6 (renovate[bot])
+
+ * fix: null value not persisted for properties of type JSON, Any, or Object (Siim Sams)
+
+ * chore: update dependency eslint to ^8.43.0 (renovate[bot])
+
+ * chore: update dependency loopback-connector to ^5.3.2 (renovate[bot])
+
+
+2023-06-13, Version 4.28.6
+==========================
+
+ * chore: lock file maintenance (renovate[bot])
+
+ * chore: update dependency eslint to ^8.42.0 (renovate[bot])
+
+ * chore: update commitlint monorepo to ^17.6.5 (renovate[bot])
+
+ * chore: update dependency eslint to ^8.41.0 (renovate[bot])
+
+ * chore: update dependency qs to ^6.11.2 (renovate[bot])
+
+ * chore: update dependency loopback-connector to ^5.3.1 (renovate[bot])
+
+
 2023-05-15, Version 4.28.5
 ==========================
 

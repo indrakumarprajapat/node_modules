@@ -1,7 +1,7 @@
 /**
  * Options to configure API Explorer UI
  */
-export type RestExplorerConfig = {
+export declare type RestExplorerConfig = {
     /**
      * URL path where to expose the explorer UI. Default: '/explorer'
      */
