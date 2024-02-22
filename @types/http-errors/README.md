@@ -8,7 +8,7 @@ This package contains type definitions for http-errors (https://github.com/jshtt
 Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/http-errors.
 
 ### Additional Details
- * Last updated: Thu, 13 Jan 2022 20:01:39 GMT
+ * Last updated: Tue, 01 Nov 2022 00:02:46 GMT
  * Dependencies: none
  * Global values: none
 

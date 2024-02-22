@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,22 +11,19 @@ const express_1 = require("@loopback/express");
 const debug_1 = tslib_1.__importDefault(require("debug"));
 const keys_1 = require("../keys");
 const sequence_1 = require("../sequence");
-const debug = debug_1.default('loopback:rest:invoke-method');
-let InvokeMethodProvider = class InvokeMethodProvider {
-    constructor(context) {
-        this.context = context;
+const debug = (0, debug_1.default)('loopback:rest:invoke-method');
+class InvokeMethodProvider {
+    static value(context) {
+        const invokeMethod = (route, args) => route.invokeHandler(context, args);
+        return invokeMethod;
     }
-    value() {
-        return (route, args) => this.action(route, args);
-    }
-    action(route, args) {
-        return route.invokeHandler(this.context, args);
-    }
-};
-InvokeMethodProvider = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(keys_1.RestBindings.Http.CONTEXT)),
-    tslib_1.__metadata("design:paramtypes", [core_1.Context])
-], InvokeMethodProvider);
+}
+tslib_1.__decorate([
+    tslib_1.__param(0, (0, core_1.inject)(keys_1.RestBindings.Http.CONTEXT)),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [core_1.Context]),
+    tslib_1.__metadata("design:returntype", Function)
+], InvokeMethodProvider, "value", null);
 exports.InvokeMethodProvider = InvokeMethodProvider;
 let InvokeMethodMiddlewareProvider = class InvokeMethodMiddlewareProvider {
     value() {
@@ -54,7 +51,7 @@ let InvokeMethodMiddlewareProvider = class InvokeMethodMiddlewareProvider {
     }
 };
 InvokeMethodMiddlewareProvider = tslib_1.__decorate([
-    core_1.injectable(express_1.asMiddleware({
+    (0, core_1.injectable)((0, express_1.asMiddleware)({
         group: sequence_1.RestMiddlewareGroups.INVOKE_METHOD,
         upstreamGroups: sequence_1.RestMiddlewareGroups.PARSE_PARAMS,
         chain: keys_1.RestTags.REST_MIDDLEWARE_CHAIN,

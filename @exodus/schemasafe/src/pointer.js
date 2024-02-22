@@ -2,6 +2,11 @@
 
 const { knownKeywords } = require('./known-keywords')
 
+function safeSet(map, key, value, comment = 'keys') {
+  if (!map.has(key)) return map.set(key, value)
+  if (map.get(key) !== value) throw new Error(`Conflicting duplicate ${comment}: ${key}`)
+}
+
 function untilde(string) {
   if (!string.includes('~')) return string
   return string.replace(/~[01]/g, (match) => {
@@ -54,23 +59,37 @@ function objpath2path(objpath) {
 }
 
 const withSpecialChilds = ['properties', 'patternProperties', '$defs', 'definitions']
+const skipChilds = ['const', 'enum', 'examples', 'example', 'comment']
+const sSkip = Symbol('skip')
+
+function traverse(schema, work) {
+  const visit = (sub, specialChilds = false) => {
+    if (!sub || typeof sub !== 'object') return
+    const res = work(sub)
+    if (res !== undefined) return res === sSkip ? undefined : res
+    for (const k of Object.keys(sub)) {
+      if (!specialChilds && !Array.isArray(sub) && !knownKeywords.includes(k)) continue
+      if (!specialChilds && skipChilds.includes(k)) continue
+      const kres = visit(sub[k], !specialChilds && withSpecialChilds.includes(k))
+      if (kres !== undefined) return kres
+    }
+  }
+  return visit(schema)
+}
 
 // Returns a list of resolved entries, in a form: [schema, root, basePath]
 // basePath doesn't contain the target object $id itself
-function resolveReference(root, additionalSchemas, ref, base = '') {
+function resolveReference(root, schemas, ref, base = '') {
   const ptr = joinPath(base, ref)
-  const schemas = new Map(additionalSchemas)
-  const self = (base || '').split('#')[0]
-  if (self) schemas.set(self, root)
-
   const results = []
 
   const [main, hash = ''] = ptr.split('#')
-  const local = decodeURI(hash).replace(/\/$/, '')
+  const local = decodeURI(hash)
 
   // Find in self by id path
   const visit = (sub, oldPath, specialChilds = false, dynamic = false) => {
     if (!sub || typeof sub !== 'object') return
+
     const id = sub.$id || sub.id
     let path = oldPath
     if (id && typeof id === 'string') {
@@ -90,25 +109,26 @@ function resolveReference(root, additionalSchemas, ref, base = '') {
       path = joinPath(path, `#${anchor}`)
       if (path === ptr) results.push([sub, root, oldPath])
     }
+
     for (const k of Object.keys(sub)) {
       if (!specialChilds && !Array.isArray(sub) && !knownKeywords.includes(k)) continue
-      if (!specialChilds && ['const', 'enum', 'examples', 'comment'].includes(k)) continue
+      if (!specialChilds && skipChilds.includes(k)) continue
       visit(sub[k], path, !specialChilds && withSpecialChilds.includes(k))
     }
     if (!dynamic && sub.$dynamicAnchor) visit(sub, oldPath, specialChilds, true)
   }
-  visit(root, '')
+  visit(root, main)
 
   // Find in self by pointer
-  if (main === '' && (local[0] === '/' || local === '')) {
+  if (main === base.replace(/#$/, '') && (local[0] === '/' || local === '')) {
     const objpath = []
     const res = get(root, local, objpath)
     if (res !== undefined) results.push([res, root, objpath2path(objpath)])
   }
 
   // Find in additional schemas
-  if (schemas.has(main)) {
-    const additional = resolveReference(schemas.get(main), additionalSchemas, `#${hash}`)
+  if (schemas.has(main) && schemas.get(main) !== root) {
+    const additional = resolveReference(schemas.get(main), schemas, `#${hash}`, main)
     results.push(...additional.map(([res, rRoot, rPath]) => [res, rRoot, joinPath(main, rPath)]))
   }
 
@@ -120,69 +140,48 @@ function resolveReference(root, additionalSchemas, ref, base = '') {
 
 function getDynamicAnchors(schema) {
   const results = new Map()
-  const visit = (sub, specialChilds = false) => {
-    if (!sub || typeof sub !== 'object') return
-    if (sub !== schema && (sub.$id || sub.id)) return // base changed, no longer in the same resource
+  traverse(schema, (sub) => {
+    if (sub !== schema && (sub.$id || sub.id)) return sSkip // base changed, no longer in the same resource
     const anchor = sub.$dynamicAnchor
     if (anchor && typeof anchor === 'string') {
       if (anchor.includes('#')) throw new Error("$dynamicAnchor can't include '#'")
       if (!/^[a-zA-Z0-9_-]+$/.test(anchor)) throw new Error(`Unsupported $dynamicAnchor: ${anchor}`)
-      if (results.has(anchor)) throw new Error(`duplicate $dynamicAnchor: ${anchor}`)
-      results.set(anchor, sub)
+      safeSet(results, anchor, sub, '$dynamicAnchor')
     }
-    for (const k of Object.keys(sub)) {
-      if (!specialChilds && !Array.isArray(sub) && !knownKeywords.includes(k)) continue
-      if (!specialChilds && ['const', 'enum', 'examples', 'comment'].includes(k)) continue
-      visit(sub[k], !specialChilds && withSpecialChilds.includes(k))
-    }
-  }
-  visit(schema)
+  })
   return results
 }
 
-function hasKeywords(schema, keywords) {
-  const visit = (sub, specialChilds = false) => {
-    if (!sub || typeof sub !== 'object') return false
-    for (const k of Object.keys(sub)) {
-      if (keywords.includes(k)) return true
-      if (!specialChilds && !Array.isArray(sub) && !knownKeywords.includes(k)) continue
-      if (!specialChilds && ['const', 'enum', 'examples', 'comment'].includes(k)) continue
-      if (visit(sub[k], !specialChilds && withSpecialChilds.includes(k))) return true
-    }
-    return false
+const hasKeywords = (schema, keywords) =>
+  traverse(schema, (s) => Object.keys(s).some((k) => keywords.includes(k)) || undefined) || false
+
+const addSchemasArrayToMap = (schemas, input, optional = false) => {
+  if (!Array.isArray(input)) throw new Error('Expected an array of schemas')
+  // schema ids are extracted from the schemas themselves
+  for (const schema of input) {
+    traverse(schema, (sub) => {
+      const idRaw = sub.$id || sub.id
+      const id = idRaw && typeof idRaw === 'string' ? idRaw.replace(/#$/, '') : null // # is allowed only as the last symbol here
+      if (id && id.includes('://') && !id.includes('#')) {
+        safeSet(schemas, id, sub, "schema $id in 'schemas'")
+      } else if (sub === schema && !optional) {
+        throw new Error("Schema with missing or invalid $id in 'schemas'")
+      }
+    })
   }
-  return visit(schema)
+  return schemas
 }
 
-const buildSchemas = (input) => {
+const buildSchemas = (input, extra) => {
+  if (extra) return addSchemasArrayToMap(buildSchemas(input), extra, true)
   if (input) {
     switch (Object.getPrototypeOf(input)) {
       case Object.prototype:
         return new Map(Object.entries(input))
       case Map.prototype:
         return new Map(input)
-      case Array.prototype: {
-        // In this case, schema ids are extracted from the schemas themselves
-        const schemas = new Map()
-        const cleanId = (id) =>
-          // # is allowed only as the last symbol here
-          id && typeof id === 'string' && !/#./.test(id) ? id.replace(/#$/, '') : null
-        for (const schema of input) {
-          const visit = (sub) => {
-            if (!sub || typeof sub !== 'object') return
-            const id = cleanId(sub.$id || sub.id)
-            if (id && id.includes('://')) {
-              if (schemas.has(id)) throw new Error("Duplicate schema $id in 'schemas'")
-              schemas.set(id, sub)
-            } else if (sub === schema) {
-              throw new Error("Schema with missing or invalid $id in 'schemas'")
-            }
-            for (const k of Object.keys(sub)) visit(sub[k])
-          }
-          visit(schema)
-        }
-        return schemas
-      }
+      case Array.prototype:
+        return addSchemasArrayToMap(new Map(), input)
     }
   }
   throw new Error("Unexpected value for 'schemas' option")

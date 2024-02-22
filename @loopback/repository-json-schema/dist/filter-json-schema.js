@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository-json-schema
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -28,9 +28,10 @@ function getScopeFilterJsonSchemaFor(modelCtor, options = {}) {
     let EmptyModel = class EmptyModel extends repository_1.Model {
     };
     EmptyModel = tslib_1.__decorate([
-        repository_1.model({ settings: { strict: false } })
+        (0, repository_1.model)({ settings: { strict: false } })
     ], EmptyModel);
     const schema = {
+        type: 'object',
         ...getFilterJsonSchemaFor(EmptyModel, {
             setTitle: false,
         }),
@@ -102,13 +103,14 @@ function getFilterJsonSchemaFor(modelCtor, options = {}) {
         delete properties[p];
     }
     const schema = {
+        type: 'object',
         ...(options.setTitle !== false && {
             title: `${modelCtor.modelName}.Filter`,
         }),
         properties,
         additionalProperties: false,
     };
-    const modelRelations = repository_1.getModelRelations(modelCtor);
+    const modelRelations = (0, repository_1.getModelRelations)(modelCtor);
     const hasRelations = Object.keys(modelRelations).length > 0;
     if (hasRelations && !excluded.includes('include')) {
         schema.properties.include = {
@@ -125,7 +127,7 @@ function getFilterJsonSchemaFor(modelCtor, options = {}) {
                         type: 'object',
                         properties: {
                             // TODO(bajtos) restrict values to relations defined by "model"
-                            relation: { type: 'string' },
+                            relation: { type: 'string', enum: Object.keys(modelRelations) },
                             // TODO(bajtos) describe the filter for the relation target model
                             scope: getScopeFilterJsonSchemaFor(modelCtor, options),
                         },
@@ -156,7 +158,7 @@ function getWhereJsonSchemaFor(modelCtor, options = {}) {
         }),
         type: 'object',
         // TODO(bajtos) enumerate "model" properties and operators like "and"
-        // See https://github.com/strongloop/loopback-next/issues/1748
+        // See https://github.com/loopbackio/loopback-next/issues/1748
         additionalProperties: true,
     };
     return schema;

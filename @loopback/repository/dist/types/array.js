@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2017,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArrayType = void 0;
 const tslib_1 = require("tslib");
-const util_1 = (0, tslib_1.__importDefault)(require("util"));
+const util_1 = tslib_1.__importDefault(require("util"));
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Array type, such as string[]

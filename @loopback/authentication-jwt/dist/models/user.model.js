@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,7 +14,7 @@ let User = class User extends repository_1.Entity {
     }
 };
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'string',
         id: true,
         generated: false,
@@ -23,19 +23,19 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "id", void 0);
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'string',
     }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "realm", void 0);
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'string',
     }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "username", void 0);
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'string',
         required: true,
         index: {
@@ -45,23 +45,23 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "email", void 0);
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'boolean',
     }),
     tslib_1.__metadata("design:type", Boolean)
 ], User.prototype, "emailVerified", void 0);
 tslib_1.__decorate([
-    repository_1.property({
+    (0, repository_1.property)({
         type: 'string',
     }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "verificationToken", void 0);
 tslib_1.__decorate([
-    repository_1.hasOne(() => user_credentials_model_1.UserCredentials),
+    (0, repository_1.hasOne)(() => user_credentials_model_1.UserCredentials),
     tslib_1.__metadata("design:type", user_credentials_model_1.UserCredentials)
 ], User.prototype, "userCredentials", void 0);
 User = tslib_1.__decorate([
-    repository_1.model({
+    (0, repository_1.model)({
         settings: {
             strict: false,
         },

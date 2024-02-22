@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -10,7 +10,7 @@ const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
 const openapi_v3_1 = require("@loopback/openapi-v3");
 const debug_1 = tslib_1.__importDefault(require("debug"));
-const debug = debug_1.default('loopback:openapi:spec-enhancer:info');
+const debug = (0, debug_1.default)('loopback:openapi:spec-enhancer:info');
 /**
  * An OpenAPI spec enhancer to populate `info` with application metadata
  * (package.json).
@@ -43,7 +43,7 @@ let InfoSpecEnhancer = InfoSpecEnhancer_1 = class InfoSpecEnhancer {
             },
         };
         debug('Enhancing OpenAPI spec with %j', patchSpec);
-        return openapi_v3_1.mergeOpenAPISpec(spec, patchSpec);
+        return (0, openapi_v3_1.mergeOpenAPISpec)(spec, patchSpec);
     }
     /**
      * Parse package.json
@@ -85,8 +85,8 @@ let InfoSpecEnhancer = InfoSpecEnhancer_1 = class InfoSpecEnhancer {
     }
 };
 InfoSpecEnhancer = InfoSpecEnhancer_1 = tslib_1.__decorate([
-    core_1.injectable(openapi_v3_1.asSpecEnhancer, { scope: core_1.BindingScope.SINGLETON }),
-    tslib_1.__param(0, core_1.inject(core_1.CoreBindings.APPLICATION_METADATA, { optional: true })),
+    (0, core_1.injectable)(openapi_v3_1.asSpecEnhancer, { scope: core_1.BindingScope.SINGLETON }),
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_METADATA, { optional: true })),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], InfoSpecEnhancer);
 exports.InfoSpecEnhancer = InfoSpecEnhancer;

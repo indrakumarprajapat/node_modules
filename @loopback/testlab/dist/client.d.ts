@@ -1,8 +1,8 @@
 /// <reference types="node" />
 import http from 'http';
-import supertest = require('supertest');
+import supertest from 'supertest';
 export { supertest };
-export declare type Client = supertest.SuperTest<supertest.Test>;
+export type Client = supertest.SuperTest<supertest.Test>;
 /**
  * Create a SuperTest client connected to an HTTP server listening
  * on an ephemeral port and calling `handler` to handle incoming requests.

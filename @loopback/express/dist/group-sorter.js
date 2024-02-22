@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,7 +8,7 @@ exports.sortListOfGroups = void 0;
 const tslib_1 = require("tslib");
 const debug_1 = tslib_1.__importDefault(require("debug"));
 const toposort_1 = tslib_1.__importDefault(require("toposort"));
-const debug = debug_1.default('loopback:middleware');
+const debug = (0, debug_1.default)('loopback:middleware');
 /**
  * Sort the groups by their relative order
  * @param orderedGroups - A list of arrays - each of which represents a partial
@@ -29,7 +29,7 @@ function sortListOfGroups(...orderedGroups) {
             }, undefined);
         }
     }
-    const sorted = toposort_1.default(graph);
+    const sorted = (0, toposort_1.default)(graph);
     debug('Sorted groups: %s', sorted.join('->'));
     return sorted;
 }

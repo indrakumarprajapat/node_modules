@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Options, OptionsJson, OptionsText, OptionsUrlencoded } from 'body-parser';
 import { HttpError } from 'http-errors';
 import { Request, RequestBodyParserOptions, Response } from '../types';
@@ -9,12 +10,12 @@ export declare function getContentType(req: Request): string | undefined;
 /**
  * Express body parser function type
  */
-export declare type BodyParserMiddleware = (request: Request, response: Response, next: (err: HttpError) => void) => void;
+export type BodyParserMiddleware = (request: Request, response: Response, next: (err: HttpError) => void) => void;
 /**
  * Normalize parsing errors as `4xx`
  * @param err
  */
-export declare function normalizeParsingError(err: HttpError): HttpError;
+export declare function normalizeParsingError(err: HttpError): HttpError<number>;
 /**
  * Parse the request body asynchronously
  * @param handle - The express middleware handler

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -23,7 +23,7 @@ class Route extends base_route_1.BaseRoute {
     async invokeHandler(requestContext, args) {
         // Use `invokeMethodWithInterceptors` to invoke the handler function so
         // that global interceptors are applied
-        return core_1.invokeMethodWithInterceptors(requestContext, this, '_handler', args, { source: new base_route_1.RouteSource(this) });
+        return (0, core_1.invokeMethodWithInterceptors)(requestContext, this, '_handler', args, { source: new base_route_1.RouteSource(this) });
     }
 }
 exports.Route = Route;

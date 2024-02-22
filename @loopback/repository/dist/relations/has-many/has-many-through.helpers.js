@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolveHasManyThroughMetadata = exports.createThroughConstraintFromTarget = exports.getTargetIdsFromTargetModels = exports.createThroughConstraintFromSource = exports.getTargetKeysFromThroughModels = exports.createTargetConstraintFromThrough = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const lodash_1 = require("lodash");
 const __1 = require("../..");
 const has_many_helpers_1 = require("./has-many.helpers");
@@ -246,7 +246,10 @@ function resolveHasManyThroughMetadata(relationMeta) {
         relationMeta.through.keyFrom &&
         throughModelProperties[relationMeta.through.keyFrom] &&
         relationMeta.keyTo &&
-        targetModelProperties[relationMeta.keyTo]) {
+        targetModelProperties[relationMeta.keyTo] &&
+        (relationMeta.through.polymorphic === false ||
+            (typeof relationMeta.through.polymorphic === 'object' &&
+                relationMeta.through.polymorphic.discriminator.length > 0))) {
         // The explicit cast is needed because of a limitation of type inference
         return relationMeta;
     }
@@ -268,6 +271,26 @@ function resolveHasManyThroughMetadata(relationMeta) {
         const reason = `target model ${targetModel.modelName} does not have any primary key (id property)`;
         throw new __1.InvalidRelationError(reason, relationMeta);
     }
+    let throughPolymorphic;
+    if (relationMeta.through.polymorphic === undefined ||
+        relationMeta.through.polymorphic === false ||
+        !relationMeta.through.polymorphic) {
+        const polymorphicFalse = false;
+        throughPolymorphic = polymorphicFalse;
+    }
+    else {
+        if (relationMeta.through.polymorphic === true) {
+            const polymorphicObject = {
+                discriminator: (0, lodash_1.camelCase)(relationMeta.target().name + '_type'),
+            };
+            throughPolymorphic = polymorphicObject;
+        }
+        else {
+            const polymorphicObject = relationMeta.through
+                .polymorphic;
+            throughPolymorphic = polymorphicObject;
+        }
+    }
     return Object.assign(relationMeta, {
         keyTo: targetPrimaryKey,
         keyFrom: relationMeta.keyFrom,
@@ -275,6 +298,7 @@ function resolveHasManyThroughMetadata(relationMeta) {
             ...relationMeta.through,
             keyTo: targetFkName,
             keyFrom: sourceFkName,
+            polymorphic: throughPolymorphic,
         },
     });
 }

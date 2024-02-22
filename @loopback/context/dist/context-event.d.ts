@@ -3,7 +3,7 @@ import { Context } from './context';
 /**
  * Events emitted by a context
  */
-export declare type ContextEvent = {
+export type ContextEvent = {
     /**
      * Source context that emits the event
      */
@@ -20,4 +20,4 @@ export declare type ContextEvent = {
 /**
  * Synchronous listener for context events
  */
-export declare type ContextEventListener = (event: ContextEvent) => void;
+export type ContextEventListener = (event: ContextEvent) => void;

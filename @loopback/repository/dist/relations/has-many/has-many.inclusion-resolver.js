@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createHasManyInclusionResolver = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const relation_helpers_1 = require("../relation.helpers");
 const has_many_helpers_1 = require("./has-many.helpers");
 const debug = (0, debug_1.default)('loopback:repository:relations:has-many:inclusion-resolver');

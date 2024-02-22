@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Binding = exports.isDynamicValueProviderClass = exports.BindingType = exports.BindingScope = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const events_1 = require("events");
 const binding_inspector_1 = require("./binding-inspector");
 const binding_key_1 = require("./binding-key");
@@ -200,16 +200,6 @@ exports.isDynamicValueProviderClass = isDynamicValueProviderClass;
  * corresponding value getter.
  */
 class Binding extends events_1.EventEmitter {
-    constructor(key, isLocked = false) {
-        super();
-        this.isLocked = isLocked;
-        /**
-         * Map for tag name/value pairs
-         */
-        this.tagMap = {};
-        binding_key_1.BindingKey.validate(key);
-        this.key = key.toString();
-    }
     /**
      * Scope of the binding to control how the value is cached/shared
      */
@@ -247,6 +237,16 @@ class Binding extends events_1.EventEmitter {
         return ((_a = this._source) === null || _a === void 0 ? void 0 : _a.type) === BindingType.PROVIDER
             ? (_b = this._source) === null || _b === void 0 ? void 0 : _b.value
             : undefined;
+    }
+    constructor(key, isLocked = false) {
+        super();
+        this.isLocked = isLocked;
+        /**
+         * Map for tag name/value pairs
+         */
+        this.tagMap = {};
+        binding_key_1.BindingKey.validate(key);
+        this.key = key.toString();
     }
     /**
      * Cache the resolved value by the binding scope

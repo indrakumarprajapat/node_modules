@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@ const http_errors_1 = tslib_1.__importDefault(require("http-errors"));
 const controller_route_1 = require("./controller-route");
 const openapi_path_1 = require("./openapi-path");
 const trie_router_1 = require("./trie-router");
-const debug = debug_1.default('loopback:rest:routing-table');
+const debug = (0, debug_1.default)('loopback:rest:routing-table');
 /**
  * Routing table
  */
@@ -27,7 +27,7 @@ class RoutingTable {
      * @param controllerFactory
      */
     registerController(spec, controllerCtor, controllerFactory) {
-        const routes = controller_route_1.createRoutesForController(spec, controllerCtor, controllerFactory);
+        const routes = (0, controller_route_1.createRoutesForController)(spec, controllerCtor, controllerFactory);
         for (const route of routes) {
             this.registerRoute(route);
         }
@@ -38,12 +38,12 @@ class RoutingTable {
      */
     registerRoute(route) {
         // TODO(bajtos) handle the case where opSpec.parameters contains $ref
-        // See https://github.com/strongloop/loopback-next/issues/435
+        // See https://github.com/loopbackio/loopback-next/issues/435
         /* istanbul ignore if */
         if (debug.enabled) {
             debug('Registering route %s %s -> %s(%s)', route.verb.toUpperCase(), route.path, route.describe(), describeOperationParameters(route.spec));
         }
-        openapi_path_1.validateApiPath(route.path);
+        (0, openapi_path_1.validateApiPath)(route.path);
         this._router.add(route);
     }
     describeApiPaths() {

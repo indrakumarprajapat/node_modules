@@ -1,11 +1,10 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpHandler = void 0;
-const express_1 = require("@loopback/express");
 const keys_1 = require("./keys");
 const request_context_1 = require("./request-context");
 const router_1 = require("./router");
@@ -61,10 +60,6 @@ class HttpHandler {
     }
     async _handleRequest(request, response) {
         const requestContext = new request_context_1.RequestContext(request, response, this._rootContext, this._serverConfig);
-        // Set the request context as a property of Express request object so that
-        // downstream Express native integration can access `RequestContext`
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        request[express_1.MIDDLEWARE_CONTEXT] = requestContext;
         const sequence = await requestContext.get(keys_1.RestBindings.SEQUENCE);
         await sequence.handle(requestContext);
     }

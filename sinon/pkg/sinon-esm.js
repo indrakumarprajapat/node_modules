@@ -1,4 +1,4 @@
-/* Sinon.JS 11.1.2, 2021-07-27, @license BSD-3 */let sinon;(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/* Sinon.JS 15.1.0, 2023-05-18, @license BSD-3 */let sinon;(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 // eslint-disable-next-line no-undef
 sinon = require("./sinon");
@@ -6,17 +6,16 @@ sinon = require("./sinon");
 },{"./sinon":2}],2:[function(require,module,exports){
 "use strict";
 
-var behavior = require("./sinon/behavior");
-var createSandbox = require("./sinon/create-sandbox");
-var extend = require("./sinon/util/core/extend");
-var fakeTimers = require("./sinon/util/fake-timers");
-var format = require("./sinon/util/core/format");
-var nise = require("nise");
-var Sandbox = require("./sinon/sandbox");
-var stub = require("./sinon/stub");
-var promise = require("./sinon/promise");
+const behavior = require("./sinon/behavior");
+const createSandbox = require("./sinon/create-sandbox");
+const extend = require("./sinon/util/core/extend");
+const fakeTimers = require("./sinon/util/fake-timers");
+const nise = require("nise");
+const Sandbox = require("./sinon/sandbox");
+const stub = require("./sinon/stub");
+const promise = require("./sinon/promise");
 
-var apiMethods = {
+const apiMethods = {
     createSandbox: createSandbox,
     assert: require("./sinon/assert"),
     match: require("@sinonjs/samsam").createMatcher,
@@ -24,8 +23,6 @@ var apiMethods = {
 
     expectation: require("./sinon/mock-expectation"),
     defaultConfig: require("./sinon/util/core/default-config"),
-
-    setFormatter: format.setFormatter,
 
     // fake timers
     timers: fakeTimers.timers,
@@ -50,35 +47,135 @@ var apiMethods = {
     promise: promise,
 };
 
-var sandbox = new Sandbox();
+const sandbox = new Sandbox();
 
-var api = extend(sandbox, apiMethods);
+const api = extend(sandbox, apiMethods);
 
 module.exports = api;
 
-},{"./sinon/assert":3,"./sinon/behavior":4,"./sinon/create-sandbox":7,"./sinon/mock-expectation":10,"./sinon/promise":12,"./sinon/restore-object":17,"./sinon/sandbox":18,"./sinon/stub":21,"./sinon/util/core/default-config":23,"./sinon/util/core/extend":25,"./sinon/util/core/format":26,"./sinon/util/fake-timers":40,"@sinonjs/samsam":85,"nise":107}],3:[function(require,module,exports){
+},{"./sinon/assert":3,"./sinon/behavior":4,"./sinon/create-sandbox":7,"./sinon/mock-expectation":11,"./sinon/promise":13,"./sinon/restore-object":18,"./sinon/sandbox":19,"./sinon/stub":22,"./sinon/util/core/default-config":24,"./sinon/util/core/extend":26,"./sinon/util/fake-timers":41,"@sinonjs/samsam":88,"nise":128}],3:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var calledInOrder = require("@sinonjs/commons").calledInOrder;
-var createMatcher = require("@sinonjs/samsam").createMatcher;
-var orderByFirstCall = require("@sinonjs/commons").orderByFirstCall;
-var timesInWords = require("./util/core/times-in-words");
-var format = require("./util/core/format");
-var stringSlice = require("@sinonjs/commons").prototypes.string.slice;
-var globalObject = require("@sinonjs/commons").global;
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const calledInOrder = require("@sinonjs/commons").calledInOrder;
+const createMatcher = require("@sinonjs/samsam").createMatcher;
+const orderByFirstCall = require("@sinonjs/commons").orderByFirstCall;
+const timesInWords = require("./util/core/times-in-words");
+const inspect = require("util").inspect;
+const stringSlice = require("@sinonjs/commons").prototypes.string.slice;
+const globalObject = require("@sinonjs/commons").global;
 
-var arraySlice = arrayProto.slice;
-var concat = arrayProto.concat;
-var forEach = arrayProto.forEach;
-var join = arrayProto.join;
-var splice = arrayProto.splice;
+const arraySlice = arrayProto.slice;
+const concat = arrayProto.concat;
+const forEach = arrayProto.forEach;
+const join = arrayProto.join;
+const splice = arrayProto.splice;
 
 function createAssertObject() {
-    var assert;
+    const assert = {
+        failException: "AssertError",
+
+        fail: function fail(message) {
+            const error = new Error(message);
+            error.name = this.failException || assert.failException;
+
+            throw error;
+        },
+
+        pass: function pass() {
+            return;
+        },
+
+        callOrder: function assertCallOrder() {
+            verifyIsStub.apply(null, arguments);
+            let expected = "";
+            let actual = "";
+
+            if (!calledInOrder(arguments)) {
+                try {
+                    expected = join(arguments, ", ");
+                    const calls = arraySlice(arguments);
+                    let i = calls.length;
+                    while (i) {
+                        if (!calls[--i].called) {
+                            splice(calls, i, 1);
+                        }
+                    }
+                    actual = join(orderByFirstCall(calls), ", ");
+                } catch (e) {
+                    // If this fails, we'll just fall back to the blank string
+                }
+
+                failAssertion(
+                    this,
+                    `expected ${expected} to be called in order but were called as ${actual}`
+                );
+            } else {
+                assert.pass("callOrder");
+            }
+        },
+
+        callCount: function assertCallCount(method, count) {
+            verifyIsStub(method);
+
+            let msg;
+            if (typeof count !== "number") {
+                msg =
+                    `expected ${inspect(count)} to be a number ` +
+                    `but was of type ${typeof count}`;
+                failAssertion(this, msg);
+            } else if (method.callCount !== count) {
+                msg =
+                    `expected %n to be called ${timesInWords(count)} ` +
+                    `but was called %c%C`;
+                failAssertion(this, method.printf(msg));
+            } else {
+                assert.pass("callCount");
+            }
+        },
+
+        expose: function expose(target, options) {
+            if (!target) {
+                throw new TypeError("target is null or undefined");
+            }
+
+            const o = options || {};
+            const prefix =
+                (typeof o.prefix === "undefined" && "assert") || o.prefix;
+            const includeFail =
+                typeof o.includeFail === "undefined" || Boolean(o.includeFail);
+            const instance = this;
+
+            forEach(Object.keys(instance), function (method) {
+                if (
+                    method !== "expose" &&
+                    (includeFail || !/^(fail)/.test(method))
+                ) {
+                    target[exposedName(prefix, method)] = instance[method];
+                }
+            });
+
+            return target;
+        },
+
+        match: function match(actual, expectation) {
+            const matcher = createMatcher(expectation);
+            if (matcher.test(actual)) {
+                assert.pass("match");
+            } else {
+                const formatted = [
+                    "expected value to match",
+                    `    expected = ${inspect(expectation)}`,
+                    `    actual = ${inspect(actual)}`,
+                ];
+
+                failAssertion(this, join(formatted, "\n"));
+            }
+        },
+    };
 
     function verifyIsStub() {
-        var args = arraySlice(arguments);
+        const args = arraySlice(arguments);
 
         forEach(args, function (method) {
             if (!method) {
@@ -120,14 +217,14 @@ function createAssertObject() {
     }
 
     function failAssertion(object, msg) {
-        var obj = object || globalObject;
-        var failMethod = obj.fail || assert.fail;
+        const obj = object || globalObject;
+        const failMethod = obj.fail || assert.fail;
         failMethod.call(obj, msg);
     }
 
     function mirrorPropAsAssertion(name, method, message) {
-        var msg = message;
-        var meth = method;
+        let msg = message;
+        let meth = method;
         if (arguments.length === 2) {
             msg = method;
             meth = name;
@@ -136,8 +233,8 @@ function createAssertObject() {
         assert[name] = function (fake) {
             verifyIsStub(fake);
 
-            var args = arraySlice(arguments, 1);
-            var failed = false;
+            const args = arraySlice(arguments, 1);
+            let failed = false;
 
             verifyIsValidAssertion(name, args);
 
@@ -171,102 +268,6 @@ function createAssertObject() {
                   stringSlice(prop, 0, 1).toUpperCase() +
                   stringSlice(prop, 1);
     }
-
-    assert = {
-        failException: "AssertError",
-
-        fail: function fail(message) {
-            var error = new Error(message);
-            error.name = this.failException || assert.failException;
-
-            throw error;
-        },
-
-        pass: function pass() {
-            return;
-        },
-
-        callOrder: function assertCallOrder() {
-            verifyIsStub.apply(null, arguments);
-            var expected = "";
-            var actual = "";
-
-            if (!calledInOrder(arguments)) {
-                try {
-                    expected = join(arguments, ", ");
-                    var calls = arraySlice(arguments);
-                    var i = calls.length;
-                    while (i) {
-                        if (!calls[--i].called) {
-                            splice(calls, i, 1);
-                        }
-                    }
-                    actual = join(orderByFirstCall(calls), ", ");
-                } catch (e) {
-                    // If this fails, we'll just fall back to the blank string
-                }
-
-                failAssertion(
-                    this,
-                    `expected ${expected} to be called in order but were called as ${actual}`
-                );
-            } else {
-                assert.pass("callOrder");
-            }
-        },
-
-        callCount: function assertCallCount(method, count) {
-            verifyIsStub(method);
-
-            if (method.callCount !== count) {
-                var msg = `expected %n to be called ${timesInWords(
-                    count
-                )} but was called %c%C`;
-                failAssertion(this, method.printf(msg));
-            } else {
-                assert.pass("callCount");
-            }
-        },
-
-        expose: function expose(target, options) {
-            if (!target) {
-                throw new TypeError("target is null or undefined");
-            }
-
-            var o = options || {};
-            var prefix =
-                (typeof o.prefix === "undefined" && "assert") || o.prefix;
-            var includeFail =
-                typeof o.includeFail === "undefined" || Boolean(o.includeFail);
-            var instance = this;
-
-            forEach(Object.keys(instance), function (method) {
-                if (
-                    method !== "expose" &&
-                    (includeFail || !/^(fail)/.test(method))
-                ) {
-                    target[exposedName(prefix, method)] = instance[method];
-                }
-            });
-
-            return target;
-        },
-
-        match: function match(actual, expectation) {
-            var matcher = createMatcher(expectation);
-            if (matcher.test(actual)) {
-                assert.pass("match");
-            } else {
-                var formatted = [
-                    "expected value to match",
-                    `    expected = ${format(expectation)}`,
-                    `    actual = ${format(actual)}`,
-                ];
-
-                failAssertion(this, join(formatted, "\n"));
-            }
-        },
-    };
 
     mirrorPropAsAssertion(
         "called",
@@ -353,32 +354,32 @@ function createAssertObject() {
 module.exports = createAssertObject();
 module.exports.createAssertObject = createAssertObject;
 
-},{"./util/core/format":26,"./util/core/times-in-words":35,"@sinonjs/commons":47,"@sinonjs/samsam":85}],4:[function(require,module,exports){
+},{"./util/core/times-in-words":36,"@sinonjs/commons":48,"@sinonjs/samsam":88,"util":113}],4:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var extend = require("./util/core/extend");
-var functionName = require("@sinonjs/commons").functionName;
-var nextTick = require("./util/core/next-tick");
-var valueToString = require("@sinonjs/commons").valueToString;
-var exportAsyncBehaviors = require("./util/core/export-async-behaviors");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const extend = require("./util/core/extend");
+const functionName = require("@sinonjs/commons").functionName;
+const nextTick = require("./util/core/next-tick");
+const valueToString = require("@sinonjs/commons").valueToString;
+const exportAsyncBehaviors = require("./util/core/export-async-behaviors");
 
-var concat = arrayProto.concat;
-var join = arrayProto.join;
-var reverse = arrayProto.reverse;
-var slice = arrayProto.slice;
+const concat = arrayProto.concat;
+const join = arrayProto.join;
+const reverse = arrayProto.reverse;
+const slice = arrayProto.slice;
 
-var useLeftMostCallback = -1;
-var useRightMostCallback = -2;
+const useLeftMostCallback = -1;
+const useRightMostCallback = -2;
 
 function getCallback(behavior, args) {
-    var callArgAt = behavior.callArgAt;
+    const callArgAt = behavior.callArgAt;
 
     if (callArgAt >= 0) {
         return args[callArgAt];
     }
 
-    var argumentList;
+    let argumentList;
 
     if (callArgAt === useLeftMostCallback) {
         argumentList = args;
@@ -388,9 +389,9 @@ function getCallback(behavior, args) {
         argumentList = reverse(slice(args));
     }
 
-    var callArgProp = behavior.callArgProp;
+    const callArgProp = behavior.callArgProp;
 
-    for (var i = 0, l = argumentList.length; i < l; ++i) {
+    for (let i = 0, l = argumentList.length; i < l; ++i) {
         if (!callArgProp && typeof argumentList[i] === "function") {
             return argumentList[i];
         }
@@ -409,7 +410,7 @@ function getCallback(behavior, args) {
 
 function getCallbackError(behavior, func, args) {
     if (behavior.callArgAt < 0) {
-        var msg;
+        let msg;
 
         if (behavior.callArgProp) {
             msg = `${functionName(
@@ -436,8 +437,8 @@ function getCallbackError(behavior, func, args) {
 function ensureArgs(name, behavior, args) {
     // map function name to internal property
     //   callsArg => callArgAt
-    var property = name.replace(/sArg/, "ArgAt");
-    var index = behavior[property];
+    const property = name.replace(/sArg/, "ArgAt");
+    const index = behavior[property];
 
     if (index >= args.length) {
         throw new TypeError(
@@ -451,7 +452,7 @@ function ensureArgs(name, behavior, args) {
 function callCallback(behavior, args) {
     if (typeof behavior.callArgAt === "number") {
         ensureArgs("callsArg", behavior, args);
-        var func = getCallback(behavior, args);
+        const func = getCallback(behavior, args);
 
         if (typeof func !== "function") {
             throw new TypeError(getCallbackError(behavior, func, args));
@@ -475,9 +476,9 @@ function callCallback(behavior, args) {
     return undefined;
 }
 
-var proto = {
+const proto = {
     create: function create(stub) {
-        var behavior = extend({}, proto);
+        const behavior = extend({}, proto);
         delete behavior.create;
         delete behavior.addBehavior;
         delete behavior.createBehavior;
@@ -513,7 +514,7 @@ var proto = {
          * Note: callCallback intentionally happens before
          * everything else and cannot be moved lower
          */
-        var returnValue = callCallback(this, args);
+        const returnValue = callCallback(this, args);
 
         if (this.exception) {
             throw this.exception;
@@ -543,16 +544,16 @@ var proto = {
         } else if (this.reject) {
             return (this.promiseLibrary || Promise).reject(this.returnValue);
         } else if (this.callsThrough) {
-            var wrappedMethod = this.effectiveWrappedMethod();
+            const wrappedMethod = this.effectiveWrappedMethod();
 
             return wrappedMethod.apply(context, args);
         } else if (this.callsThroughWithNew) {
             // Get the original method (assumed to be a constructor in this case)
-            var WrappedClass = this.effectiveWrappedMethod();
+            const WrappedClass = this.effectiveWrappedMethod();
             // Turn the arguments object into a normal array
-            var argsArray = slice(args);
+            const argsArray = slice(args);
             // Call the constructor
-            var F = WrappedClass.bind.apply(
+            const F = WrappedClass.bind.apply(
                 WrappedClass,
                 concat([null], argsArray)
             );
@@ -567,7 +568,7 @@ var proto = {
     },
 
     effectiveWrappedMethod: function effectiveWrappedMethod() {
-        for (var stubb = this.stub; stubb; stubb = stubb.parent) {
+        for (let stubb = this.stub; stubb; stubb = stubb.parent) {
             if (stubb.wrappedMethod) {
                 return stubb.wrappedMethod;
             }
@@ -623,18 +624,18 @@ function addBehavior(stub, name, fn) {
 proto.addBehavior = addBehavior;
 proto.createBehavior = createBehavior;
 
-var asyncBehaviors = exportAsyncBehaviors(proto);
+const asyncBehaviors = exportAsyncBehaviors(proto);
 
 module.exports = extend.nonEnum({}, proto, asyncBehaviors);
 
-},{"./util/core/export-async-behaviors":24,"./util/core/extend":25,"./util/core/next-tick":34,"@sinonjs/commons":47}],5:[function(require,module,exports){
+},{"./util/core/export-async-behaviors":25,"./util/core/extend":26,"./util/core/next-tick":34,"@sinonjs/commons":48}],5:[function(require,module,exports){
 "use strict";
 
-var walk = require("./util/core/walk");
-var getPropertyDescriptor = require("./util/core/get-property-descriptor");
-var hasOwnProperty =
+const walk = require("./util/core/walk");
+const getPropertyDescriptor = require("./util/core/get-property-descriptor");
+const hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-var push = require("@sinonjs/commons").prototypes.array.push;
+const push = require("@sinonjs/commons").prototypes.array.push;
 
 function collectMethod(methods, object, prop, propOwner) {
     if (
@@ -647,7 +648,7 @@ function collectMethod(methods, object, prop, propOwner) {
 
 // This function returns an array of all the own methods on the passed object
 function collectOwnMethods(object) {
-    var methods = [];
+    const methods = [];
 
     walk(object, collectMethod.bind(null, methods, object));
 
@@ -656,10 +657,10 @@ function collectOwnMethods(object) {
 
 module.exports = collectOwnMethods;
 
-},{"./util/core/get-property-descriptor":29,"./util/core/walk":38,"@sinonjs/commons":47}],6:[function(require,module,exports){
+},{"./util/core/get-property-descriptor":29,"./util/core/walk":39,"@sinonjs/commons":48}],6:[function(require,module,exports){
 "use strict";
 
-var supportsColor = require("supports-color");
+const supportsColor = require("supports-color");
 
 function colorize(str, color) {
     if (supportsColor.stdout === false) {
@@ -689,17 +690,17 @@ exports.bold = function (str) {
     return colorize(str, 1);
 };
 
-},{"supports-color":109}],7:[function(require,module,exports){
+},{"supports-color":151}],7:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var Sandbox = require("./sandbox");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const Sandbox = require("./sandbox");
 
-var forEach = arrayProto.forEach;
-var push = arrayProto.push;
+const forEach = arrayProto.forEach;
+const push = arrayProto.push;
 
 function prepareSandboxFromConfig(config) {
-    var sandbox = new Sandbox();
+    const sandbox = new Sandbox();
 
     if (config.useFakeServer) {
         if (typeof config.useFakeServer === "object") {
@@ -738,15 +739,15 @@ function createSandbox(config) {
         return new Sandbox();
     }
 
-    var configuredSandbox = prepareSandboxFromConfig(config);
+    const configuredSandbox = prepareSandboxFromConfig(config);
     configuredSandbox.args = configuredSandbox.args || [];
     configuredSandbox.injectedKeys = [];
     configuredSandbox.injectInto = config.injectInto;
-    var exposed = configuredSandbox.inject({});
+    const exposed = configuredSandbox.inject({});
 
     if (config.properties) {
         forEach(config.properties, function (prop) {
-            var value =
+            const value =
                 exposed[prop] || (prop === "sandbox" && configuredSandbox);
             exposeValue(configuredSandbox, config, prop, value);
         });
@@ -759,25 +760,63 @@ function createSandbox(config) {
 
 module.exports = createSandbox;
 
-},{"./sandbox":18,"@sinonjs/commons":47}],8:[function(require,module,exports){
+},{"./sandbox":19,"@sinonjs/commons":48}],8:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var isPropertyConfigurable = require("./util/core/is-property-configurable");
-var exportAsyncBehaviors = require("./util/core/export-async-behaviors");
-var extend = require("./util/core/extend");
+const stub = require("./stub");
+const sinonType = require("./util/core/sinon-type");
+const forEach = require("@sinonjs/commons").prototypes.array.forEach;
 
-var slice = arrayProto.slice;
+function isStub(value) {
+    return sinonType.get(value) === "stub";
+}
 
-var useLeftMostCallback = -1;
-var useRightMostCallback = -2;
+module.exports = function createStubInstance(constructor, overrides) {
+    if (typeof constructor !== "function") {
+        throw new TypeError("The constructor should be a function.");
+    }
+
+    const stubInstance = Object.create(constructor.prototype);
+    sinonType.set(stubInstance, "stub-instance");
+
+    const stubbedObject = stub(stubInstance);
+
+    forEach(Object.keys(overrides || {}), function (propertyName) {
+        if (propertyName in stubbedObject) {
+            const value = overrides[propertyName];
+            if (isStub(value)) {
+                stubbedObject[propertyName] = value;
+            } else {
+                stubbedObject[propertyName].returns(value);
+            }
+        } else {
+            throw new Error(
+                `Cannot stub ${propertyName}. Property does not exist!`
+            );
+        }
+    });
+    return stubbedObject;
+};
+
+},{"./stub":22,"./util/core/sinon-type":35,"@sinonjs/commons":48}],9:[function(require,module,exports){
+"use strict";
+
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const isPropertyConfigurable = require("./util/core/is-property-configurable");
+const exportAsyncBehaviors = require("./util/core/export-async-behaviors");
+const extend = require("./util/core/extend");
+
+const slice = arrayProto.slice;
+
+const useLeftMostCallback = -1;
+const useRightMostCallback = -2;
 
 function throwsException(fake, error, message) {
     if (typeof error === "function") {
         fake.exceptionCreator = error;
     } else if (typeof error === "string") {
         fake.exceptionCreator = function () {
-            var newException = new Error(message || "");
+            const newException = new Error(message || "");
             newException.name = error;
             return newException;
         };
@@ -790,9 +829,11 @@ function throwsException(fake, error, message) {
     }
 }
 
-var defaultBehaviors = {
+const defaultBehaviors = {
     callsFake: function callsFake(fake, fn) {
         fake.fakeFn = fn;
+        fake.exception = undefined;
+        fake.exceptionCreator = undefined;
     },
 
     callsArg: function callsArg(fake, index) {
@@ -952,7 +993,7 @@ var defaultBehaviors = {
     },
 
     rejects: function rejects(fake, error, message) {
-        var reason;
+        let reason;
         if (typeof error === "string") {
             reason = new Error(message || "");
             reason.name = error;
@@ -993,7 +1034,7 @@ var defaultBehaviors = {
     },
 
     get: function get(fake, getterFunction) {
-        var rootStub = fake.stub || fake;
+        const rootStub = fake.stub || fake;
 
         Object.defineProperty(rootStub.rootObj, rootStub.propName, {
             get: getterFunction,
@@ -1007,7 +1048,7 @@ var defaultBehaviors = {
     },
 
     set: function set(fake, setterFunction) {
-        var rootStub = fake.stub || fake;
+        const rootStub = fake.stub || fake;
 
         Object.defineProperty(
             rootStub.rootObj,
@@ -1026,11 +1067,12 @@ var defaultBehaviors = {
     },
 
     value: function value(fake, newVal) {
-        var rootStub = fake.stub || fake;
+        const rootStub = fake.stub || fake;
 
         Object.defineProperty(rootStub.rootObj, rootStub.propName, {
             value: newVal,
             enumerable: true,
+            writable: true,
             configurable:
                 rootStub.shadowsPropOnPrototype ||
                 isPropertyConfigurable(rootStub.rootObj, rootStub.propName),
@@ -1040,19 +1082,19 @@ var defaultBehaviors = {
     },
 };
 
-var asyncBehaviors = exportAsyncBehaviors(defaultBehaviors);
+const asyncBehaviors = exportAsyncBehaviors(defaultBehaviors);
 
 module.exports = extend({}, defaultBehaviors, asyncBehaviors);
 
-},{"./util/core/export-async-behaviors":24,"./util/core/extend":25,"./util/core/is-property-configurable":32,"@sinonjs/commons":47}],9:[function(require,module,exports){
+},{"./util/core/export-async-behaviors":25,"./util/core/extend":26,"./util/core/is-property-configurable":32,"@sinonjs/commons":48}],10:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var createProxy = require("./proxy");
-var nextTick = require("./util/core/next-tick");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const createProxy = require("./proxy");
+const nextTick = require("./util/core/next-tick");
 
-var slice = arrayProto.slice;
-var promiseLib = Promise;
+const slice = arrayProto.slice;
+let promiseLib = Promise;
 
 module.exports = fake;
 
@@ -1234,11 +1276,11 @@ fake.usingPromise = function usingPromise(promiseLibrary) {
  * @returns {Function}
  */
 fake.yields = function yields() {
-    var values = slice(arguments);
+    const values = slice(arguments);
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     function f() {
-        var callback = arguments[arguments.length - 1];
+        const callback = arguments[arguments.length - 1];
         if (typeof callback !== "function") {
             throw new TypeError("Expected last argument to be a function");
         }
@@ -1270,11 +1312,11 @@ fake.yields = function yields() {
  * @returns {Function}
  */
 fake.yieldsAsync = function yieldsAsync() {
-    var values = slice(arguments);
+    const values = slice(arguments);
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     function f() {
-        var callback = arguments[arguments.length - 1];
+        const callback = arguments[arguments.length - 1];
         if (typeof callback !== "function") {
             throw new TypeError("Expected last argument to be a function");
         }
@@ -1286,7 +1328,7 @@ fake.yieldsAsync = function yieldsAsync() {
     return wrapFunc(f);
 };
 
-var uuid = 0;
+let uuid = 0;
 /**
  * Creates a proxy (sinon concept) from the passed function.
  *
@@ -1295,25 +1337,25 @@ var uuid = 0;
  * @returns {Function}
  */
 function wrapFunc(f) {
-    var proxy;
-    var fakeInstance = function () {
-        var firstArg, lastArg;
+    const fakeInstance = function () {
+        let firstArg, lastArg;
 
         if (arguments.length > 0) {
             firstArg = arguments[0];
             lastArg = arguments[arguments.length - 1];
         }
 
-        var callback =
+        const callback =
             lastArg && typeof lastArg === "function" ? lastArg : undefined;
 
+        /* eslint-disable no-use-before-define */
         proxy.firstArg = firstArg;
         proxy.lastArg = lastArg;
         proxy.callback = callback;
 
         return f && f.apply(this, arguments);
     };
-    proxy = createProxy(fakeInstance, f || fakeInstance);
+    const proxy = createProxy(fakeInstance, f || fakeInstance);
 
     proxy.displayName = "fake";
     proxy.id = `fake#${uuid++}`;
@@ -1333,25 +1375,25 @@ function getError(value) {
     return value instanceof Error ? value : new Error(value);
 }
 
-},{"./proxy":16,"./util/core/next-tick":34,"@sinonjs/commons":47}],10:[function(require,module,exports){
+},{"./proxy":17,"./util/core/next-tick":34,"@sinonjs/commons":48}],11:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var proxyInvoke = require("./proxy-invoke");
-var proxyCallToString = require("./proxy-call").toString;
-var timesInWords = require("./util/core/times-in-words");
-var extend = require("./util/core/extend");
-var match = require("@sinonjs/samsam").createMatcher;
-var stub = require("./stub");
-var assert = require("./assert");
-var deepEqual = require("@sinonjs/samsam").deepEqual;
-var format = require("./util/core/format");
-var valueToString = require("@sinonjs/commons").valueToString;
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const proxyInvoke = require("./proxy-invoke");
+const proxyCallToString = require("./proxy-call").toString;
+const timesInWords = require("./util/core/times-in-words");
+const extend = require("./util/core/extend");
+const match = require("@sinonjs/samsam").createMatcher;
+const stub = require("./stub");
+const assert = require("./assert");
+const deepEqual = require("@sinonjs/samsam").deepEqual;
+const inspect = require("util").inspect;
+const valueToString = require("@sinonjs/commons").valueToString;
 
-var every = arrayProto.every;
-var forEach = arrayProto.forEach;
-var push = arrayProto.push;
-var slice = arrayProto.slice;
+const every = arrayProto.every;
+const forEach = arrayProto.forEach;
+const push = arrayProto.push;
+const slice = arrayProto.slice;
 
 function callCountInWords(callCount) {
     if (callCount === 0) {
@@ -1362,11 +1404,11 @@ function callCountInWords(callCount) {
 }
 
 function expectedCallCountInWords(expectation) {
-    var min = expectation.minCalls;
-    var max = expectation.maxCalls;
+    const min = expectation.minCalls;
+    const max = expectation.maxCalls;
 
     if (typeof min === "number" && typeof max === "number") {
-        var str = timesInWords(min);
+        let str = timesInWords(min);
 
         if (min !== max) {
             str = `at least ${str} and at most ${timesInWords(max)}`;
@@ -1383,7 +1425,7 @@ function expectedCallCountInWords(expectation) {
 }
 
 function receivedMinCalls(expectation) {
-    var hasMinLimit = typeof expectation.minCalls === "number";
+    const hasMinLimit = typeof expectation.minCalls === "number";
     return !hasMinLimit || expectation.callCount >= expectation.minCalls;
 }
 
@@ -1396,17 +1438,17 @@ function receivedMaxCalls(expectation) {
 }
 
 function verifyMatcher(possibleMatcher, arg) {
-    var isMatcher = match.isMatcher(possibleMatcher);
+    const isMatcher = match.isMatcher(possibleMatcher);
 
     return (isMatcher && possibleMatcher.test(arg)) || true;
 }
 
-var mockExpectation = {
+const mockExpectation = {
     minCalls: 1,
     maxCalls: 1,
 
     create: function create(methodName) {
-        var expectation = extend.nonEnum(stub(), mockExpectation);
+        const expectation = extend.nonEnum(stub(), mockExpectation);
         delete expectation.create;
         expectation.method = methodName;
 
@@ -1479,7 +1521,7 @@ var mockExpectation = {
     },
 
     verifyCallAllowed: function verifyCallAllowed(thisValue, args) {
-        var expectedArguments = this.expectedArguments;
+        const expectedArguments = this.expectedArguments;
 
         if (receivedMaxCalls(this)) {
             this.failed = true;
@@ -1502,7 +1544,7 @@ var mockExpectation = {
 
         if (!args) {
             mockExpectation.fail(
-                `${this.method} received no arguments, expected ${format(
+                `${this.method} received no arguments, expected ${inspect(
                     expectedArguments
                 )}`
             );
@@ -1510,9 +1552,9 @@ var mockExpectation = {
 
         if (args.length < expectedArguments.length) {
             mockExpectation.fail(
-                `${this.method} received too few arguments (${format(
+                `${this.method} received too few arguments (${inspect(
                     args
-                )}), expected ${format(expectedArguments)}`
+                )}), expected ${inspect(expectedArguments)}`
             );
         }
 
@@ -1521,9 +1563,9 @@ var mockExpectation = {
             args.length !== expectedArguments.length
         ) {
             mockExpectation.fail(
-                `${this.method} received too many arguments (${format(
+                `${this.method} received too many arguments (${inspect(
                     args
-                )}), expected ${format(expectedArguments)}`
+                )}), expected ${inspect(expectedArguments)}`
             );
         }
 
@@ -1532,7 +1574,7 @@ var mockExpectation = {
             function (expectedArgument, i) {
                 if (!verifyMatcher(expectedArgument, args[i])) {
                     mockExpectation.fail(
-                        `${this.method} received wrong arguments ${format(
+                        `${this.method} received wrong arguments ${inspect(
                             args
                         )}, didn't match ${String(expectedArguments)}`
                     );
@@ -1540,9 +1582,9 @@ var mockExpectation = {
 
                 if (!deepEqual(args[i], expectedArgument)) {
                     mockExpectation.fail(
-                        `${this.method} received wrong arguments ${format(
+                        `${this.method} received wrong arguments ${inspect(
                             args
-                        )}, expected ${format(expectedArguments)}`
+                        )}, expected ${inspect(expectedArguments)}`
                     );
                 }
             },
@@ -1551,7 +1593,7 @@ var mockExpectation = {
     },
 
     allowsCall: function allowsCall(thisValue, args) {
-        var expectedArguments = this.expectedArguments;
+        const expectedArguments = this.expectedArguments;
 
         if (this.met() && receivedMaxCalls(this)) {
             return false;
@@ -1566,7 +1608,7 @@ var mockExpectation = {
         }
 
         // eslint-disable-next-line no-underscore-dangle
-        var _args = args || [];
+        const _args = args || [];
 
         if (_args.length < expectedArguments.length) {
             return false;
@@ -1609,18 +1651,18 @@ var mockExpectation = {
     },
 
     toString: function () {
-        var args = slice(this.expectedArguments || []);
+        const args = slice(this.expectedArguments || []);
 
         if (!this.expectsExactArgCount) {
             push(args, "[...]");
         }
 
-        var callStr = proxyCallToString.call({
+        const callStr = proxyCallToString.call({
             proxy: this.method || "anonymous mock expectation",
             args: args,
         });
 
-        var message = `${callStr.replace(
+        const message = `${callStr.replace(
             ", [...",
             "[, ..."
         )} ${expectedCallCountInWords(this)}`;
@@ -1647,7 +1689,7 @@ var mockExpectation = {
     },
 
     fail: function fail(message) {
-        var exception = new Error(message);
+        const exception = new Error(message);
         exception.name = "ExpectationError";
 
         throw exception;
@@ -1656,25 +1698,25 @@ var mockExpectation = {
 
 module.exports = mockExpectation;
 
-},{"./assert":3,"./proxy-call":14,"./proxy-invoke":15,"./stub":21,"./util/core/extend":25,"./util/core/format":26,"./util/core/times-in-words":35,"@sinonjs/commons":47,"@sinonjs/samsam":85}],11:[function(require,module,exports){
+},{"./assert":3,"./proxy-call":15,"./proxy-invoke":16,"./stub":22,"./util/core/extend":26,"./util/core/times-in-words":36,"@sinonjs/commons":48,"@sinonjs/samsam":88,"util":113}],12:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var mockExpectation = require("./mock-expectation");
-var proxyCallToString = require("./proxy-call").toString;
-var extend = require("./util/core/extend");
-var deepEqual = require("@sinonjs/samsam").deepEqual;
-var wrapMethod = require("./util/core/wrap-method");
-var usePromiseLibrary = require("./util/core/use-promise-library");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const mockExpectation = require("./mock-expectation");
+const proxyCallToString = require("./proxy-call").toString;
+const extend = require("./util/core/extend");
+const deepEqual = require("@sinonjs/samsam").deepEqual;
+const wrapMethod = require("./util/core/wrap-method");
+const usePromiseLibrary = require("./util/core/use-promise-library");
 
-var concat = arrayProto.concat;
-var filter = arrayProto.filter;
-var forEach = arrayProto.forEach;
-var every = arrayProto.every;
-var join = arrayProto.join;
-var push = arrayProto.push;
-var slice = arrayProto.slice;
-var unshift = arrayProto.unshift;
+const concat = arrayProto.concat;
+const filter = arrayProto.filter;
+const forEach = arrayProto.forEach;
+const every = arrayProto.every;
+const join = arrayProto.join;
+const push = arrayProto.push;
+const slice = arrayProto.slice;
+const unshift = arrayProto.unshift;
 
 function mock(object) {
     if (!object || typeof object === "string") {
@@ -1685,7 +1727,7 @@ function mock(object) {
 }
 
 function each(collection, callback) {
-    var col = collection || [];
+    const col = collection || [];
 
     forEach(col, callback);
 }
@@ -1706,7 +1748,7 @@ extend(mock, {
             throw new TypeError("object is null");
         }
 
-        var mockObject = extend.nonEnum({}, mock, { object: object });
+        const mockObject = extend.nonEnum({}, mock, { object: object });
         delete mockObject.create;
 
         return mockObject;
@@ -1725,7 +1767,7 @@ extend(mock, {
 
         if (!this.expectations[method]) {
             this.expectations[method] = [];
-            var mockObject = this;
+            const mockObject = this;
 
             wrapMethod(this.object, method, function () {
                 return mockObject.invokeMethod(method, this, arguments);
@@ -1734,7 +1776,7 @@ extend(mock, {
             push(this.proxies, method);
         }
 
-        var expectation = mockExpectation.create(method);
+        const expectation = mockExpectation.create(method);
         expectation.wrappedMethod = this.object[method].wrappedMethod;
         push(this.expectations[method], expectation);
         usePromiseLibrary(this.promiseLibrary, expectation);
@@ -1743,7 +1785,7 @@ extend(mock, {
     },
 
     restore: function restore() {
-        var object = this.object;
+        const object = this.object;
 
         each(this.proxies, function (proxy) {
             if (typeof object[proxy].restore === "function") {
@@ -1753,9 +1795,9 @@ extend(mock, {
     },
 
     verify: function verify() {
-        var expectations = this.expectations || {};
-        var messages = this.failures ? slice(this.failures) : [];
-        var met = [];
+        const expectations = this.expectations || {};
+        const messages = this.failures ? slice(this.failures) : [];
+        const met = [];
 
         each(this.proxies, function (proxy) {
             each(expectations[proxy], function (expectation) {
@@ -1787,17 +1829,17 @@ extend(mock, {
     invokeMethod: function invokeMethod(method, thisValue, args) {
         /* if we cannot find any matching files we will explicitly call mockExpection#fail with error messages */
         /* eslint consistent-return: "off" */
-        var expectations =
+        const expectations =
             this.expectations && this.expectations[method]
                 ? this.expectations[method]
                 : [];
-        var currentArgs = args || [];
-        var available;
+        const currentArgs = args || [];
+        let available;
 
-        var expectationsWithMatchingArgs = filter(
+        const expectationsWithMatchingArgs = filter(
             expectations,
             function (expectation) {
-                var expectedArgs = expectation.expectedArguments || [];
+                const expectedArgs = expectation.expectedArguments || [];
 
                 return arrayEquals(
                     expectedArgs,
@@ -1807,7 +1849,7 @@ extend(mock, {
             }
         );
 
-        var expectationsToApply = filter(
+        const expectationsToApply = filter(
             expectationsWithMatchingArgs,
             function (expectation) {
                 return (
@@ -1821,8 +1863,8 @@ extend(mock, {
             return expectationsToApply[0].apply(thisValue, args);
         }
 
-        var messages = [];
-        var exhausted = 0;
+        const messages = [];
+        let exhausted = 0;
 
         forEach(expectationsWithMatchingArgs, function (expectation) {
             if (expectation.allowsCall(thisValue, args)) {
@@ -1848,7 +1890,7 @@ extend(mock, {
             })}`
         );
 
-        var err = new Error();
+        const err = new Error();
         if (!err.stack) {
             // PhantomJS does not serialize the stack trace until the error has been thrown
             try {
@@ -1872,18 +1914,18 @@ extend(mock, {
 
 module.exports = mock;
 
-},{"./mock-expectation":10,"./proxy-call":14,"./util/core/extend":25,"./util/core/use-promise-library":36,"./util/core/wrap-method":39,"@sinonjs/commons":47,"@sinonjs/samsam":85}],12:[function(require,module,exports){
+},{"./mock-expectation":11,"./proxy-call":15,"./util/core/extend":26,"./util/core/use-promise-library":37,"./util/core/wrap-method":40,"@sinonjs/commons":48,"@sinonjs/samsam":88}],13:[function(require,module,exports){
 "use strict";
 
-var fake = require("./fake");
-var isRestorable = require("./util/core/is-restorable");
+const fake = require("./fake");
+const isRestorable = require("./util/core/is-restorable");
 
-var STATUS_PENDING = "pending";
-var STATUS_RESOLVED = "resolved";
-var STATUS_REJECTED = "rejected";
+const STATUS_PENDING = "pending";
+const STATUS_RESOLVED = "resolved";
+const STATUS_REJECTED = "rejected";
 
 /**
- * Returns a fake for a given function or undefined. If no functino is given, a
+ * Returns a fake for a given function or undefined. If no function is given, a
  * new fake is returned. If the given function is already a fake, it is
  * returned as is. Otherwise the given function is wrapped in a new fake.
  *
@@ -1909,8 +1951,8 @@ function getFakeExecutor(executor) {
  * @returns {Promise}
  */
 function promise(executor) {
-    var fakeExecutor = getFakeExecutor(executor);
-    var sinonPromise = new Promise(fakeExecutor);
+    const fakeExecutor = getFakeExecutor(executor);
+    const sinonPromise = new Promise(fakeExecutor);
 
     sinonPromise.status = STATUS_PENDING;
     sinonPromise
@@ -1958,10 +2000,10 @@ function promise(executor) {
 
 module.exports = promise;
 
-},{"./fake":9,"./util/core/is-restorable":33}],13:[function(require,module,exports){
+},{"./fake":10,"./util/core/is-restorable":33}],14:[function(require,module,exports){
 "use strict";
 
-var push = require("@sinonjs/commons").prototypes.array.push;
+const push = require("@sinonjs/commons").prototypes.array.push;
 
 exports.incrementCallCount = function incrementCallCount(proxy) {
     proxy.called = true;
@@ -2000,13 +2042,13 @@ exports.delegateToCalls = function delegateToCalls(
             return false;
         }
 
-        var currentCall;
-        var matches = 0;
-        var returnValues = [];
+        let currentCall;
+        let matches = 0;
+        const returnValues = [];
 
-        for (var i = 0, l = this.callCount; i < l; i += 1) {
+        for (let i = 0, l = this.callCount; i < l; i += 1) {
             currentCall = this.getCall(i);
-            var returnValue = currentCall[actual || method].apply(
+            const returnValue = currentCall[actual || method].apply(
                 currentCall,
                 arguments
             );
@@ -2027,32 +2069,37 @@ exports.delegateToCalls = function delegateToCalls(
     };
 };
 
-},{"@sinonjs/commons":47}],14:[function(require,module,exports){
+},{"@sinonjs/commons":48}],15:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var match = require("@sinonjs/samsam").createMatcher;
-var deepEqual = require("@sinonjs/samsam").deepEqual;
-var functionName = require("@sinonjs/commons").functionName;
-var sinonFormat = require("./util/core/format");
-var valueToString = require("@sinonjs/commons").valueToString;
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const match = require("@sinonjs/samsam").createMatcher;
+const deepEqual = require("@sinonjs/samsam").deepEqual;
+const functionName = require("@sinonjs/commons").functionName;
+const inspect = require("util").inspect;
+const valueToString = require("@sinonjs/commons").valueToString;
 
-var concat = arrayProto.concat;
-var filter = arrayProto.filter;
-var join = arrayProto.join;
-var map = arrayProto.map;
-var reduce = arrayProto.reduce;
-var slice = arrayProto.slice;
+const concat = arrayProto.concat;
+const filter = arrayProto.filter;
+const join = arrayProto.join;
+const map = arrayProto.map;
+const reduce = arrayProto.reduce;
+const slice = arrayProto.slice;
 
+/**
+ * @param proxy
+ * @param text
+ * @param args
+ */
 function throwYieldError(proxy, text, args) {
-    var msg = functionName(proxy) + text;
+    let msg = functionName(proxy) + text;
     if (args.length) {
         msg += ` Received [${join(slice(args), ", ")}]`;
     }
     throw new Error(msg);
 }
 
-var callProto = {
+const callProto = {
     calledOn: function calledOn(thisValue) {
         if (match.isMatcher(thisValue)) {
             return thisValue.test(this.thisValue);
@@ -2061,8 +2108,8 @@ var callProto = {
     },
 
     calledWith: function calledWith() {
-        var self = this;
-        var calledWithArgs = slice(arguments);
+        const self = this;
+        const calledWithArgs = slice(arguments);
 
         if (calledWithArgs.length > self.args.length) {
             return false;
@@ -2078,8 +2125,8 @@ var callProto = {
     },
 
     calledWithMatch: function calledWithMatch() {
-        var self = this;
-        var calledWithMatchArgs = slice(arguments);
+        const self = this;
+        const calledWithMatchArgs = slice(arguments);
 
         if (calledWithMatchArgs.length > self.args.length) {
             return false;
@@ -2088,7 +2135,7 @@ var callProto = {
         return reduce(
             calledWithMatchArgs,
             function (prev, expectation, i) {
-                var actual = self.args[i];
+                const actual = self.args[i];
 
                 return prev && match(expectation).test(actual);
             },
@@ -2162,7 +2209,7 @@ var callProto = {
 
     callArgOnWith: function (pos, thisValue) {
         this.ensureArgIsAFunction(pos);
-        var args = slice(arguments, 2);
+        const args = slice(arguments, 2);
         return this.args[pos].apply(thisValue, args);
     },
 
@@ -2181,8 +2228,8 @@ var callProto = {
     },
 
     yieldOn: function (thisValue) {
-        var args = slice(this.args);
-        var yieldFn = filter(args, function (arg) {
+        const args = slice(this.args);
+        const yieldFn = filter(args, function (arg) {
             return typeof arg === "function";
         })[0];
 
@@ -2205,11 +2252,11 @@ var callProto = {
     },
 
     yieldToOn: function (prop, thisValue) {
-        var args = slice(this.args);
-        var yieldArg = filter(args, function (arg) {
+        const args = slice(this.args);
+        const yieldArg = filter(args, function (arg) {
             return arg && typeof arg[prop] === "function";
         })[0];
-        var yieldFn = yieldArg && yieldArg[prop];
+        const yieldFn = yieldArg && yieldArg[prop];
 
         if (!yieldFn) {
             throwYieldError(
@@ -2225,21 +2272,19 @@ var callProto = {
     },
 
     toString: function () {
-        var callStr = this.proxy ? `${String(this.proxy)}(` : "";
-        var formattedArgs;
-
         if (!this.args) {
             return ":(";
         }
 
-        formattedArgs = map(this.args, function (arg) {
-            return sinonFormat(arg);
+        let callStr = this.proxy ? `${String(this.proxy)}(` : "";
+        const formattedArgs = map(this.args, function (arg) {
+            return inspect(arg);
         });
 
         callStr = `${callStr + join(formattedArgs, ", ")})`;
 
         if (typeof this.returnValue !== "undefined") {
-            callStr += ` => ${sinonFormat(this.returnValue)}`;
+            callStr += ` => ${inspect(this.returnValue)}`;
         }
 
         if (this.exception) {
@@ -2250,7 +2295,8 @@ var callProto = {
             }
         }
         if (this.stack) {
-            // Omit the error message and the two top stack frames in sinon itself:
+            // If we have a stack, add the first frame that's in end-user code
+            // Skip the first two frames because they will refer to Sinon code
             callStr += (this.stack.split("\n")[3] || "unknown").replace(
                 /^\s*(?:at\s+|@)?/,
                 " at "
@@ -2279,6 +2325,15 @@ Object.defineProperty(callProto, "stack", {
 
 callProto.invokeCallback = callProto.yield;
 
+/**
+ * @param proxy
+ * @param thisValue
+ * @param args
+ * @param returnValue
+ * @param exception
+ * @param id
+ * @param errorWithCallStack
+ */
 function createProxyCall(
     proxy,
     thisValue,
@@ -2292,15 +2347,15 @@ function createProxyCall(
         throw new TypeError("Call id is not a number");
     }
 
-    var firstArg, lastArg;
+    let firstArg, lastArg;
 
     if (args.length > 0) {
         firstArg = args[0];
         lastArg = args[args.length - 1];
     }
 
-    var proxyCall = Object.create(callProto);
-    var callback =
+    const proxyCall = Object.create(callProto);
+    const callback =
         lastArg && typeof lastArg === "function" ? lastArg : undefined;
 
     proxyCall.proxy = proxy;
@@ -2320,24 +2375,24 @@ createProxyCall.toString = callProto.toString; // used by mocks
 
 module.exports = createProxyCall;
 
-},{"./util/core/format":26,"@sinonjs/commons":47,"@sinonjs/samsam":85}],15:[function(require,module,exports){
+},{"@sinonjs/commons":48,"@sinonjs/samsam":88,"util":113}],16:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var proxyCallUtil = require("./proxy-call-util");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const proxyCallUtil = require("./proxy-call-util");
 
-var push = arrayProto.push;
-var forEach = arrayProto.forEach;
-var concat = arrayProto.concat;
-var ErrorConstructor = Error.prototype.constructor;
-var bind = Function.prototype.bind;
+const push = arrayProto.push;
+const forEach = arrayProto.forEach;
+const concat = arrayProto.concat;
+const ErrorConstructor = Error.prototype.constructor;
+const bind = Function.prototype.bind;
 
-var callId = 0;
+let callId = 0;
 
 module.exports = function invoke(func, thisValue, args) {
-    var matchings = this.matchingFakes(args);
-    var currentCallId = callId++;
-    var exception, returnValue;
+    const matchings = this.matchingFakes(args);
+    const currentCallId = callId++;
+    let exception, returnValue;
 
     proxyCallUtil.incrementCallCount(this);
     push(this.thisValues, thisValue);
@@ -2357,7 +2412,7 @@ module.exports = function invoke(func, thisValue, args) {
     try {
         this.invoking = true;
 
-        var thisCall = this.getCall(this.callCount - 1);
+        const thisCall = this.getCall(this.callCount - 1);
 
         if (thisCall.calledWithNew()) {
             // Call through with `new`
@@ -2385,7 +2440,7 @@ module.exports = function invoke(func, thisValue, args) {
         push(matching.returnValues, returnValue);
     });
 
-    var err = new ErrorConstructor();
+    const err = new ErrorConstructor();
     // 1. Please do not get stack at this point. It may be so very slow, and not actually used
     // 2. PhantomJS does not serialize the stack trace until the error has been thrown:
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Stack
@@ -2410,30 +2465,30 @@ module.exports = function invoke(func, thisValue, args) {
     return returnValue;
 };
 
-},{"./proxy-call-util":13,"@sinonjs/commons":47}],16:[function(require,module,exports){
+},{"./proxy-call-util":14,"@sinonjs/commons":48}],17:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var extend = require("./util/core/extend");
-var functionToString = require("./util/core/function-to-string");
-var proxyCall = require("./proxy-call");
-var proxyCallUtil = require("./proxy-call-util");
-var proxyInvoke = require("./proxy-invoke");
-var sinonFormat = require("./util/core/format");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const extend = require("./util/core/extend");
+const functionToString = require("./util/core/function-to-string");
+const proxyCall = require("./proxy-call");
+const proxyCallUtil = require("./proxy-call-util");
+const proxyInvoke = require("./proxy-invoke");
+const inspect = require("util").inspect;
 
-var push = arrayProto.push;
-var forEach = arrayProto.forEach;
-var slice = arrayProto.slice;
+const push = arrayProto.push;
+const forEach = arrayProto.forEach;
+const slice = arrayProto.slice;
 
-var emptyFakes = Object.freeze([]);
+const emptyFakes = Object.freeze([]);
 
 // Public API
-var proxyApi = {
+const proxyApi = {
     toString: functionToString,
 
     named: function named(name) {
         this.displayName = name;
-        var nameDescriptor = Object.getOwnPropertyDescriptor(this, "name");
+        const nameDescriptor = Object.getOwnPropertyDescriptor(this, "name");
         if (nameDescriptor && nameDescriptor.configurable) {
             // IE 11 functions don't have a name.
             // Safari 9 has names that are not configurable.
@@ -2454,7 +2509,7 @@ var proxyApi = {
     },
 
     getCall: function getCall(index) {
-        var i = index;
+        let i = index;
         if (i < 0) {
             // Negative indices means counting backwards from the last call
             i += this.callCount;
@@ -2475,8 +2530,8 @@ var proxyApi = {
     },
 
     getCalls: function () {
-        var calls = [];
-        var i;
+        const calls = [];
+        let i;
 
         for (i = 0; i < this.callCount; i++) {
             push(calls, this.getCall(i));
@@ -2529,26 +2584,26 @@ var proxyApi = {
 
     formatters: require("./spy-formatters"),
     printf: function (format) {
-        var spyInstance = this;
-        var args = slice(arguments, 1);
-        var formatter;
+        const spyInstance = this;
+        const args = slice(arguments, 1);
+        let formatter;
 
-        return (format || "").replace(/%(.)/g, function (match, specifyer) {
-            formatter = proxyApi.formatters[specifyer];
+        return (format || "").replace(/%(.)/g, function (match, specifier) {
+            formatter = proxyApi.formatters[specifier];
 
             if (typeof formatter === "function") {
                 return String(formatter(spyInstance, args));
-            } else if (!isNaN(parseInt(specifyer, 10))) {
-                return sinonFormat(args[specifyer - 1]);
+            } else if (!isNaN(parseInt(specifier, 10))) {
+                return inspect(args[specifier - 1]);
             }
 
-            return `%${specifyer}`;
+            return `%${specifier}`;
         });
     },
 
     resetHistory: function () {
         if (this.invoking) {
-            var err = new Error(
+            const err = new Error(
                 "Cannot reset Sinon function while invoking it. " +
                     "Move the call to .resetHistory outside of the callback."
             );
@@ -2585,7 +2640,7 @@ var proxyApi = {
     },
 };
 
-var delegateToCalls = proxyCallUtil.delegateToCalls;
+const delegateToCalls = proxyCallUtil.delegateToCalls;
 delegateToCalls(proxyApi, "calledOn", true);
 delegateToCalls(proxyApi, "alwaysCalledOn", false, "calledOn");
 delegateToCalls(proxyApi, "calledWith", true);
@@ -2654,7 +2709,7 @@ delegateToCalls(proxyApi, "calledWithNew", true);
 delegateToCalls(proxyApi, "alwaysCalledWithNew", false, "calledWithNew");
 
 function createProxy(func, originalFunc) {
-    var proxy = wrapFunction(func, originalFunc);
+    const proxy = wrapFunction(func, originalFunc);
 
     // Inherit function properties:
     extend(proxy, func);
@@ -2667,8 +2722,8 @@ function createProxy(func, originalFunc) {
 }
 
 function wrapFunction(func, originalFunc) {
-    var arity = originalFunc.length;
-    var p;
+    const arity = originalFunc.length;
+    let p;
     // Do not change this to use an eval. Projects that depend on sinon block the use of eval.
     // ref: https://github.com/sinonjs/sinon/issues/710
     switch (arity) {
@@ -2745,7 +2800,10 @@ function wrapFunction(func, originalFunc) {
             break;
         /*eslint-enable*/
     }
-    var nameDescriptor = Object.getOwnPropertyDescriptor(originalFunc, "name");
+    const nameDescriptor = Object.getOwnPropertyDescriptor(
+        originalFunc,
+        "name"
+    );
     if (nameDescriptor && nameDescriptor.configurable) {
         // IE 11 functions don't have a name.
         // Safari 9 has names that are not configurable.
@@ -2778,10 +2836,10 @@ function wrapFunction(func, originalFunc) {
 
 module.exports = createProxy;
 
-},{"./proxy-call":14,"./proxy-call-util":13,"./proxy-invoke":15,"./spy-formatters":19,"./util/core/extend":25,"./util/core/format":26,"./util/core/function-to-string":27,"@sinonjs/commons":47}],17:[function(require,module,exports){
+},{"./proxy-call":15,"./proxy-call-util":14,"./proxy-invoke":16,"./spy-formatters":20,"./util/core/extend":26,"./util/core/function-to-string":27,"@sinonjs/commons":48,"util":113}],18:[function(require,module,exports){
 "use strict";
 
-var walkObject = require("./util/core/walk-object");
+const walkObject = require("./util/core/walk-object");
 
 function filter(object, property) {
     return object[property].restore && object[property].restore.sinon;
@@ -2797,35 +2855,36 @@ function restoreObject(object) {
 
 module.exports = restoreObject;
 
-},{"./util/core/walk-object":37}],18:[function(require,module,exports){
+},{"./util/core/walk-object":38}],19:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var logger = require("@sinonjs/commons").deprecated;
-var collectOwnMethods = require("./collect-own-methods");
-var getPropertyDescriptor = require("./util/core/get-property-descriptor");
-var isPropertyConfigurable = require("./util/core/is-property-configurable");
-var match = require("@sinonjs/samsam").createMatcher;
-var sinonAssert = require("./assert");
-var sinonClock = require("./util/fake-timers");
-var sinonMock = require("./mock");
-var sinonSpy = require("./spy");
-var sinonStub = require("./stub");
-var sinonFake = require("./fake");
-var valueToString = require("@sinonjs/commons").valueToString;
-var fakeServer = require("nise").fakeServer;
-var fakeXhr = require("nise").fakeXhr;
-var usePromiseLibrary = require("./util/core/use-promise-library");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const logger = require("@sinonjs/commons").deprecated;
+const collectOwnMethods = require("./collect-own-methods");
+const getPropertyDescriptor = require("./util/core/get-property-descriptor");
+const isPropertyConfigurable = require("./util/core/is-property-configurable");
+const match = require("@sinonjs/samsam").createMatcher;
+const sinonAssert = require("./assert");
+const sinonClock = require("./util/fake-timers");
+const sinonMock = require("./mock");
+const sinonSpy = require("./spy");
+const sinonStub = require("./stub");
+const sinonCreateStubInstance = require("./create-stub-instance");
+const sinonFake = require("./fake");
+const valueToString = require("@sinonjs/commons").valueToString;
+const fakeServer = require("nise").fakeServer;
+const fakeXhr = require("nise").fakeXhr;
+const usePromiseLibrary = require("./util/core/use-promise-library");
 
-var DEFAULT_LEAK_THRESHOLD = 10000;
+const DEFAULT_LEAK_THRESHOLD = 10000;
 
-var filter = arrayProto.filter;
-var forEach = arrayProto.forEach;
-var push = arrayProto.push;
-var reverse = arrayProto.reverse;
+const filter = arrayProto.filter;
+const forEach = arrayProto.forEach;
+const push = arrayProto.push;
+const reverse = arrayProto.reverse;
 
 function applyOnEach(fakes, method) {
-    var matchingFakes = filter(fakes, function (fake) {
+    const matchingFakes = filter(fakes, function (fake) {
         return typeof fake[method] === "function";
     });
 
@@ -2835,12 +2894,12 @@ function applyOnEach(fakes, method) {
 }
 
 function Sandbox() {
-    var sandbox = this;
-    var fakeRestorers = [];
-    var promiseLib;
+    const sandbox = this;
+    let fakeRestorers = [];
+    let promiseLib;
 
-    var collection = [];
-    var loggedLeakWarning = false;
+    let collection = [];
+    let loggedLeakWarning = false;
     sandbox.leakThreshold = DEFAULT_LEAK_THRESHOLD;
 
     function addToCollection(object) {
@@ -2871,9 +2930,9 @@ function Sandbox() {
     };
 
     sandbox.createStubInstance = function createStubInstance() {
-        var stubbed = sinonStub.createStubInstance.apply(null, arguments);
+        const stubbed = sinonCreateStubInstance.apply(null, arguments);
 
-        var ownMethods = collectOwnMethods(stubbed);
+        const ownMethods = collectOwnMethods(stubbed);
 
         forEach(ownMethods, function (method) {
             addToCollection(method);
@@ -2932,7 +2991,7 @@ function Sandbox() {
     };
 
     sandbox.mock = function mock() {
-        var m = sinonMock.apply(null, arguments);
+        const m = sinonMock.apply(null, arguments);
 
         addToCollection(m);
         usePromiseLibrary(promiseLib, m);
@@ -2951,7 +3010,7 @@ function Sandbox() {
 
     sandbox.resetHistory = function resetHistory() {
         function privateResetHistory(f) {
-            var method = f.resetHistory || f.reset;
+            const method = f.resetHistory || f.reset;
             if (method) {
                 method.call(f);
             }
@@ -2963,7 +3022,7 @@ function Sandbox() {
                 return;
             }
 
-            var methods = [];
+            const methods = [];
             if (fake.get) {
                 push(methods, fake.get);
             }
@@ -2996,8 +3055,8 @@ function Sandbox() {
     };
 
     sandbox.restoreContext = function restoreContext() {
-        var injectedKeys = sandbox.injectedKeys;
-        var injectInto = sandbox.injectInto;
+        let injectedKeys = sandbox.injectedKeys;
+        const injectInto = sandbox.injectInto;
 
         if (!injectedKeys) {
             return;
@@ -3011,7 +3070,7 @@ function Sandbox() {
     };
 
     function getFakeRestorer(object, property) {
-        var descriptor = getPropertyDescriptor(object, property);
+        const descriptor = getPropertyDescriptor(object, property);
 
         function restorer() {
             if (descriptor.isOwn) {
@@ -3039,7 +3098,7 @@ function Sandbox() {
     }
 
     sandbox.replace = function replace(object, property, replacement) {
-        var descriptor = getPropertyDescriptor(object, property);
+        const descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -3084,7 +3143,7 @@ function Sandbox() {
         property,
         replacement
     ) {
-        var descriptor = getPropertyDescriptor(object, property);
+        const descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -3122,7 +3181,7 @@ function Sandbox() {
         property,
         replacement
     ) {
-        var descriptor = getPropertyDescriptor(object, property);
+        const descriptor = getPropertyDescriptor(object, property);
 
         if (typeof descriptor === "undefined") {
             throw new TypeError(
@@ -3157,14 +3216,14 @@ function Sandbox() {
     };
 
     function commonPostInitSetup(args, spy) {
-        var object = args[0];
-        var property = args[1];
+        const object = args[0];
+        const property = args[1];
 
-        var isSpyingOnEntireObject =
+        const isSpyingOnEntireObject =
             typeof property === "undefined" && typeof object === "object";
 
         if (isSpyingOnEntireObject) {
-            var ownMethods = collectOwnMethods(spy);
+            const ownMethods = collectOwnMethods(spy);
 
             forEach(ownMethods, function (method) {
                 addToCollection(method);
@@ -3180,18 +3239,18 @@ function Sandbox() {
     }
 
     sandbox.spy = function spy() {
-        var createdSpy = sinonSpy.apply(sinonSpy, arguments);
+        const createdSpy = sinonSpy.apply(sinonSpy, arguments);
         return commonPostInitSetup(arguments, createdSpy);
     };
 
     sandbox.stub = function stub() {
-        var createdStub = sinonStub.apply(sinonStub, arguments);
+        const createdStub = sinonStub.apply(sinonStub, arguments);
         return commonPostInitSetup(arguments, createdStub);
     };
 
     // eslint-disable-next-line no-unused-vars
     sandbox.fake = function fake(f) {
-        var s = sinonFake.apply(sinonFake, arguments);
+        const s = sinonFake.apply(sinonFake, arguments);
 
         addToCollection(s);
 
@@ -3199,10 +3258,10 @@ function Sandbox() {
     };
 
     forEach(Object.keys(sinonFake), function (key) {
-        var fakeBehavior = sinonFake[key];
+        const fakeBehavior = sinonFake[key];
         if (typeof fakeBehavior === "function") {
             sandbox.fake[key] = function () {
-                var s = fakeBehavior.apply(fakeBehavior, arguments);
+                const s = fakeBehavior.apply(fakeBehavior, arguments);
 
                 addToCollection(s);
 
@@ -3212,7 +3271,7 @@ function Sandbox() {
     });
 
     sandbox.useFakeTimers = function useFakeTimers(args) {
-        var clock = sinonClock.useFakeTimers.call(null, args);
+        const clock = sinonClock.useFakeTimers.call(null, args);
 
         sandbox.clock = clock;
         addToCollection(clock);
@@ -3225,7 +3284,7 @@ function Sandbox() {
     };
 
     sandbox.verifyAndRestore = function verifyAndRestore() {
-        var exception;
+        let exception;
 
         try {
             sandbox.verify();
@@ -3241,7 +3300,7 @@ function Sandbox() {
     };
 
     sandbox.useFakeServer = function useFakeServer() {
-        var proto = sandbox.serverPrototype || fakeServer;
+        const proto = sandbox.serverPrototype || fakeServer;
 
         if (!proto || !proto.create) {
             return null;
@@ -3254,7 +3313,7 @@ function Sandbox() {
     };
 
     sandbox.useFakeXMLHttpRequest = function useFakeXMLHttpRequest() {
-        var xhr = fakeXhr.useFakeXMLHttpRequest();
+        const xhr = fakeXhr.useFakeXMLHttpRequest();
         addToCollection(xhr);
         return xhr;
     };
@@ -3271,35 +3330,36 @@ Sandbox.prototype.match = match;
 
 module.exports = Sandbox;
 
-},{"./assert":3,"./collect-own-methods":5,"./fake":9,"./mock":11,"./spy":20,"./stub":21,"./util/core/get-property-descriptor":29,"./util/core/is-property-configurable":32,"./util/core/use-promise-library":36,"./util/fake-timers":40,"@sinonjs/commons":47,"@sinonjs/samsam":85,"nise":107}],19:[function(require,module,exports){
+},{"./assert":3,"./collect-own-methods":5,"./create-stub-instance":8,"./fake":10,"./mock":12,"./spy":21,"./stub":22,"./util/core/get-property-descriptor":29,"./util/core/is-property-configurable":32,"./util/core/use-promise-library":37,"./util/fake-timers":41,"@sinonjs/commons":48,"@sinonjs/samsam":88,"nise":128}],20:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var color = require("./color");
-var match = require("@sinonjs/samsam").createMatcher;
-var timesInWords = require("./util/core/times-in-words");
-var sinonFormat = require("./util/core/format");
-var jsDiff = require("diff");
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const color = require("./color");
+const match = require("@sinonjs/samsam").createMatcher;
+const timesInWords = require("./util/core/times-in-words");
+const inspect = require("util").inspect;
+const jsDiff = require("diff");
 
-var join = arrayProto.join;
-var map = arrayProto.map;
-var push = arrayProto.push;
-var slice = arrayProto.slice;
+const join = arrayProto.join;
+const map = arrayProto.map;
+const push = arrayProto.push;
+const slice = arrayProto.slice;
 
 function colorSinonMatchText(matcher, calledArg, calledArgMessage) {
-    var calledArgumentMessage = calledArgMessage;
+    let calledArgumentMessage = calledArgMessage;
+    let matcherMessage = matcher.message;
     if (!matcher.test(calledArg)) {
-        matcher.message = color.red(matcher.message);
+        matcherMessage = color.red(matcher.message);
         if (calledArgumentMessage) {
             calledArgumentMessage = color.green(calledArgumentMessage);
         }
     }
-    return `${calledArgumentMessage} ${matcher.message}`;
+    return `${calledArgumentMessage} ${matcherMessage}`;
 }
 
 function colorDiffText(diff) {
-    var objects = map(diff, function (part) {
-        var text = part.value;
+    const objects = map(diff, function (part) {
+        let text = part.value;
         if (part.added) {
             text = color.green(text);
         } else if (part.removed) {
@@ -3331,45 +3391,45 @@ module.exports = {
     },
 
     D: function (spyInstance, args) {
-        var message = "";
+        let message = "";
 
-        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
+        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
             // describe multiple calls
             if (l > 1) {
                 message += `\nCall ${i + 1}:`;
             }
-            var calledArgs = spyInstance.getCall(i).args;
-            var expectedArgs = slice(args);
+            const calledArgs = spyInstance.getCall(i).args;
+            const expectedArgs = slice(args);
 
             for (
-                var j = 0;
+                let j = 0;
                 j < calledArgs.length || j < expectedArgs.length;
                 ++j
             ) {
-                if (calledArgs[j]) {
-                    calledArgs[j] = quoteStringValue(calledArgs[j]);
+                let calledArg = calledArgs[j];
+                let expectedArg = expectedArgs[j];
+                if (calledArg) {
+                    calledArg = quoteStringValue(calledArg);
                 }
 
-                if (expectedArgs[j]) {
-                    expectedArgs[j] = quoteStringValue(expectedArgs[j]);
+                if (expectedArg) {
+                    expectedArg = quoteStringValue(expectedArg);
                 }
 
                 message += "\n";
 
-                var calledArgMessage =
-                    j < calledArgs.length ? sinonFormat(calledArgs[j]) : "";
-                if (match.isMatcher(expectedArgs[j])) {
+                const calledArgMessage =
+                    j < calledArgs.length ? inspect(calledArg) : "";
+                if (match.isMatcher(expectedArg)) {
                     message += colorSinonMatchText(
-                        expectedArgs[j],
-                        calledArgs[j],
+                        expectedArg,
+                        calledArg,
                         calledArgMessage
                     );
                 } else {
-                    var expectedArgMessage =
-                        j < expectedArgs.length
-                            ? sinonFormat(expectedArgs[j])
-                            : "";
-                    var diff = jsDiff.diffJson(
+                    const expectedArgMessage =
+                        j < expectedArgs.length ? inspect(expectedArg) : "";
+                    const diff = jsDiff.diffJson(
                         calledArgMessage,
                         expectedArgMessage
                     );
@@ -3382,11 +3442,11 @@ module.exports = {
     },
 
     C: function (spyInstance) {
-        var calls = [];
+        const calls = [];
 
-        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
+        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
             // eslint-disable-next-line @sinonjs/no-prototype-methods/no-prototype-methods
-            var stringifiedCall = `    ${spyInstance.getCall(i).toString()}`;
+            let stringifiedCall = `    ${spyInstance.getCall(i).toString()}`;
             if (/\n/.test(calls[i - 1])) {
                 stringifiedCall = `\n${stringifiedCall}`;
             }
@@ -3397,10 +3457,10 @@ module.exports = {
     },
 
     t: function (spyInstance) {
-        var objects = [];
+        const objects = [];
 
-        for (var i = 0, l = spyInstance.callCount; i < l; ++i) {
-            push(objects, sinonFormat(spyInstance.thisValues[i]));
+        for (let i = 0, l = spyInstance.callCount; i < l; ++i) {
+            push(objects, inspect(spyInstance.thisValues[i]));
         }
 
         return join(objects, ", ");
@@ -3409,39 +3469,39 @@ module.exports = {
     "*": function (spyInstance, args) {
         return join(
             map(args, function (arg) {
-                return sinonFormat(arg);
+                return inspect(arg);
             }),
             ", "
         );
     },
 };
 
-},{"./color":6,"./util/core/format":26,"./util/core/times-in-words":35,"@sinonjs/commons":47,"@sinonjs/samsam":85,"diff":92}],20:[function(require,module,exports){
+},{"./color":6,"./util/core/times-in-words":36,"@sinonjs/commons":48,"@sinonjs/samsam":88,"diff":114,"util":113}],21:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var createProxy = require("./proxy");
-var extend = require("./util/core/extend");
-var functionName = require("@sinonjs/commons").functionName;
-var getPropertyDescriptor = require("./util/core/get-property-descriptor");
-var deepEqual = require("@sinonjs/samsam").deepEqual;
-var isEsModule = require("./util/core/is-es-module");
-var proxyCallUtil = require("./proxy-call-util");
-var walkObject = require("./util/core/walk-object");
-var wrapMethod = require("./util/core/wrap-method");
-var valueToString = require("@sinonjs/commons").valueToString;
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const createProxy = require("./proxy");
+const extend = require("./util/core/extend");
+const functionName = require("@sinonjs/commons").functionName;
+const getPropertyDescriptor = require("./util/core/get-property-descriptor");
+const deepEqual = require("@sinonjs/samsam").deepEqual;
+const isEsModule = require("./util/core/is-es-module");
+const proxyCallUtil = require("./proxy-call-util");
+const walkObject = require("./util/core/walk-object");
+const wrapMethod = require("./util/core/wrap-method");
+const valueToString = require("@sinonjs/commons").valueToString;
 
 /* cache references to library methods so that they also can be stubbed without problems */
-var forEach = arrayProto.forEach;
-var pop = arrayProto.pop;
-var push = arrayProto.push;
-var slice = arrayProto.slice;
-var filter = Array.prototype.filter;
+const forEach = arrayProto.forEach;
+const pop = arrayProto.pop;
+const push = arrayProto.push;
+const slice = arrayProto.slice;
+const filter = Array.prototype.filter;
 
-var uuid = 0;
+let uuid = 0;
 
 function matches(fake, args, strict) {
-    var margs = fake.matchingArguments;
+    const margs = fake.matchingArguments;
     if (
         margs.length <= args.length &&
         deepEqual(slice(args, 0, margs.length), margs)
@@ -3452,16 +3512,16 @@ function matches(fake, args, strict) {
 }
 
 // Public API
-var spyApi = {
+const spyApi = {
     withArgs: function () {
-        var args = slice(arguments);
-        var matching = pop(this.matchingFakes(args, true));
+        const args = slice(arguments);
+        const matching = pop(this.matchingFakes(args, true));
         if (matching) {
             return matching;
         }
 
-        var original = this;
-        var fake = this.instantiateFake();
+        const original = this;
+        const fake = this.instantiateFake();
         fake.matchingArguments = args;
         fake.parent = this;
         push(this.fakes, fake);
@@ -3497,7 +3557,7 @@ var spyApi = {
 };
 
 /* eslint-disable @sinonjs/no-prototype-methods/no-prototype-methods */
-var delegateToCalls = proxyCallUtil.delegateToCalls;
+const delegateToCalls = proxyCallUtil.delegateToCalls;
 delegateToCalls(spyApi, "callArg", false, "callArgWith", true, function () {
     throw new Error(
         `${this.toString()} cannot call arg since it was not yet invoked.`
@@ -3550,8 +3610,8 @@ delegateToCalls(
 );
 
 function createSpy(func) {
-    var name;
-    var funk = func;
+    let name;
+    let funk = func;
 
     if (typeof funk !== "function") {
         funk = function () {
@@ -3561,7 +3621,7 @@ function createSpy(func) {
         name = functionName(funk);
     }
 
-    var proxy = createProxy(funk, funk);
+    const proxy = createProxy(funk, funk);
 
     // Inherit spy API:
     extend.nonEnum(proxy, spyApi);
@@ -3575,8 +3635,6 @@ function createSpy(func) {
 }
 
 function spy(object, property, types) {
-    var descriptor, methodDesc;
-
     if (isEsModule(object)) {
         throw new TypeError("ES Modules cannot be spied");
     }
@@ -3599,8 +3657,8 @@ function spy(object, property, types) {
         return wrapMethod(object, property, createSpy(object[property]));
     }
 
-    descriptor = {};
-    methodDesc = getPropertyDescriptor(object, property);
+    const descriptor = {};
+    const methodDesc = getPropertyDescriptor(object, property);
 
     forEach(types, function (type) {
         descriptor[type] = createSpy(methodDesc[type]);
@@ -3612,41 +3670,43 @@ function spy(object, property, types) {
 extend(spy, spyApi);
 module.exports = spy;
 
-},{"./proxy":16,"./proxy-call-util":13,"./util/core/extend":25,"./util/core/get-property-descriptor":29,"./util/core/is-es-module":30,"./util/core/walk-object":37,"./util/core/wrap-method":39,"@sinonjs/commons":47,"@sinonjs/samsam":85}],21:[function(require,module,exports){
+},{"./proxy":17,"./proxy-call-util":14,"./util/core/extend":26,"./util/core/get-property-descriptor":29,"./util/core/is-es-module":30,"./util/core/walk-object":38,"./util/core/wrap-method":40,"@sinonjs/commons":48,"@sinonjs/samsam":88}],22:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var behavior = require("./behavior");
-var behaviors = require("./default-behaviors");
-var createProxy = require("./proxy");
-var functionName = require("@sinonjs/commons").functionName;
-var hasOwnProperty =
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const behavior = require("./behavior");
+const behaviors = require("./default-behaviors");
+const createProxy = require("./proxy");
+const functionName = require("@sinonjs/commons").functionName;
+const hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-var isNonExistentProperty = require("./util/core/is-non-existent-property");
-var spy = require("./spy");
-var extend = require("./util/core/extend");
-var getPropertyDescriptor = require("./util/core/get-property-descriptor");
-var isEsModule = require("./util/core/is-es-module");
-var wrapMethod = require("./util/core/wrap-method");
-var throwOnFalsyObject = require("./throw-on-falsy-object");
-var valueToString = require("@sinonjs/commons").valueToString;
-var walkObject = require("./util/core/walk-object");
+const isNonExistentProperty = require("./util/core/is-non-existent-property");
+const spy = require("./spy");
+const extend = require("./util/core/extend");
+const getPropertyDescriptor = require("./util/core/get-property-descriptor");
+const isEsModule = require("./util/core/is-es-module");
+const sinonType = require("./util/core/sinon-type");
+const wrapMethod = require("./util/core/wrap-method");
+const throwOnFalsyObject = require("./throw-on-falsy-object");
+const valueToString = require("@sinonjs/commons").valueToString;
+const walkObject = require("./util/core/walk-object");
 
-var forEach = arrayProto.forEach;
-var pop = arrayProto.pop;
-var slice = arrayProto.slice;
-var sort = arrayProto.sort;
+const forEach = arrayProto.forEach;
+const pop = arrayProto.pop;
+const slice = arrayProto.slice;
+const sort = arrayProto.sort;
 
-var uuid = 0;
+let uuid = 0;
 
 function createStub(originalFunc) {
-    var proxy;
+    // eslint-disable-next-line prefer-const
+    let proxy;
 
     function functionStub() {
-        var args = slice(arguments);
-        var matchings = proxy.matchingFakes(args);
+        const args = slice(arguments);
+        const matchings = proxy.matchingFakes(args);
 
-        var fnStub =
+        const fnStub =
             pop(
                 sort(matchings, function (a, b) {
                     return (
@@ -3663,7 +3723,7 @@ function createStub(originalFunc) {
     // Inherit stub API:
     extend.nonEnum(proxy, stub);
 
-    var name = originalFunc ? functionName(originalFunc) : null;
+    const name = originalFunc ? functionName(originalFunc) : null;
     extend.nonEnum(proxy, {
         fakes: [],
         instantiateFake: createStub,
@@ -3672,6 +3732,8 @@ function createStub(originalFunc) {
         behaviors: [],
         id: `stub#${uuid++}`,
     });
+
+    sinonType.set(proxy, "stub");
 
     return proxy;
 }
@@ -3695,13 +3757,16 @@ function stub(object, property) {
         );
     }
 
-    var actualDescriptor = getPropertyDescriptor(object, property);
-    var isObjectOrFunction =
+    const actualDescriptor = getPropertyDescriptor(object, property);
+
+    assertValidPropertyDescriptor(actualDescriptor, property);
+
+    const isObjectOrFunction =
         typeof object === "object" || typeof object === "function";
-    var isStubbingEntireObject =
+    const isStubbingEntireObject =
         typeof property === "undefined" && isObjectOrFunction;
-    var isCreatingNewStub = !object && typeof property === "undefined";
-    var isStubbingNonFuncProperty =
+    const isCreatingNewStub = !object && typeof property === "undefined";
+    const isStubbingNonFuncProperty =
         isObjectOrFunction &&
         typeof property !== "undefined" &&
         (typeof actualDescriptor === "undefined" ||
@@ -3715,11 +3780,11 @@ function stub(object, property) {
         return createStub();
     }
 
-    var func =
+    const func =
         typeof actualDescriptor.value === "function"
             ? actualDescriptor.value
             : null;
-    var s = createStub(func);
+    const s = createStub(func);
 
     extend.nonEnum(s, {
         rootObj: object,
@@ -3738,29 +3803,35 @@ function stub(object, property) {
     return isStubbingNonFuncProperty ? s : wrapMethod(object, property, s);
 }
 
-stub.createStubInstance = function (constructor, overrides) {
-    if (typeof constructor !== "function") {
-        throw new TypeError("The constructor should be a function.");
+function assertValidPropertyDescriptor(descriptor, property) {
+    if (!descriptor || !property) {
+        return;
     }
+    if (descriptor.isOwn && !descriptor.configurable && !descriptor.writable) {
+        throw new TypeError(
+            `Descriptor for property ${property} is non-configurable and non-writable`
+        );
+    }
+    if ((descriptor.get || descriptor.set) && !descriptor.configurable) {
+        throw new TypeError(
+            `Descriptor for accessor property ${property} is non-configurable`
+        );
+    }
+    if (isDataDescriptor(descriptor) && !descriptor.writable) {
+        throw new TypeError(
+            `Descriptor for data property ${property} is non-writable`
+        );
+    }
+}
 
-    var stubbedObject = stub(Object.create(constructor.prototype));
-
-    forEach(Object.keys(overrides || {}), function (propertyName) {
-        if (propertyName in stubbedObject) {
-            var value = overrides[propertyName];
-            if (value && value.createStubInstance) {
-                stubbedObject[propertyName] = value;
-            } else {
-                stubbedObject[propertyName].returns(value);
-            }
-        } else {
-            throw new Error(
-                `Cannot stub ${propertyName}. Property does not exist!`
-            );
-        }
-    });
-    return stubbedObject;
-};
+function isDataDescriptor(descriptor) {
+    return (
+        !descriptor.value &&
+        !descriptor.writable &&
+        !descriptor.set &&
+        !descriptor.get
+    );
+}
 
 /*eslint-disable no-use-before-define*/
 function getParentBehaviour(stubInstance) {
@@ -3776,14 +3847,14 @@ function getDefaultBehavior(stubInstance) {
 }
 
 function getCurrentBehavior(stubInstance) {
-    var currentBehavior = stubInstance.behaviors[stubInstance.callCount - 1];
+    const currentBehavior = stubInstance.behaviors[stubInstance.callCount - 1];
     return currentBehavior && currentBehavior.isPresent()
         ? currentBehavior
         : getDefaultBehavior(stubInstance);
 }
 /*eslint-enable no-use-before-define*/
 
-var proto = {
+const proto = {
     resetBehavior: function () {
         this.defaultBehavior = null;
         this.behaviors = [];
@@ -3827,7 +3898,7 @@ var proto = {
     },
 
     withArgs: function withArgs() {
-        var fake = spy.withArgs.apply(this, arguments);
+        const fake = spy.withArgs.apply(this, arguments);
         if (this.defaultBehavior && this.defaultBehavior.promiseLibrary) {
             fake.defaultBehavior =
                 fake.defaultBehavior || behavior.create(fake);
@@ -3858,13 +3929,13 @@ forEach(Object.keys(behaviors), function (method) {
 extend(stub, proto);
 module.exports = stub;
 
-},{"./behavior":4,"./default-behaviors":8,"./proxy":16,"./spy":20,"./throw-on-falsy-object":22,"./util/core/extend":25,"./util/core/get-property-descriptor":29,"./util/core/is-es-module":30,"./util/core/is-non-existent-property":31,"./util/core/walk-object":37,"./util/core/wrap-method":39,"@sinonjs/commons":47}],22:[function(require,module,exports){
+},{"./behavior":4,"./default-behaviors":9,"./proxy":17,"./spy":21,"./throw-on-falsy-object":23,"./util/core/extend":26,"./util/core/get-property-descriptor":29,"./util/core/is-es-module":30,"./util/core/is-non-existent-property":31,"./util/core/sinon-type":35,"./util/core/walk-object":38,"./util/core/wrap-method":40,"@sinonjs/commons":48}],23:[function(require,module,exports){
 "use strict";
-var valueToString = require("@sinonjs/commons").valueToString;
+const valueToString = require("@sinonjs/commons").valueToString;
 
 function throwOnFalsyObject(object, property) {
     if (property && !object) {
-        var type = object === null ? "null" : "undefined";
+        const type = object === null ? "null" : "undefined";
         throw new Error(
             `Trying to stub property '${valueToString(property)}' of ${type}`
         );
@@ -3873,7 +3944,7 @@ function throwOnFalsyObject(object, property) {
 
 module.exports = throwOnFalsyObject;
 
-},{"@sinonjs/commons":47}],23:[function(require,module,exports){
+},{"@sinonjs/commons":48}],24:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -3895,11 +3966,11 @@ module.exports = {
     useFakeServer: true,
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var reduce = arrayProto.reduce;
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const reduce = arrayProto.reduce;
 
 module.exports = function exportAsyncBehaviors(behaviorMethods) {
     return reduce(
@@ -3908,7 +3979,10 @@ module.exports = function exportAsyncBehaviors(behaviorMethods) {
             // need to avoid creating another async versions of the newly added async methods
             if (method.match(/^(callsArg|yields)/) && !method.match(/Async/)) {
                 acc[`${method}Async`] = function () {
-                    var result = behaviorMethods[method].apply(this, arguments);
+                    const result = behaviorMethods[method].apply(
+                        this,
+                        arguments
+                    );
                     this.callbackAsync = true;
                     return result;
                 };
@@ -3919,19 +3993,19 @@ module.exports = function exportAsyncBehaviors(behaviorMethods) {
     );
 };
 
-},{"@sinonjs/commons":47}],25:[function(require,module,exports){
+},{"@sinonjs/commons":48}],26:[function(require,module,exports){
 "use strict";
 
-var arrayProto = require("@sinonjs/commons").prototypes.array;
-var hasOwnProperty =
+const arrayProto = require("@sinonjs/commons").prototypes.array;
+const hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
 
-var join = arrayProto.join;
-var push = arrayProto.push;
+const join = arrayProto.join;
+const push = arrayProto.push;
 
 // Adapted from https://developer.mozilla.org/en/docs/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-var hasDontEnumBug = (function () {
-    var obj = {
+const hasDontEnumBug = (function () {
+    const obj = {
         constructor: function () {
             return "0";
         },
@@ -3964,8 +4038,8 @@ var hasDontEnumBug = (function () {
         },
     };
 
-    var result = [];
-    for (var prop in obj) {
+    const result = [];
+    for (const prop in obj) {
         if (hasOwnProperty(obj, prop)) {
             push(result, obj[prop]());
         }
@@ -3973,8 +4047,15 @@ var hasDontEnumBug = (function () {
     return join(result, "") !== "0123456789";
 })();
 
+/**
+ *
+ * @param target
+ * @param sources
+ * @param doCopy
+ * @returns {*} target
+ */
 function extendCommon(target, sources, doCopy) {
-    var source, i, prop;
+    let source, i, prop;
 
     for (i = 0; i < sources.length; i++) {
         source = sources[i];
@@ -3999,12 +4080,12 @@ function extendCommon(target, sources, doCopy) {
     return target;
 }
 
-/** Public: Extend target in place with all (own) properties, except 'name' when [[writable]] is false,
+/**
+ * Public: Extend target in place with all (own) properties, except 'name' when [[writable]] is false,
  *         from sources in-order. Thus, last source will override properties in previous sources.
  *
  * @param {object} target - The Object to extend
  * @param {object[]} sources - Objects to copy properties from.
- *
  * @returns {object} the extended target
  */
 module.exports = function extend(target, ...sources) {
@@ -4012,11 +4093,11 @@ module.exports = function extend(target, ...sources) {
         target,
         sources,
         function copyValue(dest, source, prop) {
-            var destOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
+            const destOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
                 dest,
                 prop
             );
-            var sourceOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
+            const sourceOwnPropertyDescriptor = Object.getOwnPropertyDescriptor(
                 source,
                 prop
             );
@@ -4030,7 +4111,7 @@ module.exports = function extend(target, ...sources) {
             };
             /*
                 if the sorce has an Accessor property copy over the accessor functions (get and set)
-                data properties has writable attribute where as acessor property don't
+                data properties has writable attribute where as accessor property don't
                 REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#properties
             */
 
@@ -4052,12 +4133,12 @@ module.exports = function extend(target, ...sources) {
     );
 };
 
-/** Public: Extend target in place with all (own) properties from sources in-order. Thus, last source will
+/**
+ * Public: Extend target in place with all (own) properties from sources in-order. Thus, last source will
  *         override properties in previous sources. Define the properties as non enumerable.
  *
  * @param {object} target - The Object to extend
  * @param {object[]} sources - Objects to copy properties from.
- *
  * @returns {object} the extended target
  */
 module.exports.nonEnum = function extendNonEnum(target, ...sources) {
@@ -4075,35 +4156,11 @@ module.exports.nonEnum = function extendNonEnum(target, ...sources) {
     );
 };
 
-},{"@sinonjs/commons":47}],26:[function(require,module,exports){
-"use strict";
-
-var inspect = require("util").inspect;
-var customFormatter;
-
-function format() {
-    if (customFormatter) {
-        return customFormatter.apply(null, arguments);
-    }
-
-    return inspect.apply(inspect, arguments);
-}
-
-format.setFormatter = function (aCustomFormatter) {
-    if (typeof aCustomFormatter !== "function") {
-        throw new Error("format.setFormatter must be called with a function");
-    }
-
-    customFormatter = aCustomFormatter;
-};
-
-module.exports = format;
-
-},{"util":91}],27:[function(require,module,exports){
+},{"@sinonjs/commons":48}],27:[function(require,module,exports){
 "use strict";
 
 module.exports = function toString() {
-    var i, prop, thisValue;
+    let i, prop, thisValue;
     if (this.getCall && this.callCount) {
         i = this.callCount;
 
@@ -4150,9 +4207,9 @@ module.exports = function getNextTick(process, setImmediate) {
 "use strict";
 
 module.exports = function getPropertyDescriptor(object, property) {
-    var proto = object;
-    var descriptor;
-    var isOwn = Boolean(
+    let proto = object;
+    let descriptor;
+    const isOwn = Boolean(
         object && Object.getOwnPropertyDescriptor(object, property)
     );
 
@@ -4181,7 +4238,6 @@ module.exports = function getPropertyDescriptor(object, property) {
  * on weird error messages.
  *
  * @param {object} object The object to examine
- *
  * @returns {boolean} true when the object is a module
  */
 module.exports = function (object) {
@@ -4212,10 +4268,10 @@ module.exports = isNonExistentProperty;
 },{}],32:[function(require,module,exports){
 "use strict";
 
-var getPropertyDescriptor = require("./get-property-descriptor");
+const getPropertyDescriptor = require("./get-property-descriptor");
 
 function isPropertyConfigurable(obj, propName) {
-    var propertyDescriptor = getPropertyDescriptor(obj, propName);
+    const propertyDescriptor = getPropertyDescriptor(obj, propName);
 
     return propertyDescriptor ? propertyDescriptor.configurable : true;
 }
@@ -4238,24 +4294,48 @@ module.exports = isRestorable;
 },{}],34:[function(require,module,exports){
 "use strict";
 
-var globalObject = require("@sinonjs/commons").global;
-var getNextTick = require("./get-next-tick");
+const globalObject = require("@sinonjs/commons").global;
+const getNextTick = require("./get-next-tick");
 
 module.exports = getNextTick(globalObject.process, globalObject.setImmediate);
 
-},{"./get-next-tick":28,"@sinonjs/commons":47}],35:[function(require,module,exports){
+},{"./get-next-tick":28,"@sinonjs/commons":48}],35:[function(require,module,exports){
 "use strict";
 
-var array = [null, "once", "twice", "thrice"];
+const sinonTypeSymbolProperty = Symbol("SinonType");
 
-module.exports = function timesInWords(count) {
-    return array[count] || `${count || 0} times`;
+module.exports = {
+    /**
+     * Set the type of a Sinon object to make it possible to identify it later at runtime
+     *
+     * @param {object|Function} object  object/function to set the type on
+     * @param {string} type the named type of the object/function
+     */
+    set(object, type) {
+        Object.defineProperty(object, sinonTypeSymbolProperty, {
+            value: type,
+            configurable: false,
+            enumerable: false,
+        });
+    },
+    get(object) {
+        return object && object[sinonTypeSymbolProperty];
+    },
 };
 
 },{}],36:[function(require,module,exports){
 "use strict";
 
-var forEach = Array.prototype.forEach;
+const array = [null, "once", "twice", "thrice"];
+
+module.exports = function timesInWords(count) {
+    return array[count] || `${count || 0} times`;
+};
+
+},{}],37:[function(require,module,exports){
+"use strict";
+
+const forEach = Array.prototype.forEach;
 
 function usePromiseLibrary(library, fakes) {
     if (typeof library === "undefined") {
@@ -4275,17 +4355,25 @@ function usePromiseLibrary(library, fakes) {
 
 module.exports = usePromiseLibrary;
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 
-var functionName = require("@sinonjs/commons").functionName;
+const functionName = require("@sinonjs/commons").functionName;
 
-var getPropertyDescriptor = require("./get-property-descriptor");
-var walk = require("./walk");
+const getPropertyDescriptor = require("./get-property-descriptor");
+const walk = require("./walk");
 
-function walkObject(predicate, object, filter) {
-    var called = false;
-    var name = functionName(predicate);
+/**
+ * A utility that allows traversing an object, applying mutating functions on the properties
+ *
+ * @param {Function} mutator called on each property
+ * @param {object} object the object we are walking over
+ * @param {Function} filter a predicate (boolean function) that will decide whether or not to apply the mutator to the current property
+ * @returns {void} nothing
+ */
+function walkObject(mutator, object, filter) {
+    let called = false;
+    const name = functionName(mutator);
 
     if (!object) {
         throw new Error(
@@ -4304,17 +4392,19 @@ function walkObject(predicate, object, filter) {
             if (filter) {
                 if (filter(object, prop)) {
                     called = true;
-                    predicate(object, prop);
+                    mutator(object, prop);
                 }
             } else {
                 called = true;
-                predicate(object, prop);
+                mutator(object, prop);
             }
         }
     });
 
     if (!called) {
-        throw new Error(`Expected to ${name} methods on object but found none`);
+        throw new Error(
+            `Found no methods on object to which we could apply mutations`
+        );
     }
 
     return object;
@@ -4322,13 +4412,14 @@ function walkObject(predicate, object, filter) {
 
 module.exports = walkObject;
 
-},{"./get-property-descriptor":29,"./walk":38,"@sinonjs/commons":47}],38:[function(require,module,exports){
+},{"./get-property-descriptor":29,"./walk":39,"@sinonjs/commons":48}],39:[function(require,module,exports){
 "use strict";
 
-var forEach = require("@sinonjs/commons").prototypes.array.forEach;
+const forEach = require("@sinonjs/commons").prototypes.array.forEach;
 
 function walkInternal(obj, iterator, context, originalObj, seen) {
-    var proto, prop;
+    let prop;
+    const proto = Object.getPrototypeOf(obj);
 
     if (typeof Object.getOwnPropertyNames !== "function") {
         // We explicitly want to enumerate through all of the prototype's properties
@@ -4344,7 +4435,7 @@ function walkInternal(obj, iterator, context, originalObj, seen) {
     forEach(Object.getOwnPropertyNames(obj), function (k) {
         if (seen[k] !== true) {
             seen[k] = true;
-            var target =
+            const target =
                 typeof Object.getOwnPropertyDescriptor(obj, k).get ===
                 "function"
                     ? originalObj
@@ -4353,7 +4444,6 @@ function walkInternal(obj, iterator, context, originalObj, seen) {
         }
     });
 
-    proto = Object.getPrototypeOf(obj);
     if (proto) {
         walkInternal(proto, iterator, context, originalObj, seen);
     }
@@ -4373,15 +4463,18 @@ module.exports = function walk(obj, iterator, context) {
     return walkInternal(obj, iterator, context, obj, {});
 };
 
-},{"@sinonjs/commons":47}],39:[function(require,module,exports){
+},{"@sinonjs/commons":48}],40:[function(require,module,exports){
 "use strict";
 
-var getPropertyDescriptor = require("./get-property-descriptor");
-var extend = require("./extend");
-var hasOwnProperty =
+// eslint-disable-next-line no-empty-function
+const noop = () => {};
+const getPropertyDescriptor = require("./get-property-descriptor");
+const extend = require("./extend");
+const sinonType = require("./sinon-type");
+const hasOwnProperty =
     require("@sinonjs/commons").prototypes.object.hasOwnProperty;
-var valueToString = require("@sinonjs/commons").valueToString;
-var push = require("@sinonjs/commons").prototypes.array.push;
+const valueToString = require("@sinonjs/commons").valueToString;
+const push = require("@sinonjs/commons").prototypes.array.push;
 
 function isFunction(obj) {
     return (
@@ -4391,7 +4484,7 @@ function isFunction(obj) {
 }
 
 function mirrorProperties(target, source) {
-    for (var prop in source) {
+    for (const prop in source) {
         if (!hasOwnProperty(target, prop)) {
             target[prop] = source[prop];
         }
@@ -4399,10 +4492,10 @@ function mirrorProperties(target, source) {
 }
 
 function getAccessor(object, property, method) {
-    var accessors = ["get", "set"];
-    var descriptor = getPropertyDescriptor(object, property);
+    const accessors = ["get", "set"];
+    const descriptor = getPropertyDescriptor(object, property);
 
-    for (var i = 0; i < accessors.length; i++) {
+    for (let i = 0; i < accessors.length; i++) {
         if (
             descriptor[accessors[i]] &&
             descriptor[accessors[i]].name === method.name
@@ -4414,7 +4507,7 @@ function getAccessor(object, property, method) {
 }
 
 // Cheap way to detect if we have ES5 support.
-var hasES5Support = "keys" in Object;
+const hasES5Support = "keys" in Object;
 
 module.exports = function wrapMethod(object, property, method) {
     if (!object) {
@@ -4428,7 +4521,7 @@ module.exports = function wrapMethod(object, property, method) {
     }
 
     function checkWrappedMethod(wrappedMethod) {
-        var error;
+        let error;
 
         if (!isFunction(wrappedMethod)) {
             error = new TypeError(
@@ -4443,7 +4536,7 @@ module.exports = function wrapMethod(object, property, method) {
                 )} which is already wrapped`
             );
         } else if (wrappedMethod.calledBefore) {
-            var verb = wrappedMethod.returns ? "stubbed" : "spied on";
+            const verb = wrappedMethod.returns ? "stubbed" : "spied on";
             error = new TypeError(
                 `Attempted to wrap ${valueToString(
                     property
@@ -4459,15 +4552,9 @@ module.exports = function wrapMethod(object, property, method) {
         }
     }
 
-    var error,
-        wrappedMethods,
-        wrappedMethod,
-        i,
-        wrappedMethodDesc,
-        target,
-        accessor;
+    let error, wrappedMethod, i, wrappedMethodDesc, target, accessor;
 
-    wrappedMethods = [];
+    const wrappedMethods = [];
 
     function simplePropertyAssignment() {
         wrappedMethod = object[property];
@@ -4477,12 +4564,12 @@ module.exports = function wrapMethod(object, property, method) {
     }
 
     // Firefox has a problem when using hasOwn.call on objects from other frames.
-    var owned = object.hasOwnProperty
+    const owned = object.hasOwnProperty
         ? object.hasOwnProperty(property) // eslint-disable-line @sinonjs/no-prototype-methods/no-prototype-methods
         : hasOwnProperty(object, property);
 
     if (hasES5Support) {
-        var methodDesc =
+        const methodDesc =
             typeof method === "function" ? { value: method } : method;
         wrappedMethodDesc = getPropertyDescriptor(object, property);
 
@@ -4505,7 +4592,7 @@ module.exports = function wrapMethod(object, property, method) {
             throw error;
         }
 
-        var types = Object.keys(methodDesc);
+        const types = Object.keys(methodDesc);
         for (i = 0; i < types.length; i++) {
             wrappedMethod = wrappedMethodDesc[types[i]];
             checkWrappedMethod(wrappedMethod);
@@ -4516,6 +4603,13 @@ module.exports = function wrapMethod(object, property, method) {
         for (i = 0; i < types.length; i++) {
             mirrorProperties(methodDesc[types[i]], wrappedMethodDesc[types[i]]);
         }
+
+        // you are not allowed to flip the configurable prop on an
+        // existing descriptor to anything but false (#2514)
+        if (!owned) {
+            methodDesc.configurable = true;
+        }
+
         Object.defineProperty(object, property, methodDesc);
 
         // catch failing assignment
@@ -4556,7 +4650,7 @@ module.exports = function wrapMethod(object, property, method) {
 
     function restore() {
         accessor = getAccessor(object, property, this.wrappedMethod);
-        var descriptor;
+        let descriptor;
         // For prototype properties try to reset by delete first.
         // If this fails (ex: localStorage on mobile safari) then force a reset
         // via direct assignment.
@@ -4606,30 +4700,45 @@ module.exports = function wrapMethod(object, property, method) {
                 }
             }
         }
+        if (sinonType.get(object) === "stub-instance") {
+            // this is simply to avoid errors after restoring if something should
+            // traverse the object in a cleanup phase, ref #2477
+            object[property] = noop;
+        }
     }
 
     return method;
 };
 
-},{"./extend":25,"./get-property-descriptor":29,"@sinonjs/commons":47}],40:[function(require,module,exports){
+},{"./extend":26,"./get-property-descriptor":29,"./sinon-type":35,"@sinonjs/commons":48}],41:[function(require,module,exports){
 "use strict";
 
-var extend = require("./core/extend");
-var FakeTimers = require("@sinonjs/fake-timers");
-var globalObject = require("@sinonjs/commons").global;
+const extend = require("./core/extend");
+const FakeTimers = require("@sinonjs/fake-timers");
+const globalObject = require("@sinonjs/commons").global;
 
+/**
+ *
+ * @param config
+ * @param globalCtx
+ */
 function createClock(config, globalCtx) {
-    var FakeTimersCtx = FakeTimers;
+    let FakeTimersCtx = FakeTimers;
     if (globalCtx !== null && typeof globalCtx === "object") {
         FakeTimersCtx = FakeTimers.withGlobal(globalCtx);
     }
-    var clock = FakeTimersCtx.install(config);
+    const clock = FakeTimersCtx.install(config);
     clock.restore = clock.uninstall;
     return clock;
 }
 
+/**
+ *
+ * @param obj
+ * @param globalPropName
+ */
 function addIfDefined(obj, globalPropName) {
-    var globalProp = globalObject[globalPropName];
+    const globalProp = globalObject[globalPropName];
     if (typeof globalProp !== "undefined") {
         obj[globalPropName] = globalProp;
     }
@@ -4640,11 +4749,11 @@ function addIfDefined(obj, globalPropName) {
  * @returns {object} Returns a lolex clock instance
  */
 exports.useFakeTimers = function (dateOrConfig) {
-    var hasArguments = typeof dateOrConfig !== "undefined";
-    var argumentIsDateLike =
+    const hasArguments = typeof dateOrConfig !== "undefined";
+    const argumentIsDateLike =
         (typeof dateOrConfig === "number" || dateOrConfig instanceof Date) &&
         arguments.length === 1;
-    var argumentIsObject =
+    const argumentIsObject =
         dateOrConfig !== null &&
         typeof dateOrConfig === "object" &&
         arguments.length === 1;
@@ -4662,8 +4771,8 @@ exports.useFakeTimers = function (dateOrConfig) {
     }
 
     if (argumentIsObject) {
-        var config = extend.nonEnum({}, dateOrConfig);
-        var globalCtx = config.global;
+        const config = extend.nonEnum({}, dateOrConfig);
+        const globalCtx = config.global;
         delete config.global;
         return createClock(config, globalCtx);
     }
@@ -4679,7 +4788,7 @@ exports.clock = {
     },
 };
 
-var timers = {
+const timers = {
     setTimeout: setTimeout,
     clearTimeout: clearTimeout,
     setInterval: setInterval,
@@ -4691,7 +4800,7 @@ addIfDefined(timers, "clearImmediate");
 
 exports.timers = timers;
 
-},{"./core/extend":25,"@sinonjs/commons":47,"@sinonjs/fake-timers":59}],41:[function(require,module,exports){
+},{"./core/extend":26,"@sinonjs/commons":48,"@sinonjs/fake-timers":61}],42:[function(require,module,exports){
 "use strict";
 
 var every = require("./prototypes/array").every;
@@ -4750,7 +4859,7 @@ function calledInOrder(spies) {
 
 module.exports = calledInOrder;
 
-},{"./prototypes/array":49}],42:[function(require,module,exports){
+},{"./prototypes/array":50}],43:[function(require,module,exports){
 "use strict";
 
 var functionName = require("./function-name");
@@ -4779,7 +4888,7 @@ function className(value) {
 
 module.exports = className;
 
-},{"./function-name":45}],43:[function(require,module,exports){
+},{"./function-name":46}],44:[function(require,module,exports){
 /* eslint-disable no-console */
 "use strict";
 
@@ -4791,8 +4900,8 @@ module.exports = className;
  * @param  {string} msg
  * @returns {Function}
  */
-exports.wrap = function(func, msg) {
-    var wrapped = function() {
+exports.wrap = function (func, msg) {
+    var wrapped = function () {
         exports.printWarning(msg);
         return func.apply(this, arguments);
     };
@@ -4810,15 +4919,8 @@ exports.wrap = function(func, msg) {
  * @param  {string} funcName
  * @returns {string}
  */
-exports.defaultMsg = function(packageName, funcName) {
-    return (
-        packageName +
-        "." +
-        funcName +
-        " is deprecated and will be removed from the public API in a future version of " +
-        packageName +
-        "."
-    );
+exports.defaultMsg = function (packageName, funcName) {
+    return `${packageName}.${funcName} is deprecated and will be removed from the public API in a future version of ${packageName}.`;
 };
 
 /**
@@ -4827,7 +4929,7 @@ exports.defaultMsg = function(packageName, funcName) {
  * @param  {string} msg
  * @returns {undefined}
  */
-exports.printWarning = function(msg) {
+exports.printWarning = function (msg) {
     /* istanbul ignore next */
     if (typeof process === "object" && process.emitWarning) {
         // Emit Warnings in Node
@@ -4839,7 +4941,7 @@ exports.printWarning = function(msg) {
     }
 };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 /**
@@ -4855,7 +4957,7 @@ module.exports = function every(obj, fn) {
 
     try {
         // eslint-disable-next-line @sinonjs/no-prototype-methods/no-prototype-methods
-        obj.forEach(function() {
+        obj.forEach(function () {
             if (!fn.apply(this, arguments)) {
                 // Throwing an error is the only way to break `forEach`
                 throw new Error();
@@ -4868,7 +4970,7 @@ module.exports = function every(obj, fn) {
     return pass;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 
 /**
@@ -4899,7 +5001,7 @@ module.exports = function functionName(func) {
     }
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 "use strict";
 
 /**
@@ -4923,7 +5025,7 @@ if (typeof global !== "undefined") {
 
 module.exports = globalObject;
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -4936,10 +5038,10 @@ module.exports = {
     orderByFirstCall: require("./order-by-first-call"),
     prototypes: require("./prototypes"),
     typeOf: require("./type-of"),
-    valueToString: require("./value-to-string")
+    valueToString: require("./value-to-string"),
 };
 
-},{"./called-in-order":41,"./class-name":42,"./deprecated":43,"./every":44,"./function-name":45,"./global":46,"./order-by-first-call":48,"./prototypes":52,"./type-of":57,"./value-to-string":58}],48:[function(require,module,exports){
+},{"./called-in-order":42,"./class-name":43,"./deprecated":44,"./every":45,"./function-name":46,"./global":47,"./order-by-first-call":49,"./prototypes":53,"./type-of":59,"./value-to-string":60}],49:[function(require,module,exports){
 "use strict";
 
 var sort = require("./prototypes/array").sort;
@@ -4977,44 +5079,63 @@ function orderByFirstCall(spies) {
 
 module.exports = orderByFirstCall;
 
-},{"./prototypes/array":49}],49:[function(require,module,exports){
+},{"./prototypes/array":50}],50:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(Array.prototype);
 
-},{"./copy-prototype":50}],50:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],51:[function(require,module,exports){
 "use strict";
 
 var call = Function.call;
+var throwsOnProto = require("./throws-on-proto");
+
+var disallowedProperties = [
+    // ignore size because it throws from Map
+    "size",
+    "caller",
+    "callee",
+    "arguments",
+];
+
+// This branch is covered when tests are run with `--disable-proto=throw`,
+// however we can test both branches at the same time, so this is ignored
+/* istanbul ignore next */
+if (throwsOnProto) {
+    disallowedProperties.push("__proto__");
+}
 
 module.exports = function copyPrototypeMethods(prototype) {
     // eslint-disable-next-line @sinonjs/no-prototype-methods/no-prototype-methods
-    return Object.getOwnPropertyNames(prototype).reduce(function(result, name) {
-        // ignore size because it throws from Map
-        if (
-            name !== "size" &&
-            name !== "caller" &&
-            name !== "callee" &&
-            name !== "arguments" &&
-            typeof prototype[name] === "function"
-        ) {
-            result[name] = call.bind(prototype[name]);
+    return Object.getOwnPropertyNames(prototype).reduce(function (
+        result,
+        name
+    ) {
+        if (disallowedProperties.includes(name)) {
+            return result;
         }
 
+        if (typeof prototype[name] !== "function") {
+            return result;
+        }
+
+        result[name] = call.bind(prototype[name]);
+
         return result;
-    }, Object.create(null));
+    },
+    Object.create(null));
 };
 
-},{}],51:[function(require,module,exports){
+},{"./throws-on-proto":58}],52:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(Function.prototype);
 
-},{"./copy-prototype":50}],52:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],53:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -5023,38 +5144,66 @@ module.exports = {
     map: require("./map"),
     object: require("./object"),
     set: require("./set"),
-    string: require("./string")
+    string: require("./string"),
 };
 
-},{"./array":49,"./function":51,"./map":53,"./object":54,"./set":55,"./string":56}],53:[function(require,module,exports){
+},{"./array":50,"./function":52,"./map":54,"./object":55,"./set":56,"./string":57}],54:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(Map.prototype);
 
-},{"./copy-prototype":50}],54:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],55:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(Object.prototype);
 
-},{"./copy-prototype":50}],55:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],56:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(Set.prototype);
 
-},{"./copy-prototype":50}],56:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],57:[function(require,module,exports){
 "use strict";
 
-var copyPrototype = require("./copy-prototype");
+var copyPrototype = require("./copy-prototype-methods");
 
 module.exports = copyPrototype(String.prototype);
 
-},{"./copy-prototype":50}],57:[function(require,module,exports){
+},{"./copy-prototype-methods":51}],58:[function(require,module,exports){
+"use strict";
+
+/**
+ * Is true when the environment causes an error to be thrown for accessing the
+ * __proto__ property.
+ *
+ * This is necessary in order to support `node --disable-proto=throw`.
+ *
+ * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/proto
+ *
+ * @type {boolean}
+ */
+let throwsOnProto;
+try {
+    const object = {};
+    // eslint-disable-next-line no-proto, no-unused-expressions
+    object.__proto__;
+    throwsOnProto = false;
+} catch (_) {
+    // This branch is covered when tests are run with `--disable-proto=throw`,
+    // however we can test both branches at the same time, so this is ignored
+    /* istanbul ignore next */
+    throwsOnProto = true;
+}
+
+module.exports = throwsOnProto;
+
+},{}],59:[function(require,module,exports){
 "use strict";
 
 var type = require("type-detect");
@@ -5069,7 +5218,7 @@ module.exports = function typeOf(value) {
     return type(value).toLowerCase();
 };
 
-},{"type-detect":110}],58:[function(require,module,exports){
+},{"type-detect":153}],60:[function(require,module,exports){
 "use strict";
 
 /**
@@ -5088,47 +5237,105 @@ function valueToString(value) {
 
 module.exports = valueToString;
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 
-var globalObject = require("@sinonjs/commons").global;
+const globalObject = require("@sinonjs/commons").global;
+let timersModule;
+if (typeof require === "function" && typeof module === "object") {
+    try {
+        timersModule = require("timers");
+    } catch (e) {
+        // ignored
+    }
+}
 
 /**
+ * @typedef {object} IdleDeadline
+ * @property {boolean} didTimeout - whether or not the callback was called before reaching the optional timeout
+ * @property {function():number} timeRemaining - a floating-point value providing an estimate of the number of milliseconds remaining in the current idle period
+ */
+
+/**
+ * Queues a function to be called during a browser's idle periods
+ *
+ * @callback RequestIdleCallback
+ * @param {function(IdleDeadline)} callback
+ * @param {{timeout: number}} options - an options object
+ * @returns {number} the id
+ */
+
+/**
+ * @callback NextTick
+ * @param {VoidVarArgsFunc} callback - the callback to run
+ * @param {...*} arguments - optional arguments to call the callback with
+ * @returns {void}
+ */
+
+/**
+ * @callback SetImmediate
+ * @param {VoidVarArgsFunc} callback - the callback to run
+ * @param {...*} arguments - optional arguments to call the callback with
+ * @returns {NodeImmediate}
+ */
+
+/**
+ * @callback VoidVarArgsFunc
+ * @param {...*} callback - the callback to run
+ * @returns {void}
+ */
+
+/**
+ * @typedef RequestAnimationFrame
+ * @property {function(number):void} requestAnimationFrame
+ * @returns {number} - the id
+ */
+
+/**
+ * @typedef Performance
+ * @property {function(): number} now
+ */
+
+/* eslint-disable jsdoc/require-property-description */
+/**
  * @typedef {object} Clock
- * @property {number} now
- * @property {any} timeouts
- * @property {typeof globalThis.Date} Date
- * @property {number} loopLimit
- * @property {(func: Function, timeout: number) => number} requestIdleCallback
- * @property {(timerId: number) => void} cancelIdleCallback
+ * @property {number} now - the current time
+ * @property {Date} Date - the Date constructor
+ * @property {number} loopLimit - the maximum number of timers before assuming an infinite loop
+ * @property {RequestIdleCallback} requestIdleCallback
+ * @property {function(number):void} cancelIdleCallback
  * @property {setTimeout} setTimeout
  * @property {clearTimeout} clearTimeout
- * @property {(func: Function, ...args: any[]) => void} nextTick
+ * @property {NextTick} nextTick
  * @property {queueMicrotask} queueMicrotask
  * @property {setInterval} setInterval
  * @property {clearInterval} clearInterval
- * @property {(func: (...args: any[]) => void, ...args: any[]) => NodeTimer} setImmediate
- * @property {(timerId: NodeTimer) => void} clearImmediate
- * @property {() => number} countTimers
- * @property {(func: (timer: number) => void) => number} requestAnimationFrame
- * @property {(timerId: number) => void} cancelAnimationFrame
- * @property {() => void} runMicrotasks
- * @property {(tickValue: string | number) => number} tick
- * @property {(tickValue: string | number) => Promise<number>} tickAsync
- * @property {() => number} next
- * @property {() => Promise<number>} nextAsync
- * @property {() => number} runAll
- * @property {() => number} runToFrame
- * @property {() => Promise<number>} runAllAsync
- * @property {() => number} runToLast
- * @property {() => Promise<number>} runToLastAsync
- * @property {() => void} reset
- * @property {(systemTime: number | Date) => void} setSystemTime
- * @property {({now(): number})} performance
- * @property {(prev: any) => number[]} hrTime
- * @property {() => void} uninstall Uninstall the clock.
- * @property {any} methods
+ * @property {SetImmediate} setImmediate
+ * @property {function(NodeImmediate):void} clearImmediate
+ * @property {function():number} countTimers
+ * @property {RequestAnimationFrame} requestAnimationFrame
+ * @property {function(number):void} cancelAnimationFrame
+ * @property {function():void} runMicrotasks
+ * @property {function(string | number): number} tick
+ * @property {function(string | number): Promise<number>} tickAsync
+ * @property {function(): number} next
+ * @property {function(): Promise<number>} nextAsync
+ * @property {function(): number} runAll
+ * @property {function(): number} runToFrame
+ * @property {function(): Promise<number>} runAllAsync
+ * @property {function(): number} runToLast
+ * @property {function(): Promise<number>} runToLastAsync
+ * @property {function(): void} reset
+ * @property {function(number | Date): void} setSystemTime
+ * @property {function(number): void} jump
+ * @property {Performance} performance
+ * @property {function(number[]): number[]} hrtime - process.hrtime (legacy)
+ * @property {function(): void} uninstall Uninstall the clock.
+ * @property {Function[]} methods - the methods that are faked
+ * @property {boolean} [shouldClearNativeTimers] inherited from config
+ * @property {{methodName:string, original:any}[] | undefined} timersModuleMethods
  */
+/* eslint-enable jsdoc/require-property-description */
 
 /**
  * Configuration object for the `install` method.
@@ -5139,14 +5346,33 @@ var globalObject = require("@sinonjs/commons").global;
  * @property {number} [loopLimit] the maximum number of timers that will be run when calling runAll()
  * @property {boolean} [shouldAdvanceTime] tells FakeTimers to increment mocked time automatically (default false)
  * @property {number} [advanceTimeDelta] increment mocked time every <<advanceTimeDelta>> ms (default: 20ms)
+ * @property {boolean} [shouldClearNativeTimers] forwards clear timer calls to native functions if they are not fakes (default: false)
+ */
+
+/* eslint-disable jsdoc/require-property-description */
+/**
+ * The internal structure to describe a scheduled fake timer
+ *
+ * @typedef {object} Timer
+ * @property {Function} func
+ * @property {*[]} args
+ * @property {number} delay
+ * @property {number} callAt
+ * @property {number} createdAt
+ * @property {boolean} immediate
+ * @property {number} id
+ * @property {Error} [error]
  */
 
 /**
- * @typedef {object} NodeTimer
- * @property {() => boolean} hasRef
- * @property {() => any} ref
- * @property {() => any} unref
+ * A Node timer
+ *
+ * @typedef {object} NodeImmediate
+ * @property {function(): boolean} hasRef
+ * @property {function(): NodeImmediate} ref
+ * @property {function(): NodeImmediate} unref
  */
+/* eslint-enable jsdoc/require-property-description */
 
 /* eslint-disable complexity */
 
@@ -5154,45 +5380,51 @@ var globalObject = require("@sinonjs/commons").global;
  * Mocks available features in the specified global namespace.
  *
  * @param {*} _global Namespace to mock (e.g. `window`)
+ * @returns {FakeTimers}
  */
 function withGlobal(_global) {
-    var userAgent = _global.navigator && _global.navigator.userAgent;
-    var isRunningInIE = userAgent && userAgent.indexOf("MSIE ") > -1;
-    var maxTimeout = Math.pow(2, 31) - 1; //see https://heycam.github.io/webidl/#abstract-opdef-converttoint
-    var NOOP = function () {
+    const userAgent = _global.navigator && _global.navigator.userAgent;
+    const isRunningInIE = userAgent && userAgent.indexOf("MSIE ") > -1;
+    const maxTimeout = Math.pow(2, 31) - 1; //see https://heycam.github.io/webidl/#abstract-opdef-converttoint
+    const idCounterStart = 1e12; // arbitrarily large number to avoid collisions with native timer IDs
+    const NOOP = function () {
         return undefined;
     };
-    var NOOP_ARRAY = function () {
+    const NOOP_ARRAY = function () {
         return [];
     };
-    var timeoutResult = _global.setTimeout(NOOP, 0);
-    var addTimerReturnsObject = typeof timeoutResult === "object";
-    var hrtimePresent =
+    const timeoutResult = _global.setTimeout(NOOP, 0);
+    const addTimerReturnsObject = typeof timeoutResult === "object";
+    const hrtimePresent =
         _global.process && typeof _global.process.hrtime === "function";
-    var hrtimeBigintPresent =
+    const hrtimeBigintPresent =
         hrtimePresent && typeof _global.process.hrtime.bigint === "function";
-    var nextTickPresent =
+    const nextTickPresent =
         _global.process && typeof _global.process.nextTick === "function";
-    var utilPromisify = _global.process && require("util").promisify;
-    var performancePresent =
+    const utilPromisify = _global.process && require("util").promisify;
+    const performancePresent =
         _global.performance && typeof _global.performance.now === "function";
-    var hasPerformancePrototype =
+    const hasPerformancePrototype =
         _global.Performance &&
         (typeof _global.Performance).match(/^(function|object)$/);
-    var queueMicrotaskPresent = _global.hasOwnProperty("queueMicrotask");
-    var requestAnimationFramePresent =
+    const hasPerformanceConstructorPrototype =
+        _global.performance &&
+        _global.performance.constructor &&
+        _global.performance.constructor.prototype;
+    const queueMicrotaskPresent = _global.hasOwnProperty("queueMicrotask");
+    const requestAnimationFramePresent =
         _global.requestAnimationFrame &&
         typeof _global.requestAnimationFrame === "function";
-    var cancelAnimationFramePresent =
+    const cancelAnimationFramePresent =
         _global.cancelAnimationFrame &&
         typeof _global.cancelAnimationFrame === "function";
-    var requestIdleCallbackPresent =
+    const requestIdleCallbackPresent =
         _global.requestIdleCallback &&
         typeof _global.requestIdleCallback === "function";
-    var cancelIdleCallbackPresent =
+    const cancelIdleCallbackPresent =
         _global.cancelIdleCallback &&
         typeof _global.cancelIdleCallback === "function";
-    var setImmediatePresent =
+    const setImmediatePresent =
         _global.setImmediate && typeof _global.setImmediate === "function";
 
     // Make properties writable in IE, as per
@@ -5216,9 +5448,13 @@ function withGlobal(_global) {
 
     _global.clearTimeout(timeoutResult);
 
-    var NativeDate = _global.Date;
-    var uniqueTimerId = 1;
+    const NativeDate = _global.Date;
+    let uniqueTimerId = idCounterStart;
 
+    /**
+     * @param {number} num
+     * @returns {boolean}
+     */
     function isNumberFinite(num) {
         if (Number.isFinite) {
             return Number.isFinite(num);
@@ -5227,21 +5463,43 @@ function withGlobal(_global) {
         return isFinite(num);
     }
 
+    let isNearInfiniteLimit = false;
+
+    /**
+     * @param {Clock} clock
+     * @param {number} i
+     */
+    function checkIsNearInfiniteLimit(clock, i) {
+        if (clock.loopLimit && i === clock.loopLimit - 1) {
+            isNearInfiniteLimit = true;
+        }
+    }
+
+    /**
+     *
+     */
+    function resetIsNearInfiniteLimit() {
+        isNearInfiniteLimit = false;
+    }
+
     /**
      * Parse strings like "01:10:00" (meaning 1 hour, 10 minutes, 0 seconds) into
      * number of milliseconds. This is used to support human-readable strings passed
      * to clock.tick()
+     *
+     * @param {string} str
+     * @returns {number}
      */
     function parseTime(str) {
         if (!str) {
             return 0;
         }
 
-        var strings = str.split(":");
-        var l = strings.length;
-        var i = l;
-        var ms = 0;
-        var parsed;
+        const strings = str.split(":");
+        const l = strings.length;
+        let i = l;
+        let ms = 0;
+        let parsed;
 
         if (l > 3 || !/^(\d\d:){0,2}\d\d?$/.test(str)) {
             throw new Error(
@@ -5253,7 +5511,7 @@ function withGlobal(_global) {
             parsed = parseInt(strings[i], 10);
 
             if (parsed >= 60) {
-                throw new Error("Invalid time " + str);
+                throw new Error(`Invalid time ${str}`);
             }
 
             ms += parsed * Math.pow(60, l - i - 1);
@@ -5271,16 +5529,19 @@ function withGlobal(_global) {
      * Example: nanoRemainer(123.456789) -> 456789
      */
     function nanoRemainder(msFloat) {
-        var modulo = 1e6;
-        var remainder = (msFloat * 1e6) % modulo;
-        var positiveRemainder = remainder < 0 ? remainder + modulo : remainder;
+        const modulo = 1e6;
+        const remainder = (msFloat * 1e6) % modulo;
+        const positiveRemainder =
+            remainder < 0 ? remainder + modulo : remainder;
 
         return Math.floor(positiveRemainder);
     }
 
     /**
      * Used to grok the `now` parameter to createClock.
+     *
      * @param {Date|number} epoch the system time
+     * @returns {number}
      */
     function getEpoch(epoch) {
         if (!epoch) {
@@ -5295,12 +5556,92 @@ function withGlobal(_global) {
         throw new TypeError("now should be milliseconds since UNIX epoch");
     }
 
+    /**
+     * @param {number} from
+     * @param {number} to
+     * @param {Timer} timer
+     * @returns {boolean}
+     */
     function inRange(from, to, timer) {
         return timer && timer.callAt >= from && timer.callAt <= to;
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {Timer} job
+     */
+    function getInfiniteLoopError(clock, job) {
+        const infiniteLoopError = new Error(
+            `Aborting after running ${clock.loopLimit} timers, assuming an infinite loop!`
+        );
+
+        if (!job.error) {
+            return infiniteLoopError;
+        }
+
+        // pattern never matched in Node
+        const computedTargetPattern = /target\.*[<|(|[].*?[>|\]|)]\s*/;
+        let clockMethodPattern = new RegExp(
+            String(Object.keys(clock).join("|"))
+        );
+
+        if (addTimerReturnsObject) {
+            // node.js environment
+            clockMethodPattern = new RegExp(
+                `\\s+at (Object\\.)?(?:${Object.keys(clock).join("|")})\\s+`
+            );
+        }
+
+        let matchedLineIndex = -1;
+        job.error.stack.split("\n").some(function (line, i) {
+            // If we've matched a computed target line (e.g. setTimeout) then we
+            // don't need to look any further. Return true to stop iterating.
+            const matchedComputedTarget = line.match(computedTargetPattern);
+            /* istanbul ignore if */
+            if (matchedComputedTarget) {
+                matchedLineIndex = i;
+                return true;
+            }
+
+            // If we've matched a clock method line, then there may still be
+            // others further down the trace. Return false to keep iterating.
+            const matchedClockMethod = line.match(clockMethodPattern);
+            if (matchedClockMethod) {
+                matchedLineIndex = i;
+                return false;
+            }
+
+            // If we haven't matched anything on this line, but we matched
+            // previously and set the matched line index, then we can stop.
+            // If we haven't matched previously, then we should keep iterating.
+            return matchedLineIndex >= 0;
+        });
+
+        const stack = `${infiniteLoopError}\n${job.type || "Microtask"} - ${
+            job.func.name || "anonymous"
+        }\n${job.error.stack
+            .split("\n")
+            .slice(matchedLineIndex + 1)
+            .join("\n")}`;
+
+        try {
+            Object.defineProperty(infiniteLoopError, "stack", {
+                value: stack,
+            });
+        } catch (e) {
+            // noop
+        }
+
+        return infiniteLoopError;
+    }
+
+    /**
+     * @param {Date} target
+     * @param {Date} source
+     * @returns {Date} the target after modifications
+     */
     function mirrorDateProperties(target, source) {
-        var prop;
+        let prop;
         for (prop in source) {
             if (source.hasOwnProperty(prop)) {
                 target[prop] = source[prop];
@@ -5334,11 +5675,23 @@ function withGlobal(_global) {
         target.parse = source.parse;
         target.UTC = source.UTC;
         target.prototype.toUTCString = source.prototype.toUTCString;
+        target.isFake = true;
 
         return target;
     }
 
+    //eslint-disable-next-line jsdoc/require-jsdoc
     function createDate() {
+        /**
+         * @param {number} year
+         * @param {number} month
+         * @param {number} date
+         * @param {number} hour
+         * @param {number} minute
+         * @param {number} second
+         * @param {number} ms
+         * @returns {Date}
+         */
         function ClockDate(year, month, date, hour, minute, second, ms) {
             // the Date constructor called as a function, ref Ecma-262 Edition 5.1, section 15.9.2.
             // This remains so in the 10th edition of 2019 as well.
@@ -5387,6 +5740,7 @@ function withGlobal(_global) {
         return mirrorDateProperties(ClockDate, NativeDate);
     }
 
+    //eslint-disable-next-line jsdoc/require-jsdoc
     function enqueueJob(clock, job) {
         // enqueues a microtick-deferred task - ecma262/#sec-enqueuejob
         if (!clock.jobs) {
@@ -5395,25 +5749,30 @@ function withGlobal(_global) {
         clock.jobs.push(job);
     }
 
+    //eslint-disable-next-line jsdoc/require-jsdoc
     function runJobs(clock) {
         // runs all microtick-deferred tasks - ecma262/#sec-runjobs
         if (!clock.jobs) {
             return;
         }
-        for (var i = 0; i < clock.jobs.length; i++) {
-            var job = clock.jobs[i];
+        for (let i = 0; i < clock.jobs.length; i++) {
+            const job = clock.jobs[i];
             job.func.apply(null, job.args);
+
+            checkIsNearInfiniteLimit(clock, i);
             if (clock.loopLimit && i > clock.loopLimit) {
-                throw new Error(
-                    "Aborting after running " +
-                        clock.loopLimit +
-                        " timers, assuming an infinite loop!"
-                );
+                throw getInfiniteLoopError(clock, job);
             }
         }
+        resetIsNearInfiniteLimit();
         clock.jobs = [];
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {Timer} timer
+     * @returns {number} id of the created timer
+     */
     function addTimer(clock, timer) {
         if (timer.func === undefined) {
             throw new Error("Callback must be provided to timer calls");
@@ -5423,12 +5782,15 @@ function withGlobal(_global) {
             // Node.js environment
             if (typeof timer.func !== "function") {
                 throw new TypeError(
-                    "[ERR_INVALID_CALLBACK]: Callback must be a function. Received " +
-                        timer.func +
-                        " of type " +
-                        typeof timer.func
+                    `[ERR_INVALID_CALLBACK]: Callback must be a function. Received ${
+                        timer.func
+                    } of type ${typeof timer.func}`
                 );
             }
+        }
+
+        if (isNearInfiniteLimit) {
+            timer.error = new Error();
         }
 
         timer.type = timer.immediate ? "Immediate" : "Timeout";
@@ -5455,6 +5817,11 @@ function withGlobal(_global) {
             timer.animation = true;
         }
 
+        if (timer.hasOwnProperty("idleCallback")) {
+            timer.type = "IdleCallback";
+            timer.idleCallback = true;
+        }
+
         if (!clock.timers) {
             clock.timers = {};
         }
@@ -5467,18 +5834,31 @@ function withGlobal(_global) {
         clock.timers[timer.id] = timer;
 
         if (addTimerReturnsObject) {
-            var res = {
-                id: timer.id,
+            const res = {
+                refed: true,
                 ref: function () {
+                    this.refed = true;
                     return res;
                 },
                 unref: function () {
+                    this.refed = false;
                     return res;
                 },
+                hasRef: function () {
+                    return this.refed;
+                },
                 refresh: function () {
-                    clearTimeout(timer.id);
-                    var args = [timer.func, timer.delay].concat(timer.args);
-                    return setTimeout.apply(null, args);
+                    timer.callAt =
+                        clock.now +
+                        (parseInt(timer.delay) || (clock.duringTick ? 1 : 0));
+
+                    // it _might_ have been removed, but if not the assignment is perfectly fine
+                    clock.timers[timer.id] = timer;
+
+                    return res;
+                },
+                [Symbol.toPrimitive]: function () {
+                    return timer.id;
                 },
             };
             return res;
@@ -5488,6 +5868,13 @@ function withGlobal(_global) {
     }
 
     /* eslint consistent-return: "off" */
+    /**
+     * Timer comparitor
+     *
+     * @param {Timer} a
+     * @param {Timer} b
+     * @returns {number}
+     */
     function compareTimers(a, b) {
         // Sort first by absolute timing
         if (a.callAt < b.callAt) {
@@ -5524,10 +5911,16 @@ function withGlobal(_global) {
         // As timer ids are unique, no fallback `0` is necessary
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {number} from
+     * @param {number} to
+     * @returns {Timer}
+     */
     function firstTimerInRange(clock, from, to) {
-        var timers = clock.timers;
-        var timer = null;
-        var id, isInRange;
+        const timers = clock.timers;
+        let timer = null;
+        let id, isInRange;
 
         for (id in timers) {
             if (timers.hasOwnProperty(id)) {
@@ -5545,10 +5938,14 @@ function withGlobal(_global) {
         return timer;
     }
 
+    /**
+     * @param {Clock} clock
+     * @returns {Timer}
+     */
     function firstTimer(clock) {
-        var timers = clock.timers;
-        var timer = null;
-        var id;
+        const timers = clock.timers;
+        let timer = null;
+        let id;
 
         for (id in timers) {
             if (timers.hasOwnProperty(id)) {
@@ -5561,10 +5958,14 @@ function withGlobal(_global) {
         return timer;
     }
 
+    /**
+     * @param {Clock} clock
+     * @returns {Timer}
+     */
     function lastTimer(clock) {
-        var timers = clock.timers;
-        var timer = null;
-        var id;
+        const timers = clock.timers;
+        let timer = null;
+        let id;
 
         for (id in timers) {
             if (timers.hasOwnProperty(id)) {
@@ -5577,6 +5978,10 @@ function withGlobal(_global) {
         return timer;
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {Timer} timer
+     */
     function callTimer(clock, timer) {
         if (typeof timer.interval === "number") {
             clock.timers[timer.id].callAt += timer.interval;
@@ -5588,13 +5993,54 @@ function withGlobal(_global) {
             timer.func.apply(null, timer.args);
         } else {
             /* eslint no-eval: "off" */
-            var eval2 = eval;
+            const eval2 = eval;
             (function () {
                 eval2(timer.func);
             })();
         }
     }
 
+    /**
+     * Gets clear handler name for a given timer type
+     *
+     * @param {string} ttype
+     */
+    function getClearHandler(ttype) {
+        if (ttype === "IdleCallback" || ttype === "AnimationFrame") {
+            return `cancel${ttype}`;
+        }
+        return `clear${ttype}`;
+    }
+
+    /**
+     * Gets schedule handler name for a given timer type
+     *
+     * @param {string} ttype
+     */
+    function getScheduleHandler(ttype) {
+        if (ttype === "IdleCallback" || ttype === "AnimationFrame") {
+            return `request${ttype}`;
+        }
+        return `set${ttype}`;
+    }
+
+    /**
+     * Creates an anonymous function to warn only once
+     */
+    function createWarnOnce() {
+        let calls = 0;
+        return function (msg) {
+            // eslint-disable-next-line
+            !calls++ && console.warn(msg);
+        };
+    }
+    const warnOnce = createWarnOnce();
+
+    /**
+     * @param {Clock} clock
+     * @param {number} timerId
+     * @param {string} ttype
+     */
     function clearTimer(clock, timerId, ttype) {
         if (!timerId) {
             // null appears to be allowed in most browsers, and appears to be
@@ -5606,13 +6052,28 @@ function withGlobal(_global) {
             clock.timers = {};
         }
 
-        // in Node, timerId is an object with .ref()/.unref(), and
-        // its .id field is the actual timer id.
-        var id = typeof timerId === "object" ? timerId.id : timerId;
+        // in Node, the ID is stored as the primitive value for `Timeout` objects
+        // for `Immediate` objects, no ID exists, so it gets coerced to NaN
+        const id = Number(timerId);
+
+        if (Number.isNaN(id) || id < idCounterStart) {
+            const handlerName = getClearHandler(ttype);
+
+            if (clock.shouldClearNativeTimers === true) {
+                const nativeHandler = clock[`_${handlerName}`];
+                return typeof nativeHandler === "function"
+                    ? nativeHandler(timerId)
+                    : undefined;
+            }
+            warnOnce(
+                `FakeTimers: ${handlerName} was invoked to clear a native timer instead of one created by this library.` +
+                    "\nTo automatically clean-up native timers, use `shouldClearNativeTimers`."
+            );
+        }
 
         if (clock.timers.hasOwnProperty(id)) {
             // check that the ID matches a timer of the correct type
-            var timer = clock.timers[id];
+            const timer = clock.timers[id];
             if (
                 timer.type === ttype ||
                 (timer.type === "Timeout" && ttype === "Interval") ||
@@ -5620,29 +6081,24 @@ function withGlobal(_global) {
             ) {
                 delete clock.timers[id];
             } else {
-                var clear =
-                    ttype === "AnimationFrame"
-                        ? "cancelAnimationFrame"
-                        : "clear" + ttype;
-                var schedule =
-                    timer.type === "AnimationFrame"
-                        ? "requestAnimationFrame"
-                        : "set" + timer.type;
+                const clear = getClearHandler(ttype);
+                const schedule = getScheduleHandler(timer.type);
                 throw new Error(
-                    "Cannot clear timer: timer created with " +
-                        schedule +
-                        "() but cleared with " +
-                        clear +
-                        "()"
+                    `Cannot clear timer: timer created with ${schedule}() but cleared with ${clear}()`
                 );
             }
         }
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {Config} config
+     * @returns {Timer[]}
+     */
     function uninstall(clock, config) {
-        var method, i, l;
-        var installedHrTime = "_hrtime";
-        var installedNextTick = "_nextTick";
+        let method, i, l;
+        const installedHrTime = "_hrtime";
+        const installedNextTick = "_nextTick";
 
         for (i = 0, l = clock.methods.length; i < l; i++) {
             method = clock.methods[i];
@@ -5651,9 +6107,9 @@ function withGlobal(_global) {
             } else if (method === "nextTick" && _global.process) {
                 _global.process.nextTick = clock[installedNextTick];
             } else if (method === "performance") {
-                var originalPerfDescriptor = Object.getOwnPropertyDescriptor(
+                const originalPerfDescriptor = Object.getOwnPropertyDescriptor(
                     clock,
-                    "_" + method
+                    `_${method}`
                 );
                 if (
                     originalPerfDescriptor &&
@@ -5666,17 +6122,11 @@ function withGlobal(_global) {
                         originalPerfDescriptor
                     );
                 } else if (originalPerfDescriptor.configurable) {
-                    _global[method] = clock["_" + method];
+                    _global[method] = clock[`_${method}`];
                 }
             } else {
                 if (_global[method] && _global[method].hadOwnProperty) {
-                    _global[method] = clock["_" + method];
-                    if (
-                        method === "clearInterval" &&
-                        config.shouldAdvanceTime === true
-                    ) {
-                        _global[method](clock.attachedInterval);
-                    }
+                    _global[method] = clock[`_${method}`];
                 } else {
                     try {
                         delete _global[method];
@@ -5685,6 +6135,16 @@ function withGlobal(_global) {
                     }
                 }
             }
+            if (clock.timersModuleMethods !== undefined) {
+                for (let j = 0; j < clock.timersModuleMethods.length; j++) {
+                    const entry = clock.timersModuleMethods[j];
+                    timersModule[entry.methodName] = entry.original;
+                }
+            }
+        }
+
+        if (config.shouldAdvanceTime === true) {
+            _global.clearInterval(clock.attachedInterval);
         }
 
         // Prevent multiple executions which will completely remove these props
@@ -5699,18 +6159,23 @@ function withGlobal(_global) {
         });
     }
 
+    /**
+     * @param {object} target the target containing the method to replace
+     * @param {string} method the keyname of the method on the target
+     * @param {Clock} clock
+     */
     function hijackMethod(target, method, clock) {
         clock[method].hadOwnProperty = Object.prototype.hasOwnProperty.call(
             target,
             method
         );
-        clock["_" + method] = target[method];
+        clock[`_${method}`] = target[method];
 
         if (method === "Date") {
-            var date = mirrorDateProperties(clock[method], target[method]);
+            const date = mirrorDateProperties(clock[method], target[method]);
             target[method] = date;
         } else if (method === "performance") {
-            var originalPerfDescriptor = Object.getOwnPropertyDescriptor(
+            const originalPerfDescriptor = Object.getOwnPropertyDescriptor(
                 target,
                 method
             );
@@ -5722,11 +6187,11 @@ function withGlobal(_global) {
             ) {
                 Object.defineProperty(
                     clock,
-                    "_" + method,
+                    `_${method}`,
                     originalPerfDescriptor
                 );
 
-                var perfDescriptor = Object.getOwnPropertyDescriptor(
+                const perfDescriptor = Object.getOwnPropertyDescriptor(
                     clock,
                     method
                 );
@@ -5748,6 +6213,10 @@ function withGlobal(_global) {
         target[method].clock = clock;
     }
 
+    /**
+     * @param {Clock} clock
+     * @param {number} advanceTimeDelta
+     */
     function doIntervalTick(clock, advanceTimeDelta) {
         clock.tick(advanceTimeDelta);
     }
@@ -5758,21 +6227,21 @@ function withGlobal(_global) {
      * @property {clearTimeout} clearTimeout
      * @property {setInterval} setInterval
      * @property {clearInterval} clearInterval
-     * @property {typeof globalThis.Date} Date
-     * @property {((fn: (...args: any[]) => void, ...args: any[]) => NodeTimer)=} setImmediate
-     * @property {((id: NodeTimer) => void)=} clearImmediate
-     * @property {((time?: [number, number]) => [number, number])=} hrtime
-     * @property {((fn: Function, ...args: any[]) => void)=} nextTick
-     * @property {({now(): number})=} performance
-     * @property {((fn: (timer: number) => void) => number)=} requestAnimationFrame
+     * @property {Date} Date
+     * @property {SetImmediate=} setImmediate
+     * @property {function(NodeImmediate): void=} clearImmediate
+     * @property {function(number[]):number[]=} hrtime
+     * @property {NextTick=} nextTick
+     * @property {Performance=} performance
+     * @property {RequestAnimationFrame=} requestAnimationFrame
      * @property {boolean=} queueMicrotask
-     * @property {((id: number) => void)=} cancelAnimationFrame
-     * @property {((fn: (deadline: any) => void, options?: any) => number)=} requestIdleCallback
-     * @property {((id: number) => void)=} cancelIdleCallback
+     * @property {function(number): void=} cancelAnimationFrame
+     * @property {RequestIdleCallback=} requestIdleCallback
+     * @property {function(number): void=} cancelIdleCallback
      */
 
     /** @type {Timers} */
-    var timers = {
+    const timers = {
         setTimeout: _global.setTimeout,
         clearTimeout: _global.clearTimeout,
         setInterval: _global.setInterval,
@@ -5817,7 +6286,7 @@ function withGlobal(_global) {
         timers.cancelIdleCallback = _global.cancelIdleCallback;
     }
 
-    var originalSetTimeout = _global.setImmediate || _global.setTimeout;
+    const originalSetTimeout = _global.setImmediate || _global.setTimeout;
 
     /**
      * @param {Date|number} [start] the system time - non-integer values are floored
@@ -5829,8 +6298,8 @@ function withGlobal(_global) {
         start = Math.floor(getEpoch(start));
         // eslint-disable-next-line no-param-reassign
         loopLimit = loopLimit || 1000;
-        var nanos = 0;
-        var adjustedSystemTime = [0, 0]; // [millis, nanoremainder]
+        let nanos = 0;
+        const adjustedSystemTime = [0, 0]; // [millis, nanoremainder]
 
         if (NativeDate === undefined) {
             throw new Error(
@@ -5839,23 +6308,24 @@ function withGlobal(_global) {
             );
         }
 
-        var clock = {
+        const clock = {
             now: start,
-            timeouts: {},
             Date: createDate(),
             loopLimit: loopLimit,
         };
 
         clock.Date.clock = clock;
 
+        //eslint-disable-next-line jsdoc/require-jsdoc
         function getTimeToNextFrame() {
             return 16 - ((clock.now - start) % 16);
         }
 
+        //eslint-disable-next-line jsdoc/require-jsdoc
         function hrtime(prev) {
-            var millisSinceStart = clock.now - adjustedSystemTime[0] - start;
-            var secsSinceStart = Math.floor(millisSinceStart / 1000);
-            var remainderInNanos =
+            const millisSinceStart = clock.now - adjustedSystemTime[0] - start;
+            const secsSinceStart = Math.floor(millisSinceStart / 1000);
+            const remainderInNanos =
                 (millisSinceStart - secsSinceStart * 1e3) * 1e6 +
                 nanos -
                 adjustedSystemTime[1];
@@ -5867,9 +6337,9 @@ function withGlobal(_global) {
                     );
                 }
 
-                var oldSecs = prev[0];
-                var nanoDiff = remainderInNanos - prev[1];
-                var secDiff = secsSinceStart - oldSecs;
+                const oldSecs = prev[0];
+                let nanoDiff = remainderInNanos - prev[1];
+                let secDiff = secsSinceStart - oldSecs;
 
                 if (nanoDiff < 0) {
                     nanoDiff += 1e9;
@@ -5881,9 +6351,15 @@ function withGlobal(_global) {
             return [secsSinceStart, remainderInNanos];
         }
 
+        function fakePerformanceNow() {
+            const hrt = hrtime();
+            const millis = hrt[0] * 1000 + hrt[1] / 1e6;
+            return millis;
+        }
+
         if (hrtimeBigintPresent) {
             hrtime.bigint = function () {
-                var parts = hrtime();
+                const parts = hrtime();
                 return BigInt(parts[0]) * BigInt(1e9) + BigInt(parts[1]); // eslint-disable-line
             };
         }
@@ -5892,26 +6368,27 @@ function withGlobal(_global) {
             func,
             timeout
         ) {
-            var timeToNextIdlePeriod = 0;
+            let timeToNextIdlePeriod = 0;
 
             if (clock.countTimers() > 0) {
                 timeToNextIdlePeriod = 50; // const for now
             }
 
-            var result = addTimer(clock, {
+            const result = addTimer(clock, {
                 func: func,
                 args: Array.prototype.slice.call(arguments, 2),
                 delay:
                     typeof timeout === "undefined"
                         ? timeToNextIdlePeriod
                         : Math.min(timeout, timeToNextIdlePeriod),
+                idleCallback: true,
             });
 
-            return result.id || result;
+            return Number(result);
         };
 
         clock.cancelIdleCallback = function cancelIdleCallback(timerId) {
-            return clearTimer(clock, timerId, "Timeout");
+            return clearTimer(clock, timerId, "IdleCallback");
         };
 
         clock.setTimeout = function setTimeout(func, timeout) {
@@ -5922,19 +6399,18 @@ function withGlobal(_global) {
             });
         };
         if (typeof _global.Promise !== "undefined" && utilPromisify) {
-            clock.setTimeout[
-                utilPromisify.custom
-            ] = function promisifiedSetTimeout(timeout, arg) {
-                return new _global.Promise(function setTimeoutExecutor(
-                    resolve
-                ) {
-                    addTimer(clock, {
-                        func: resolve,
-                        args: [arg],
-                        delay: timeout,
+            clock.setTimeout[utilPromisify.custom] =
+                function promisifiedSetTimeout(timeout, arg) {
+                    return new _global.Promise(function setTimeoutExecutor(
+                        resolve
+                    ) {
+                        addTimer(clock, {
+                            func: resolve,
+                            args: [arg],
+                            delay: timeout,
+                        });
                     });
-                });
-            };
+                };
         }
 
         clock.clearTimeout = function clearTimeout(timerId) {
@@ -5945,6 +6421,7 @@ function withGlobal(_global) {
             return enqueueJob(clock, {
                 func: func,
                 args: Array.prototype.slice.call(arguments, 1),
+                error: isNearInfiniteLimit ? new Error() : null,
             });
         };
 
@@ -5977,19 +6454,18 @@ function withGlobal(_global) {
             };
 
             if (typeof _global.Promise !== "undefined" && utilPromisify) {
-                clock.setImmediate[
-                    utilPromisify.custom
-                ] = function promisifiedSetImmediate(arg) {
-                    return new _global.Promise(function setImmediateExecutor(
-                        resolve
-                    ) {
-                        addTimer(clock, {
-                            func: resolve,
-                            args: [arg],
-                            immediate: true,
-                        });
-                    });
-                };
+                clock.setImmediate[utilPromisify.custom] =
+                    function promisifiedSetImmediate(arg) {
+                        return new _global.Promise(
+                            function setImmediateExecutor(resolve) {
+                                addTimer(clock, {
+                                    func: resolve,
+                                    args: [arg],
+                                    immediate: true,
+                                });
+                            }
+                        );
+                    };
             }
 
             clock.clearImmediate = function clearImmediate(timerId) {
@@ -6005,14 +6481,16 @@ function withGlobal(_global) {
         };
 
         clock.requestAnimationFrame = function requestAnimationFrame(func) {
-            var result = addTimer(clock, {
+            const result = addTimer(clock, {
                 func: func,
                 delay: getTimeToNextFrame(),
-                args: [clock.now + getTimeToNextFrame()],
+                get args() {
+                    return [fakePerformanceNow()];
+                },
                 animation: true,
             });
 
-            return result.id || result;
+            return Number(result);
         };
 
         clock.cancelAnimationFrame = function cancelAnimationFrame(timerId) {
@@ -6023,15 +6501,22 @@ function withGlobal(_global) {
             runJobs(clock);
         };
 
+        /**
+         * @param {number|string} tickValue milliseconds or a string parseable by parseTime
+         * @param {boolean} isAsync
+         * @param {Function} resolve
+         * @param {Function} reject
+         * @returns {number|undefined} will return the new `now` value or nothing for async
+         */
         function doTick(tickValue, isAsync, resolve, reject) {
-            var msFloat =
+            const msFloat =
                 typeof tickValue === "number"
                     ? tickValue
                     : parseTime(tickValue);
-            var ms = Math.floor(msFloat);
-            var remainder = nanoRemainder(msFloat);
-            var nanosTotal = nanos + remainder;
-            var tickTo = clock.now + ms;
+            const ms = Math.floor(msFloat);
+            const remainder = nanoRemainder(msFloat);
+            let nanosTotal = nanos + remainder;
+            let tickTo = clock.now + ms;
 
             if (msFloat < 0) {
                 throw new TypeError("Negative ticks are not supported");
@@ -6044,14 +6529,17 @@ function withGlobal(_global) {
             }
 
             nanos = nanosTotal;
-            var tickFrom = clock.now;
-            var previous = clock.now;
-            var timer,
+            let tickFrom = clock.now;
+            let previous = clock.now;
+            // ESLint fails to detect this correctly
+            /* eslint-disable prefer-const */
+            let timer,
                 firstException,
                 oldNow,
                 nextPromiseTick,
                 compensationCheck,
                 postTimerCall;
+            /* eslint-enable prefer-const */
 
             clock.duringTick = true;
 
@@ -6064,6 +6552,7 @@ function withGlobal(_global) {
                 tickTo += clock.now - oldNow;
             }
 
+            //eslint-disable-next-line jsdoc/require-jsdoc
             function doTickInner() {
                 // perform each timer in the requested range
                 timer = firstTimerInRange(clock, tickFrom, tickTo);
@@ -6160,18 +6649,23 @@ function withGlobal(_global) {
         }
 
         /**
-         * @param {tickValue} {string|number} number of milliseconds or a human-readable value like "01:11:15"
+         * @param {string|number} tickValue number of milliseconds or a human-readable value like "01:11:15"
+         * @returns {number} will return the new `now` value
          */
         clock.tick = function tick(tickValue) {
             return doTick(tickValue, false);
         };
 
         if (typeof _global.Promise !== "undefined") {
-            clock.tickAsync = function tickAsync(ms) {
+            /**
+             * @param {string|number} tickValue number of milliseconds or a human-readable value like "01:11:15"
+             * @returns {Promise}
+             */
+            clock.tickAsync = function tickAsync(tickValue) {
                 return new _global.Promise(function (resolve, reject) {
                     originalSetTimeout(function () {
                         try {
-                            doTick(ms, true, resolve, reject);
+                            doTick(tickValue, true, resolve, reject);
                         } catch (e) {
                             reject(e);
                         }
@@ -6182,7 +6676,7 @@ function withGlobal(_global) {
 
         clock.next = function next() {
             runJobs(clock);
-            var timer = firstTimer(clock);
+            const timer = firstTimer(clock);
             if (!timer) {
                 return clock.now;
             }
@@ -6203,13 +6697,13 @@ function withGlobal(_global) {
                 return new _global.Promise(function (resolve, reject) {
                     originalSetTimeout(function () {
                         try {
-                            var timer = firstTimer(clock);
+                            const timer = firstTimer(clock);
                             if (!timer) {
                                 resolve(clock.now);
                                 return;
                             }
 
-                            var err;
+                            let err;
                             clock.duringTick = true;
                             clock.now = timer.callAt;
                             try {
@@ -6235,26 +6729,26 @@ function withGlobal(_global) {
         }
 
         clock.runAll = function runAll() {
-            var numTimers, i;
+            let numTimers, i;
             runJobs(clock);
             for (i = 0; i < clock.loopLimit; i++) {
                 if (!clock.timers) {
+                    resetIsNearInfiniteLimit();
                     return clock.now;
                 }
 
                 numTimers = Object.keys(clock.timers).length;
                 if (numTimers === 0) {
+                    resetIsNearInfiniteLimit();
                     return clock.now;
                 }
 
                 clock.next();
+                checkIsNearInfiniteLimit(clock, i);
             }
 
-            throw new Error(
-                "Aborting after running " +
-                    clock.loopLimit +
-                    " timers, assuming an infinite loop!"
-            );
+            const excessJob = firstTimer(clock);
+            throw getInfiniteLoopError(clock, excessJob);
         };
 
         clock.runToFrame = function runToFrame() {
@@ -6264,20 +6758,26 @@ function withGlobal(_global) {
         if (typeof _global.Promise !== "undefined") {
             clock.runAllAsync = function runAllAsync() {
                 return new _global.Promise(function (resolve, reject) {
-                    var i = 0;
+                    let i = 0;
+                    /**
+                     *
+                     */
                     function doRun() {
                         originalSetTimeout(function () {
                             try {
-                                var numTimers;
+                                let numTimers;
                                 if (i < clock.loopLimit) {
                                     if (!clock.timers) {
+                                        resetIsNearInfiniteLimit();
                                         resolve(clock.now);
                                         return;
                                     }
 
-                                    numTimers = Object.keys(clock.timers)
-                                        .length;
+                                    numTimers = Object.keys(
+                                        clock.timers
+                                    ).length;
                                     if (numTimers === 0) {
+                                        resetIsNearInfiniteLimit();
                                         resolve(clock.now);
                                         return;
                                     }
@@ -6287,16 +6787,12 @@ function withGlobal(_global) {
                                     i++;
 
                                     doRun();
+                                    checkIsNearInfiniteLimit(clock, i);
                                     return;
                                 }
 
-                                reject(
-                                    new Error(
-                                        "Aborting after running " +
-                                            clock.loopLimit +
-                                            " timers, assuming an infinite loop!"
-                                    )
-                                );
+                                const excessJob = firstTimer(clock);
+                                reject(getInfiniteLoopError(clock, excessJob));
                             } catch (e) {
                                 reject(e);
                             }
@@ -6308,7 +6804,7 @@ function withGlobal(_global) {
         }
 
         clock.runToLast = function runToLast() {
-            var timer = lastTimer(clock);
+            const timer = lastTimer(clock);
             if (!timer) {
                 runJobs(clock);
                 return clock.now;
@@ -6322,12 +6818,12 @@ function withGlobal(_global) {
                 return new _global.Promise(function (resolve, reject) {
                     originalSetTimeout(function () {
                         try {
-                            var timer = lastTimer(clock);
+                            const timer = lastTimer(clock);
                             if (!timer) {
                                 resolve(clock.now);
                             }
 
-                            resolve(clock.tickAsync(timer.callAt));
+                            resolve(clock.tickAsync(timer.callAt - clock.now));
                         } catch (e) {
                             reject(e);
                         }
@@ -6345,9 +6841,9 @@ function withGlobal(_global) {
 
         clock.setSystemTime = function setSystemTime(systemTime) {
             // determine time difference
-            var newNow = getEpoch(systemTime);
-            var difference = newNow - clock.now;
-            var id, timer;
+            const newNow = getEpoch(systemTime);
+            const difference = newNow - clock.now;
+            let id, timer;
 
             adjustedSystemTime[0] = adjustedSystemTime[0] + difference;
             adjustedSystemTime[1] = adjustedSystemTime[1] + nanos;
@@ -6365,27 +6861,28 @@ function withGlobal(_global) {
             }
         };
 
+        /**
+         * @param {string|number} tickValue number of milliseconds or a human-readable value like "01:11:15"
+         * @returns {number} will return the new `now` value
+         */
+        clock.jump = function jump(tickValue) {
+            const msFloat =
+                typeof tickValue === "number"
+                    ? tickValue
+                    : parseTime(tickValue);
+            const ms = Math.floor(msFloat);
+
+            for (const timer of Object.values(clock.timers)) {
+                if (clock.now + ms > timer.callAt) {
+                    timer.callAt = clock.now + ms;
+                }
+            }
+            clock.tick(ms);
+        };
+
         if (performancePresent) {
             clock.performance = Object.create(null);
-
-            if (hasPerformancePrototype) {
-                var proto = _global.Performance.prototype;
-
-                Object.getOwnPropertyNames(proto).forEach(function (name) {
-                    if (name.indexOf("getEntries") === 0) {
-                        // match expected return type for getEntries functions
-                        clock.performance[name] = NOOP_ARRAY;
-                    } else {
-                        clock.performance[name] = NOOP;
-                    }
-                });
-            }
-
-            clock.performance.now = function FakeTimersNow() {
-                var hrt = hrtime();
-                var millis = hrt[0] * 1000 + hrt[1] / 1e6;
-                return millis;
-            };
+            clock.performance.now = fakePerformanceNow;
         }
 
         if (hrtimePresent) {
@@ -6409,9 +6906,17 @@ function withGlobal(_global) {
             typeof config === "number"
         ) {
             throw new TypeError(
-                "FakeTimers.install called with " +
-                    String(config) +
-                    " install requires an object parameter"
+                `FakeTimers.install called with ${String(
+                    config
+                )} install requires an object parameter`
+            );
+        }
+
+        if (_global.Date.isFake === true) {
+            // Timers are already faked; this is a problem.
+            // Make the user reset timers before continuing.
+            throw new TypeError(
+                "Can't install fake timers twice on the same global object."
             );
         }
 
@@ -6419,6 +6924,8 @@ function withGlobal(_global) {
         config = typeof config !== "undefined" ? config : {};
         config.shouldAdvanceTime = config.shouldAdvanceTime || false;
         config.advanceTimeDelta = config.advanceTimeDelta || 20;
+        config.shouldClearNativeTimers =
+            config.shouldClearNativeTimers || false;
 
         if (config.target) {
             throw new TypeError(
@@ -6426,8 +6933,9 @@ function withGlobal(_global) {
             );
         }
 
-        var i, l;
-        var clock = createClock(config.now, config.loopLimit);
+        let i, l;
+        const clock = createClock(config.now, config.loopLimit);
+        clock.shouldClearNativeTimers = config.shouldClearNativeTimers;
 
         clock.uninstall = function () {
             return uninstall(clock, config);
@@ -6442,38 +6950,77 @@ function withGlobal(_global) {
             });
         }
 
+        if (config.shouldAdvanceTime === true) {
+            const intervalTick = doIntervalTick.bind(
+                null,
+                clock,
+                config.advanceTimeDelta
+            );
+            const intervalId = _global.setInterval(
+                intervalTick,
+                config.advanceTimeDelta
+            );
+            clock.attachedInterval = intervalId;
+        }
+
+        if (clock.methods.includes("performance")) {
+            const proto = (() => {
+                if (hasPerformancePrototype) {
+                    return _global.Performance.prototype;
+                }
+                if (hasPerformanceConstructorPrototype) {
+                    return _global.performance.constructor.prototype;
+                }
+            })();
+            if (proto) {
+                Object.getOwnPropertyNames(proto).forEach(function (name) {
+                    if (name !== "now") {
+                        clock.performance[name] =
+                            name.indexOf("getEntries") === 0
+                                ? NOOP_ARRAY
+                                : NOOP;
+                    }
+                });
+            } else if ((config.toFake || []).includes("performance")) {
+                // user explicitly tried to fake performance when not present
+                throw new ReferenceError(
+                    "non-existent performance object cannot be faked"
+                );
+            }
+        }
+        if (_global === globalObject && timersModule) {
+            clock.timersModuleMethods = [];
+        }
         for (i = 0, l = clock.methods.length; i < l; i++) {
-            if (clock.methods[i] === "hrtime") {
+            const nameOfMethodToReplace = clock.methods[i];
+            if (nameOfMethodToReplace === "hrtime") {
                 if (
                     _global.process &&
                     typeof _global.process.hrtime === "function"
                 ) {
-                    hijackMethod(_global.process, clock.methods[i], clock);
+                    hijackMethod(_global.process, nameOfMethodToReplace, clock);
                 }
-            } else if (clock.methods[i] === "nextTick") {
+            } else if (nameOfMethodToReplace === "nextTick") {
                 if (
                     _global.process &&
                     typeof _global.process.nextTick === "function"
                 ) {
-                    hijackMethod(_global.process, clock.methods[i], clock);
+                    hijackMethod(_global.process, nameOfMethodToReplace, clock);
                 }
             } else {
-                if (
-                    clock.methods[i] === "setInterval" &&
-                    config.shouldAdvanceTime === true
-                ) {
-                    var intervalTick = doIntervalTick.bind(
-                        null,
-                        clock,
-                        config.advanceTimeDelta
-                    );
-                    var intervalId = _global[clock.methods[i]](
-                        intervalTick,
-                        config.advanceTimeDelta
-                    );
-                    clock.attachedInterval = intervalId;
-                }
-                hijackMethod(_global, clock.methods[i], clock);
+                hijackMethod(_global, nameOfMethodToReplace, clock);
+            }
+            if (
+                clock.timersModuleMethods !== undefined &&
+                timersModule[nameOfMethodToReplace]
+            ) {
+                const original = timersModule[nameOfMethodToReplace];
+                clock.timersModuleMethods.push({
+                    methodName: nameOfMethodToReplace,
+                    original: original,
+                });
+                timersModule[nameOfMethodToReplace] =
+                    _global[nameOfMethodToReplace];
             }
         }
 
@@ -6490,16 +7037,25 @@ function withGlobal(_global) {
     };
 }
 
+/**
+ * @typedef {object} FakeTimers
+ * @property {Timers} timers
+ * @property {createClock} createClock
+ * @property {Function} install
+ * @property {withGlobal} withGlobal
+ */
+
 /* eslint-enable complexity */
 
-var defaultImplementation = withGlobal(globalObject);
+/** @type {FakeTimers} */
+const defaultImplementation = withGlobal(globalObject);
 
 exports.timers = defaultImplementation.timers;
 exports.createClock = defaultImplementation.createClock;
 exports.install = defaultImplementation.install;
 exports.withGlobal = withGlobal;
 
-},{"@sinonjs/commons":47,"util":91}],60:[function(require,module,exports){
+},{"@sinonjs/commons":48,"timers":152,"util":113}],62:[function(require,module,exports){
 "use strict";
 
 var ARRAY_TYPES = [
@@ -6517,7 +7073,7 @@ var ARRAY_TYPES = [
 
 module.exports = ARRAY_TYPES;
 
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 var arrayProto = require("@sinonjs/commons").prototypes.array;
@@ -6579,6 +7135,13 @@ function createMatcher(expectation, message) {
     if (!m.message) {
         m.message = `match(${valueToString(expectation)})`;
     }
+
+    // ensure that nothing mutates the exported message value, ref https://github.com/sinonjs/sinon/issues/2502
+    Object.defineProperty(m, "message", {
+        configurable: false,
+        writable: false,
+        value: m.message,
+    });
 
     return m;
 }
@@ -6890,7 +7453,7 @@ createMatcher.symbol = createMatcher.typeOf("symbol");
 
 module.exports = createMatcher;
 
-},{"./create-matcher/assert-matcher":62,"./create-matcher/assert-method-exists":63,"./create-matcher/assert-type":64,"./create-matcher/is-iterable":65,"./create-matcher/is-matcher":66,"./create-matcher/matcher-prototype":68,"./create-matcher/type-map":69,"./deep-equal":70,"./iterable-to-string":83,"@sinonjs/commons":47,"lodash.get":95}],62:[function(require,module,exports){
+},{"./create-matcher/assert-matcher":64,"./create-matcher/assert-method-exists":65,"./create-matcher/assert-type":66,"./create-matcher/is-iterable":67,"./create-matcher/is-matcher":68,"./create-matcher/matcher-prototype":70,"./create-matcher/type-map":71,"./deep-equal":72,"./iterable-to-string":86,"@sinonjs/commons":95,"lodash.get":116}],64:[function(require,module,exports){
 "use strict";
 
 var isMatcher = require("./is-matcher");
@@ -6909,7 +7472,7 @@ function assertMatcher(value) {
 
 module.exports = assertMatcher;
 
-},{"./is-matcher":66}],63:[function(require,module,exports){
+},{"./is-matcher":68}],65:[function(require,module,exports){
 "use strict";
 
 /**
@@ -6930,7 +7493,7 @@ function assertMethodExists(value, method, name, methodPath) {
 
 module.exports = assertMethodExists;
 
-},{}],64:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 "use strict";
 
 var typeOf = require("@sinonjs/commons").typeOf;
@@ -6956,7 +7519,7 @@ function assertType(value, type, name) {
 
 module.exports = assertType;
 
-},{"@sinonjs/commons":47}],65:[function(require,module,exports){
+},{"@sinonjs/commons":95}],67:[function(require,module,exports){
 "use strict";
 
 var typeOf = require("@sinonjs/commons").typeOf;
@@ -6974,7 +7537,7 @@ function isIterable(value) {
 
 module.exports = isIterable;
 
-},{"@sinonjs/commons":47}],66:[function(require,module,exports){
+},{"@sinonjs/commons":95}],68:[function(require,module,exports){
 "use strict";
 
 var isPrototypeOf = require("@sinonjs/commons").prototypes.object.isPrototypeOf;
@@ -6994,7 +7557,7 @@ function isMatcher(object) {
 
 module.exports = isMatcher;
 
-},{"./matcher-prototype":68,"@sinonjs/commons":47}],67:[function(require,module,exports){
+},{"./matcher-prototype":70,"@sinonjs/commons":95}],69:[function(require,module,exports){
 "use strict";
 
 var every = require("@sinonjs/commons").prototypes.array.every;
@@ -7051,7 +7614,7 @@ function matchObject(actual, expectation, matcher) {
 
 module.exports = matchObject;
 
-},{"../deep-equal":70,"./is-matcher":66,"@sinonjs/commons":47}],68:[function(require,module,exports){
+},{"../deep-equal":72,"./is-matcher":68,"@sinonjs/commons":95}],70:[function(require,module,exports){
 "use strict";
 
 var matcherPrototype = {
@@ -7102,7 +7665,7 @@ matcherPrototype.and = function (valueOrMatcher) {
 
 module.exports = matcherPrototype;
 
-},{"../create-matcher":61}],69:[function(require,module,exports){
+},{"../create-matcher":63}],71:[function(require,module,exports){
 "use strict";
 
 var functionName = require("@sinonjs/commons").functionName;
@@ -7166,7 +7729,7 @@ var createTypeMap = function (match) {
 
 module.exports = createTypeMap;
 
-},{"./match-object":67,"@sinonjs/commons":47}],70:[function(require,module,exports){
+},{"./match-object":69,"@sinonjs/commons":95}],72:[function(require,module,exports){
 "use strict";
 
 var valueToString = require("@sinonjs/commons").valueToString;
@@ -7179,8 +7742,10 @@ var mapForEach = require("@sinonjs/commons").prototypes.map.forEach;
 var getClass = require("./get-class");
 var identical = require("./identical");
 var isArguments = require("./is-arguments");
+var isArrayType = require("./is-array-type");
 var isDate = require("./is-date");
 var isElement = require("./is-element");
+var isIterable = require("./is-iterable");
 var isMap = require("./is-map");
 var isNaN = require("./is-nan");
 var isObject = require("./is-object");
@@ -7358,6 +7923,44 @@ function deepEqualCyclic(actual, expectation, match) {
             return mapsDeeplyEqual;
         }
 
+        // jQuery objects have iteration protocols
+        // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+        // But, they don't work well with the implementation concerning iterables below,
+        // so we will detect them and use jQuery's own equality function
+        /* istanbul ignore next -- this can only be tested in the `test-headless` script */
+        if (
+            actualObj.constructor &&
+            actualObj.constructor.name === "jQuery" &&
+            typeof actualObj.is === "function"
+        ) {
+            return actualObj.is(expectationObj);
+        }
+
+        var isActualNonArrayIterable =
+            isIterable(actualObj) &&
+            !isArrayType(actualObj) &&
+            !isArguments(actualObj);
+        var isExpectationNonArrayIterable =
+            isIterable(expectationObj) &&
+            !isArrayType(expectationObj) &&
+            !isArguments(expectationObj);
+        if (isActualNonArrayIterable || isExpectationNonArrayIterable) {
+            var actualArray = Array.from(actualObj);
+            var expectationArray = Array.from(expectationObj);
+            if (actualArray.length !== expectationArray.length) {
+                return false;
+            }
+
+            var arrayDeeplyEquals = true;
+            every(actualArray, function (key) {
+                arrayDeeplyEquals =
+                    arrayDeeplyEquals &&
+                    deepEqualCyclic(actualArray[key], expectationArray[key]);
+            });
+
+            return arrayDeeplyEquals;
+        }
+
         return every(expectationKeysAndSymbols, function (key) {
             if (!hasOwnProperty(actualObj, key)) {
                 return false;
@@ -7432,7 +8035,7 @@ deepEqualCyclic.use = function (match) {
 
 module.exports = deepEqualCyclic;
 
-},{"./get-class":71,"./identical":72,"./is-arguments":73,"./is-date":75,"./is-element":76,"./is-map":77,"./is-nan":78,"./is-object":80,"./is-set":81,"./is-subset":82,"@sinonjs/commons":47}],71:[function(require,module,exports){
+},{"./get-class":73,"./identical":74,"./is-arguments":75,"./is-array-type":76,"./is-date":77,"./is-element":78,"./is-iterable":79,"./is-map":80,"./is-nan":81,"./is-object":83,"./is-set":84,"./is-subset":85,"@sinonjs/commons":95}],73:[function(require,module,exports){
 "use strict";
 
 var toString = require("@sinonjs/commons").prototypes.object.toString;
@@ -7452,7 +8055,7 @@ function getClass(value) {
 
 module.exports = getClass;
 
-},{"@sinonjs/commons":47}],72:[function(require,module,exports){
+},{"@sinonjs/commons":95}],74:[function(require,module,exports){
 "use strict";
 
 var isNaN = require("./is-nan");
@@ -7485,7 +8088,7 @@ function identical(obj1, obj2) {
 
 module.exports = identical;
 
-},{"./is-nan":78,"./is-neg-zero":79}],73:[function(require,module,exports){
+},{"./is-nan":81,"./is-neg-zero":82}],75:[function(require,module,exports){
 "use strict";
 
 var getClass = require("./get-class");
@@ -7503,7 +8106,7 @@ function isArguments(object) {
 
 module.exports = isArguments;
 
-},{"./get-class":71}],74:[function(require,module,exports){
+},{"./get-class":73}],76:[function(require,module,exports){
 "use strict";
 
 var functionName = require("@sinonjs/commons").functionName;
@@ -7525,7 +8128,7 @@ function isArrayType(object) {
 
 module.exports = isArrayType;
 
-},{"./array-types":60,"@sinonjs/commons":47,"type-detect":110}],75:[function(require,module,exports){
+},{"./array-types":62,"@sinonjs/commons":95,"type-detect":153}],77:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7541,7 +8144,7 @@ function isDate(value) {
 
 module.exports = isDate;
 
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 "use strict";
 
 var div = typeof document !== "undefined" && document.createElement("div");
@@ -7572,7 +8175,27 @@ function isElement(object) {
 
 module.exports = isElement;
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
+"use strict";
+
+/**
+ * Returns `true` when the argument is an iterable, `false` otherwise
+ *
+ * @alias module:samsam.isIterable
+ * @param  {*}  val - A value to examine
+ * @returns {boolean} Returns `true` when the argument is an iterable, `false` otherwise
+ */
+function isIterable(val) {
+    // checks for null and undefined
+    if (typeof val !== "object") {
+        return false;
+    }
+    return typeof val[Symbol.iterator] === "function";
+}
+
+module.exports = isIterable;
+
+},{}],80:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7588,7 +8211,7 @@ function isMap(value) {
 
 module.exports = isMap;
 
-},{}],78:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7609,7 +8232,7 @@ function isNaN(value) {
 
 module.exports = isNaN;
 
-},{}],79:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7625,7 +8248,7 @@ function isNegZero(value) {
 
 module.exports = isNegZero;
 
-},{}],80:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7658,7 +8281,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],81:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7674,7 +8297,7 @@ function isSet(val) {
 
 module.exports = isSet;
 
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 "use strict";
 
 var forEach = require("@sinonjs/commons").prototypes.set.forEach;
@@ -7706,7 +8329,7 @@ function isSubset(s1, s2, compare) {
 
 module.exports = isSubset;
 
-},{"@sinonjs/commons":47}],83:[function(require,module,exports){
+},{"@sinonjs/commons":95}],86:[function(require,module,exports){
 "use strict";
 
 var slice = require("@sinonjs/commons").prototypes.string.slice;
@@ -7779,7 +8402,7 @@ function stringify(item) {
 
 module.exports = iterableToString;
 
-},{"@sinonjs/commons":47}],84:[function(require,module,exports){
+},{"@sinonjs/commons":95}],87:[function(require,module,exports){
 "use strict";
 
 var valueToString = require("@sinonjs/commons").valueToString;
@@ -7955,7 +8578,7 @@ forEach(Object.keys(createMatcher), function (key) {
 
 module.exports = match;
 
-},{"./create-matcher":61,"./deep-equal":70,"./is-array-type":74,"./is-subset":82,"@sinonjs/commons":47,"type-detect":110}],85:[function(require,module,exports){
+},{"./create-matcher":63,"./deep-equal":72,"./is-array-type":76,"./is-subset":85,"@sinonjs/commons":95,"type-detect":153}],88:[function(require,module,exports){
 "use strict";
 
 /**
@@ -7983,7 +8606,45 @@ module.exports = {
     match: match,
 };
 
-},{"./create-matcher":61,"./deep-equal":70,"./identical":72,"./is-arguments":73,"./is-element":76,"./is-map":77,"./is-neg-zero":79,"./is-set":81,"./match":84}],86:[function(require,module,exports){
+},{"./create-matcher":63,"./deep-equal":72,"./identical":74,"./is-arguments":75,"./is-element":78,"./is-map":80,"./is-neg-zero":82,"./is-set":84,"./match":87}],89:[function(require,module,exports){
+arguments[4][42][0].apply(exports,arguments)
+},{"./prototypes/array":97,"dup":42}],90:[function(require,module,exports){
+arguments[4][43][0].apply(exports,arguments)
+},{"./function-name":93,"dup":43}],91:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"dup":44}],92:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"dup":45}],93:[function(require,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"dup":46}],94:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"dup":47}],95:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"./called-in-order":89,"./class-name":90,"./deprecated":91,"./every":92,"./function-name":93,"./global":94,"./order-by-first-call":96,"./prototypes":100,"./type-of":106,"./value-to-string":107,"dup":48}],96:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"./prototypes/array":97,"dup":49}],97:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":50}],98:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"./throws-on-proto":105,"dup":51}],99:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":52}],100:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"./array":97,"./function":99,"./map":101,"./object":102,"./set":103,"./string":104,"dup":53}],101:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":54}],102:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":55}],103:[function(require,module,exports){
+arguments[4][56][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":56}],104:[function(require,module,exports){
+arguments[4][57][0].apply(exports,arguments)
+},{"./copy-prototype-methods":98,"dup":57}],105:[function(require,module,exports){
+arguments[4][58][0].apply(exports,arguments)
+},{"dup":58}],106:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"dup":59,"type-detect":153}],107:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"dup":60}],108:[function(require,module,exports){
 // This is free and unencumbered software released into the public domain.
 // See LICENSE.md for more information.
 
@@ -7994,7 +8655,7 @@ module.exports = {
   TextDecoder: encoding.TextDecoder,
 };
 
-},{"./lib/encoding.js":88}],87:[function(require,module,exports){
+},{"./lib/encoding.js":110}],109:[function(require,module,exports){
 (function(global) {
   'use strict';
 
@@ -8042,7 +8703,7 @@ module.exports = {
 // For strict environments where `this` inside the global scope
 // is `undefined`, take a pure object instead
 }(this || {}));
-},{}],88:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 // This is free and unencumbered software released into the public domain.
 // See LICENSE.md for more information.
 
@@ -11356,7 +12017,7 @@ module.exports = {
 // For strict environments where `this` inside the global scope
 // is `undefined`, take a pure object instead
 }(this || {}));
-},{"./encoding-indexes.js":87}],89:[function(require,module,exports){
+},{"./encoding-indexes.js":109}],111:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -11381,14 +12042,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],90:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],91:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11976,7 +12637,44 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":90,"inherits":89}],92:[function(require,module,exports){
+},{"./support/isBuffer":112,"inherits":111}],114:[function(require,module,exports){
+/*!
+
+ diff v5.1.0
+
+Software License Agreement (BSD License)
+
+Copyright (c) 2009-2015, Kevin Decker <kpdecker@gmail.com>
+
+All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the
+  following disclaimer.
+
+* Redistributions in binary form must reproduce the above
+  copyright notice, this list of conditions and the
+  following disclaimer in the documentation and/or other
+  materials provided with the distribution.
+
+* Neither the name of Kevin Decker nor the names of its
+  contributors may be used to endorse or promote products
+  derived from this software without specific prior
+  written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+@license
+*/
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -12017,6 +12715,11 @@ function hasOwnProperty(obj, prop) {
           oldLen = oldString.length;
       var editLength = 1;
       var maxEditLength = newLen + oldLen;
+
+      if (options.maxEditLength) {
+        maxEditLength = Math.min(maxEditLength, options.maxEditLength);
+      }
+
       var bestPath = [{
         newPos: -1,
         components: []
@@ -12081,15 +12784,13 @@ function hasOwnProperty(obj, prop) {
         editLength++;
       } // Performs the length of edit iteration. Is a bit fugly as this has to support the
       // sync and async mode which is never fun. Loops over execEditLength until a value
-      // is produced.
+      // is produced, or until the edit length exceeds options.maxEditLength (if given),
+      // in which case it will return undefined.
 
 
       if (callback) {
         (function exec() {
           setTimeout(function () {
-            // This should not happen, but we want to be safe.
-
-            /* istanbul ignore next */
             if (editLength > maxEditLength) {
               return callback();
             }
@@ -12907,6 +13608,11 @@ function hasOwnProperty(obj, prop) {
     }
 
     var diff = diffLines(oldStr, newStr, options);
+
+    if (!diff) {
+      return;
+    }
+
     diff.push({
       value: '',
       lines: []
@@ -13560,12 +14266,7 @@ function hasOwnProperty(obj, prop) {
 
 })));
 
-},{}],93:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],94:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 module.exports = extend;
 
 /*
@@ -13639,7 +14340,7 @@ function isUnextendable(val) {
   return !val || (typeof val != 'object' && typeof val != 'function');
 }
 
-},{}],95:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -14572,7 +15273,7 @@ function get(object, path, defaultValue) {
 
 module.exports = get;
 
-},{}],96:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 "use strict";
 
 // cache a reference to setTimeout, so that our reference won't be stubbed out
@@ -14627,7 +15328,7 @@ function configureLogger(config) {
 
 module.exports = configureLogger;
 
-},{}],97:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 "use strict";
 
 var Event = require("./event");
@@ -14643,7 +15344,7 @@ CustomEvent.prototype.constructor = CustomEvent;
 
 module.exports = CustomEvent;
 
-},{"./event":99}],98:[function(require,module,exports){
+},{"./event":120}],119:[function(require,module,exports){
 "use strict";
 
 function flattenOptions(options) {
@@ -14767,7 +15468,7 @@ var EventTarget = {
 
 module.exports = EventTarget;
 
-},{}],99:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 "use strict";
 
 function Event(type, bubbles, cancelable, target) {
@@ -14793,7 +15494,7 @@ Event.prototype = {
 
 module.exports = Event;
 
-},{}],100:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -14803,7 +15504,7 @@ module.exports = {
     EventTarget: require("./event-target")
 };
 
-},{"./custom-event":97,"./event":99,"./event-target":98,"./progress-event":101}],101:[function(require,module,exports){
+},{"./custom-event":118,"./event":120,"./event-target":119,"./progress-event":122}],122:[function(require,module,exports){
 "use strict";
 
 var Event = require("./event");
@@ -14827,7 +15528,7 @@ ProgressEvent.prototype.constructor = ProgressEvent;
 
 module.exports = ProgressEvent;
 
-},{"./event":99}],102:[function(require,module,exports){
+},{"./event":120}],123:[function(require,module,exports){
 "use strict";
 
 var FakeTimers = require("@sinonjs/fake-timers");
@@ -14902,7 +15603,7 @@ fakeServerWithClock.restore = function restore() {
 
 module.exports = fakeServerWithClock;
 
-},{"./index":103,"@sinonjs/fake-timers":59}],103:[function(require,module,exports){
+},{"./index":124,"@sinonjs/fake-timers":61}],124:[function(require,module,exports){
 "use strict";
 
 var fakeXhr = require("../fake-xhr");
@@ -15237,7 +15938,7 @@ var fakeServer = {
 
 module.exports = fakeServer;
 
-},{"../configure-logger":96,"../fake-xhr":106,"./log":104,"path-to-regexp":108}],104:[function(require,module,exports){
+},{"../configure-logger":117,"../fake-xhr":127,"./log":125,"path-to-regexp":148}],125:[function(require,module,exports){
 "use strict";
 var inspect = require("util").inspect;
 
@@ -15255,7 +15956,7 @@ function log(response, request) {
 
 module.exports = log;
 
-},{"util":91}],105:[function(require,module,exports){
+},{"util":113}],126:[function(require,module,exports){
 "use strict";
 
 exports.isSupported = (function() {
@@ -15266,7 +15967,7 @@ exports.isSupported = (function() {
     }
 })();
 
-},{}],106:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 "use strict";
 
 var GlobalTextEncoder =
@@ -15379,6 +16080,18 @@ function verifyResponseBodyType(body, responseType) {
         if (!isString && !(body instanceof ArrayBuffer)) {
             error = new Error(
                 `Attempted to respond to fake XMLHttpRequest with ${body}, which is not a string or ArrayBuffer.`
+            );
+            error.name = "InvalidBodyException";
+        }
+    } else if (responseType === "blob") {
+        if (
+            !isString &&
+            !(body instanceof ArrayBuffer) &&
+            supportsBlob &&
+            !(body instanceof Blob)
+        ) {
+            error = new Error(
+                `Attempted to respond to fake XMLHttpRequest with ${body}, which is not a string, ArrayBuffer, or Blob.`
             );
             error.name = "InvalidBodyException";
         }
@@ -15590,7 +16303,11 @@ function fakeXMLHttpRequestFor(globalScope) {
 
     function verifyRequestOpened(xhr) {
         if (xhr.readyState !== FakeXMLHttpRequest.OPENED) {
-            throw new Error(`INVALID_STATE_ERR - ${xhr.readyState}`);
+            const errorMessage =
+                xhr.readyState === FakeXMLHttpRequest.UNSENT
+                    ? "INVALID_STATE_ERR - you might be trying to set the request state for a request that has already been aborted, it is recommended to check 'readyState' first..."
+                    : `INVALID_STATE_ERR - ${xhr.readyState}`;
+            throw new Error(errorMessage);
         }
     }
 
@@ -15622,6 +16339,10 @@ function fakeXMLHttpRequestFor(globalScope) {
                 return null;
             }
         } else if (supportsBlob && responseType === "blob") {
+            if (body instanceof Blob) {
+                return body;
+            }
+
             var blobOptions = {};
             if (contentType) {
                 blobOptions.type = contentType;
@@ -16172,7 +16893,7 @@ module.exports = extend(fakeXMLHttpRequestFor(globalObject), {
     fakeXMLHttpRequestFor: fakeXMLHttpRequestFor
 });
 
-},{"../configure-logger":96,"../event":100,"./blob":105,"@sinonjs/commons":47,"@sinonjs/text-encoding":86,"just-extend":94}],107:[function(require,module,exports){
+},{"../configure-logger":117,"../event":121,"./blob":126,"@sinonjs/commons":135,"@sinonjs/text-encoding":108,"just-extend":115}],128:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -16181,7 +16902,45 @@ module.exports = {
     fakeXhr: require("./fake-xhr")
 };
 
-},{"./fake-server":103,"./fake-server/fake-server-with-clock":102,"./fake-xhr":106}],108:[function(require,module,exports){
+},{"./fake-server":124,"./fake-server/fake-server-with-clock":123,"./fake-xhr":127}],129:[function(require,module,exports){
+arguments[4][42][0].apply(exports,arguments)
+},{"./prototypes/array":137,"dup":42}],130:[function(require,module,exports){
+arguments[4][43][0].apply(exports,arguments)
+},{"./function-name":133,"dup":43}],131:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"dup":44}],132:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"dup":45}],133:[function(require,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"dup":46}],134:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"dup":47}],135:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"./called-in-order":129,"./class-name":130,"./deprecated":131,"./every":132,"./function-name":133,"./global":134,"./order-by-first-call":136,"./prototypes":140,"./type-of":146,"./value-to-string":147,"dup":48}],136:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"./prototypes/array":137,"dup":49}],137:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":50}],138:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"./throws-on-proto":145,"dup":51}],139:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":52}],140:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"./array":137,"./function":139,"./map":141,"./object":142,"./set":143,"./string":144,"dup":53}],141:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":54}],142:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":55}],143:[function(require,module,exports){
+arguments[4][56][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":56}],144:[function(require,module,exports){
+arguments[4][57][0].apply(exports,arguments)
+},{"./copy-prototype-methods":138,"dup":57}],145:[function(require,module,exports){
+arguments[4][58][0].apply(exports,arguments)
+},{"dup":58}],146:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"dup":59,"type-detect":153}],147:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"dup":60}],148:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -16609,14 +17368,282 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(/** @type {string} */ (path), /** @type {!Array} */ (keys), options)
 }
 
-},{"isarray":93}],109:[function(require,module,exports){
+},{"isarray":149}],149:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],150:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],151:[function(require,module,exports){
 'use strict';
 module.exports = {
 	stdout: false,
 	stderr: false
 };
 
-},{}],110:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
+var nextTick = require('process/browser.js').nextTick;
+var apply = Function.prototype.apply;
+var slice = Array.prototype.slice;
+var immediateIds = {};
+var nextImmediateId = 0;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) { timeout.close(); };
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// That's not how node.js implements it but the exposed api is the same.
+exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+  var id = nextImmediateId++;
+  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+  immediateIds[id] = true;
+
+  nextTick(function onNextTick() {
+    if (immediateIds[id]) {
+      // fn.call() is faster so we optimize for the common use-case
+      // @see http://jsperf.com/call-apply-segu
+      if (args) {
+        fn.apply(null, args);
+      } else {
+        fn.call(null);
+      }
+      // Prevent ids from leaking
+      exports.clearImmediate(id);
+    }
+  });
+
+  return id;
+};
+
+exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+  delete immediateIds[id];
+};
+},{"process/browser.js":150}],153:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -17069,8 +18096,6 @@ const _expectation = sinon.expectation;
 export { _expectation as expectation };
 const _defaultConfig = sinon.defaultConfig;
 export { _defaultConfig as defaultConfig };
-const _setFormatter = sinon.setFormatter;
-export { _setFormatter as setFormatter };
 const _timers = sinon.timers;
 export { _timers as timers };
 const _xhr = sinon.xhr;

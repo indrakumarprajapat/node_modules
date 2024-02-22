@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.repository = exports.RepositoryMetadata = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
 const repositories_1 = require("../repositories");
 const legacy_juggler_bridge_1 = require("../repositories/legacy-juggler-bridge");
 /**

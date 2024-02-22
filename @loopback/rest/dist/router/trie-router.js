@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -34,8 +34,8 @@ let TrieRouter = class TrieRouter extends router_base_1.BaseRouter {
         if (found) {
             const route = found.node.value;
             if (route) {
-                debug('Route found: %s', util_1.inspect(route, { depth: 5 }));
-                return route_entry_1.createResolvedRoute(route, (_a = found.params) !== null && _a !== void 0 ? _a : {});
+                debug('Route found: %s', (0, util_1.inspect)(route, { depth: 5 }));
+                return (0, route_entry_1.createResolvedRoute)(route, (_a = found.params) !== null && _a !== void 0 ? _a : {});
             }
         }
         return undefined;
@@ -45,7 +45,7 @@ let TrieRouter = class TrieRouter extends router_base_1.BaseRouter {
     }
 };
 TrieRouter = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(keys_1.RestBindings.ROUTER_OPTIONS, { optional: true })),
+    tslib_1.__param(0, (0, core_1.inject)(keys_1.RestBindings.ROUTER_OPTIONS, { optional: true })),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], TrieRouter);
 exports.TrieRouter = TrieRouter;

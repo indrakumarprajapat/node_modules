@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -81,18 +81,22 @@ export function isBuiltinType(fn: Function): boolean {
   );
 }
 
+export type NonFunction<T> = T extends Function ? never : T;
+
 /**
  * Resolve a type value that may have been provided via TypeResolver.
  * @param fn - A type class or a type provider.
  * @returns The resolved type.
  */
-export function resolveType<T extends Object>(
-  fn: TypeResolver<T> | Class<T>,
+export function resolveType<T extends object>(
+  fn: TypeResolver<T, {}> | Class<T> | Function,
 ): Class<T>;
 
 // An overload to handle the case when `fn` is not a class nor a resolver.
-export function resolveType<T>(fn: T): T;
+export function resolveType<T>(fn: NonFunction<T>): T;
 
-export function resolveType<T>(fn: TypeResolver<T> | Class<T>) {
+export function resolveType<T extends object>(
+  fn: TypeResolver<T> | Class<T> | T,
+) {
   return isTypeResolver(fn) ? fn() : fn;
 }

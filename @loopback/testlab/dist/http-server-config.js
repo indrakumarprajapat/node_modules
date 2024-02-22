@@ -1,14 +1,14 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.givenHttpServerConfig = void 0;
 const tslib_1 = require("tslib");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
 const fs_1 = require("fs");
-const path_1 = (0, tslib_1.__importDefault)(require("path"));
+const path_1 = tslib_1.__importDefault(require("path"));
 const FIXTURES = path_1.default.resolve(__dirname, '../fixtures');
 const DUMMY_TLS_CONFIG = {
     key: (0, fs_1.readFileSync)(path_1.default.join(FIXTURES, 'key.pem')),

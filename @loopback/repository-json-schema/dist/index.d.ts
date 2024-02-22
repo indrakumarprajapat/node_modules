@@ -33,4 +33,4 @@ export * from './keys';
  * @typeParam T - Type of the object
  * @typeParam K - Keys of the object
  */
-export declare type Optional<T extends object, K extends keyof T = keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type Optional<T extends object, K extends keyof T = keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

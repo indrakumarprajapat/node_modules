@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -36,11 +36,11 @@ let AuthMetadataProvider = class AuthMetadataProvider {
         return this.options.defaultMetadata;
     }
 };
-AuthMetadataProvider = (0, tslib_1.__decorate)([
-    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.CONTROLLER_CLASS, { optional: true })),
-    (0, tslib_1.__param)(1, (0, core_1.inject)(core_1.CoreBindings.CONTROLLER_METHOD_NAME, { optional: true })),
-    (0, tslib_1.__param)(2, (0, core_1.config)({ fromBinding: keys_1.AuthenticationBindings.COMPONENT })),
-    (0, tslib_1.__metadata)("design:paramtypes", [Object, String, Object])
+AuthMetadataProvider = tslib_1.__decorate([
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.CONTROLLER_CLASS, { optional: true })),
+    tslib_1.__param(1, (0, core_1.inject)(core_1.CoreBindings.CONTROLLER_METHOD_NAME, { optional: true })),
+    tslib_1.__param(2, (0, core_1.config)({ fromBinding: keys_1.AuthenticationBindings.COMPONENT })),
+    tslib_1.__metadata("design:paramtypes", [Object, String, Object])
 ], AuthMetadataProvider);
 exports.AuthMetadataProvider = AuthMetadataProvider;
 //# sourceMappingURL=auth-metadata.provider.js.map

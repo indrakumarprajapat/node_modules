@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest-explorer
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,9 +8,9 @@ exports.ExplorerController = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
 const rest_1 = require("@loopback/rest");
-const ejs_1 = (0, tslib_1.__importDefault)(require("ejs"));
-const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
-const path_1 = (0, tslib_1.__importDefault)(require("path"));
+const ejs_1 = tslib_1.__importDefault(require("ejs"));
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const path_1 = tslib_1.__importDefault(require("path"));
 const rest_explorer_keys_1 = require("./rest-explorer.keys");
 let prevIndexTemplatePath;
 let templateFn;
@@ -36,7 +36,7 @@ let ExplorerController = class ExplorerController {
         // as a _relative_ URL
         const lastSlash = url.lastIndexOf('/');
         if (lastSlash >= 0) {
-            url = './' + url.substr(lastSlash + 1) + '/';
+            url = './' + url.slice(lastSlash + 1) + '/';
         }
         response.redirect(301, url);
     }
@@ -94,13 +94,13 @@ ExplorerController.OPENAPI_FORM = Object.freeze({
     version: '3.0.0',
     format: 'json',
 });
-ExplorerController = (0, tslib_1.__decorate)([
-    (0, tslib_1.__param)(0, (0, core_1.inject)(rest_1.RestBindings.CONFIG, { optional: true })),
-    (0, tslib_1.__param)(1, (0, core_1.config)({ fromBinding: rest_explorer_keys_1.RestExplorerBindings.COMPONENT })),
-    (0, tslib_1.__param)(2, (0, core_1.inject)(rest_1.RestBindings.BASE_PATH)),
-    (0, tslib_1.__param)(3, (0, core_1.inject)(rest_1.RestBindings.SERVER)),
-    (0, tslib_1.__param)(4, (0, core_1.inject)(rest_1.RestBindings.Http.CONTEXT)),
-    (0, tslib_1.__metadata)("design:paramtypes", [Object, Object, String, rest_1.RestServer,
+ExplorerController = tslib_1.__decorate([
+    tslib_1.__param(0, (0, core_1.inject)(rest_1.RestBindings.CONFIG, { optional: true })),
+    tslib_1.__param(1, (0, core_1.config)({ fromBinding: rest_explorer_keys_1.RestExplorerBindings.COMPONENT })),
+    tslib_1.__param(2, (0, core_1.inject)(rest_1.RestBindings.BASE_PATH)),
+    tslib_1.__param(3, (0, core_1.inject)(rest_1.RestBindings.SERVER)),
+    tslib_1.__param(4, (0, core_1.inject)(rest_1.RestBindings.Http.CONTEXT)),
+    tslib_1.__metadata("design:paramtypes", [Object, Object, String, rest_1.RestServer,
         rest_1.RequestContext])
 ], ExplorerController);
 exports.ExplorerController = ExplorerController;

@@ -1,17 +1,19 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import http, { IncomingMessage, Server, ServerResponse } from 'http';
 import https from 'https';
 import { AddressInfo, ListenOptions } from 'net';
 /**
  * Request listener function for http/https requests
  */
-export declare type RequestListener = (req: IncomingMessage, res: ServerResponse) => void;
+export type RequestListener = (req: IncomingMessage, res: ServerResponse) => void;
 /**
  * The following are for configuring properties which are directly set on
  * https://nodejs.org/api/http.html#http_class_http_server and
  * https://nodejs.org/api/net.html#net_class_net_server
  */
-export declare type HttpServerProperties = Pick<Server, 'keepAliveTimeout' | 'headersTimeout' | 'maxConnections' | 'maxHeadersCount' | 'timeout'>;
+export type HttpServerProperties = Pick<Server, 'keepAliveTimeout' | 'headersTimeout' | 'maxConnections' | 'maxHeadersCount' | 'timeout'>;
 /**
  * Base options that are common to http and https servers
  */
@@ -46,12 +48,12 @@ export interface HttpsOptions extends BaseHttpOptions, https.ServerOptions {
  * Possible server options
  *
  */
-export declare type HttpServerOptions = HttpOptions | HttpsOptions;
+export type HttpServerOptions = HttpOptions | HttpsOptions;
 /**
  * Supported protocols
  *
  */
-export declare type HttpProtocol = 'http' | 'https';
+export type HttpProtocol = 'http' | 'https';
 /**
  * HTTP / HTTPS server used by LoopBack's RestServer
  */

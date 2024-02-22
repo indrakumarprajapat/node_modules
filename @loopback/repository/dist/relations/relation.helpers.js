@@ -1,14 +1,14 @@
 "use strict";
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isBsonType = exports.deduplicate = exports.reduceAsSingleItem = exports.reduceAsArray = exports.normalizeKey = exports.getKeyValue = exports.buildLookupMap = exports.flattenMapByKeys = exports.flattenTargetsOfOneToManyRelation = exports.flattenTargetsOfOneToOneRelation = exports.includeRelatedModels = exports.findByForeignKeys = void 0;
 const tslib_1 = require("tslib");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
-const lodash_1 = (0, tslib_1.__importStar)(require("lodash"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
+const lodash_1 = tslib_1.__importStar(require("lodash"));
 const __1 = require("..");
 const debug = (0, debug_1.default)('loopback:repository:relation-helpers');
 /**
@@ -32,14 +32,20 @@ async function findByForeignKeys(targetRepository, fkName, fkValues, scope, opti
         value = fkValues;
     }
     let useScopeFilterGlobally = false;
+    // If its an include from a through model, fkValues will be an array.
+    // However, in this case we DO want to use the scope in the entire query, not
+    // on a per-fk basis
     if (options) {
         useScopeFilterGlobally = options.isThroughModelInclude;
-        //if its an include from a through model, fkValues will be an array
-        //however, in this case we DO want to use the scope in the entire query
-        //no in a per fk basis
     }
-    //This code is to keep backward compatability. See https://github.com/loopbackio/loopback-next/issues/6832
-    //for more info
+    // If `scope.limit` is not defined, there is no reason to apply the scope to
+    // each fk. This is to prevent unecessarily high database query counts.
+    // See: https://github.com/loopbackio/loopback-next/issues/8074
+    if (!(scope === null || scope === void 0 ? void 0 : scope.limit)) {
+        useScopeFilterGlobally = true;
+    }
+    // This code is to keep backward compatibility.
+    // See https://github.com/loopbackio/loopback-next/issues/6832 for more info.
     if (scope === null || scope === void 0 ? void 0 : scope.totalLimit) {
         scope.limit = scope.totalLimit;
         useScopeFilterGlobally = true;
@@ -47,7 +53,7 @@ async function findByForeignKeys(targetRepository, fkName, fkValues, scope, opti
     }
     const isScopeSet = scope && !lodash_1.default.isEmpty(scope);
     if (isScopeSet && Array.isArray(fkValues) && !useScopeFilterGlobally) {
-        // since there is a scope, there could be a where filter, a limit, an order
+        // Since there is a scope, there could be a where filter, a limit, an order
         // and we should run the scope in multiple queries so we can respect the
         // scope filter params
         const findPromises = fkValues.map(fk => {
@@ -85,8 +91,25 @@ exports.findByForeignKeys = findByForeignKeys;
  * @param options - Options for the operations
  */
 async function includeRelatedModels(targetRepository, entities, include, options) {
-    entities = (0, lodash_1.cloneDeep)(entities);
-    include = (0, lodash_1.cloneDeep)(include);
+    if (options === null || options === void 0 ? void 0 : options.polymorphicType) {
+        include = include === null || include === void 0 ? void 0 : include.filter(inclusionFilter => {
+            if (typeof inclusionFilter === 'string') {
+                return true;
+            }
+            else {
+                if (inclusionFilter.targetType === undefined ||
+                    inclusionFilter.targetType === (options === null || options === void 0 ? void 0 : options.polymorphicType)) {
+                    return true;
+                }
+            }
+        });
+    }
+    else {
+        include = (0, lodash_1.cloneDeep)(include);
+    }
+    if (include) {
+        entities = (0, lodash_1.cloneDeep)(entities);
+    }
     const result = entities;
     if (!include)
         return result;

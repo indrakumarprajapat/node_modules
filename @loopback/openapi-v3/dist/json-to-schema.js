@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,7 +19,7 @@ function jsonToSchemaObject(json, visited = new Map()) {
     // A flag to check if a schema object is fully converted
     const converted = 'x-loopback-converted';
     const schema = visited.get(json);
-    if (schema != null && types_1.isSchemaObject(schema) && schema[converted] === false) {
+    if (schema != null && (0, types_1.isSchemaObject)(schema) && schema[converted] === false) {
         return { $ref: `#/components/schemas/${json.title}` };
     }
     if (schema != null)

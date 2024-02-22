@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository-json-schema
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -47,6 +47,7 @@ export function getScopeFilterJsonSchemaFor(
   class EmptyModel extends Model {}
 
   const schema: JsonSchema = {
+    type: 'object',
     ...getFilterJsonSchemaFor(EmptyModel, {
       setTitle: false,
     }),
@@ -126,6 +127,7 @@ export function getFilterJsonSchemaFor(
   }
 
   const schema: JsonSchema = {
+    type: 'object',
     ...(options.setTitle !== false && {
       title: `${modelCtor.modelName}.Filter`,
     }),
@@ -151,7 +153,7 @@ export function getFilterJsonSchemaFor(
             type: 'object',
             properties: {
               // TODO(bajtos) restrict values to relations defined by "model"
-              relation: {type: 'string'},
+              relation: {type: 'string', enum: Object.keys(modelRelations)},
               // TODO(bajtos) describe the filter for the relation target model
               scope: getScopeFilterJsonSchemaFor(modelCtor, options),
             },
@@ -186,7 +188,7 @@ export function getWhereJsonSchemaFor(
     }),
     type: 'object',
     // TODO(bajtos) enumerate "model" properties and operators like "and"
-    // See https://github.com/strongloop/loopback-next/issues/1748
+    // See https://github.com/loopbackio/loopback-next/issues/1748
     additionalProperties: true,
   };
 

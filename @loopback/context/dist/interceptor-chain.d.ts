@@ -8,12 +8,12 @@ import { ValueOrPromise } from './value-promise';
  * Any type except `void`. We use this type to enforce that interceptor functions
  * always return a value (including undefined or null).
  */
-export declare type NonVoid = string | number | boolean | null | undefined | object;
+export type NonVoid = string | number | boolean | null | undefined | object;
 /**
  * The `next` function that can be used to invoke next generic interceptor in
  * the chain
  */
-export declare type Next = () => ValueOrPromise<NonVoid>;
+export type Next = () => ValueOrPromise<NonVoid>;
 /**
  * An interceptor function to be invoked in a chain for the given context.
  * It serves as the base interface for various types of interceptors, such
@@ -48,14 +48,14 @@ export declare type Next = () => ValueOrPromise<NonVoid>;
  *
  * @returns The invocation result as a value (sync) or promise (async).
  */
-export declare type GenericInterceptor<C extends Context = Context> = (context: C, next: Next) => ValueOrPromise<NonVoid>;
+export type GenericInterceptor<C extends Context = Context> = (context: C, next: Next) => ValueOrPromise<NonVoid>;
 /**
  * Interceptor function or a binding key that resolves a generic interceptor
  * function
  * @typeParam C - `Context` class or a subclass of `Context`
  * @typeParam T - Return type of `next()`
  */
-export declare type GenericInterceptorOrKey<C extends Context = Context> = BindingAddress<GenericInterceptor<C>> | GenericInterceptor<C>;
+export type GenericInterceptorOrKey<C extends Context = Context> = BindingAddress<GenericInterceptor<C>> | GenericInterceptor<C>;
 /**
  * A chain of generic interceptors to be invoked for the given context
  *

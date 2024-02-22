@@ -14,7 +14,7 @@ import { RequestContext } from './request-context';
 import { ControllerClass, ControllerFactory, ControllerInstance, RestRouterOptions, RouteEntry, RouterSpec } from './router';
 import { SequenceFunction, SequenceHandler } from './sequence';
 import { Request, RequestBodyParserOptions, Response } from './types';
-export declare type HttpRequestListener = (req: IncomingMessage, res: ServerResponse) => void;
+export type HttpRequestListener = (req: IncomingMessage, res: ServerResponse) => void;
 export interface HttpServerLike {
     requestHandler: HttpRequestListener;
 }
@@ -65,7 +65,7 @@ export declare class RestServer extends BaseMiddlewareRegistry implements Server
      * @param req - The request.
      * @param res - The response.
      */
-    protected _OASEnhancer: OASEnhancerService;
+    protected oasEnhancerService: OASEnhancerService;
     get OASEnhancer(): OASEnhancerService;
     protected _requestHandler: HttpRequestListener;
     get requestHandler(): HttpRequestListener;
@@ -172,7 +172,7 @@ export declare class RestServer extends BaseMiddlewareRegistry implements Server
      * @param controllerFactory - A factory function to create controller instance
      * @param methodName - The name of the controller method
      */
-    route<I>(verb: string, path: string, spec: OperationObject, controllerCtor: ControllerClass<I>, controllerFactory: ControllerFactory<I>, methodName: string): Binding;
+    route<I extends object>(verb: string, path: string, spec: OperationObject, controllerCtor: ControllerClass<I>, controllerFactory: ControllerFactory<I>, methodName: string): Binding;
     /**
      * Register a new route invoking a handler function.
      *
@@ -351,10 +351,7 @@ export declare class RestServer extends BaseMiddlewareRegistry implements Server
      * written to the console using the `log` function.
      * @param log - Log function, default to `console.log`
      */
-    exportOpenApiSpec(outFile?: string, log?: {
-        (...data: any[]): void;
-        (message?: any, ...optionalParams: any[]): void;
-    }): Promise<void>;
+    exportOpenApiSpec(outFile?: string, log?: (message?: any, ...optionalParams: any[]) => void): Promise<void>;
 }
 /**
  * Create a binding for the given body parser class
@@ -417,7 +414,7 @@ export interface ApiExplorerOptions {
      * URL for the API explorer served over `http` protocol to deal with mixed
      * content security imposed by browsers as the spec is exposed over `http` by
      * default.
-     * See https://github.com/strongloop/loopback-next/issues/1603
+     * See https://github.com/loopbackio/loopback-next/issues/1603
      */
     httpUrl?: string;
     /**
@@ -429,7 +426,7 @@ export interface ApiExplorerOptions {
 /**
  * RestServer options
  */
-export declare type RestServerOptions = Partial<RestServerResolvedOptions>;
+export type RestServerOptions = Partial<RestServerResolvedOptions>;
 export interface RestServerResolvedOptions {
     port: number;
     path?: string;
@@ -456,5 +453,5 @@ export interface RestServerResolvedOptions {
 /**
  * Valid configuration for the RestServer constructor.
  */
-export declare type RestServerConfig = RestServerOptions & HttpServerOptions;
-export declare type RestServerResolvedConfig = RestServerResolvedOptions & HttpServerOptions;
+export type RestServerConfig = RestServerOptions & HttpServerOptions;
+export type RestServerResolvedConfig = RestServerResolvedOptions & HttpServerOptions;

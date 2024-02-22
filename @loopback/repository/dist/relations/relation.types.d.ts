@@ -61,6 +61,10 @@ export interface HasManyDefinition extends RelationDefinitionBase {
     keyTo?: string;
     keyFrom?: string;
     /**
+     * With current architecture design, polymorphic type cannot be supported without through
+     * Consider using Source-hasMany->Through->hasOne->Target(polymorphic) for one-to-many relations
+     */
+    /**
      * Description of the through model of the hasManyThrough relation.
      *
      * A `hasManyThrough` relation defines a many-to-many connection with another model.
@@ -91,6 +95,20 @@ export interface HasManyDefinition extends RelationDefinitionBase {
          * The foreign key of the target model defined in the through model, e.g. CategoryProductLink#productId
          */
         keyTo?: string;
+        /**
+         * The polymorphism of the target model. The discriminator is a key of *through* model.
+         * If the target model is not polymorphic, then the value should be left undefined or false;
+         * If the key on through model indicating the concrete class of the through instance is default
+         * i.e. camelCase(classNameOf(targetModelInstance)) + "Id"
+         * then the discriminator field can be undefined
+         *
+         * With current architecture design, polymorphic type cannot be supported without through
+         * Consider using Source hasMany Through hasOne Target(polymorphic)
+         * or Source hasMany Through belongsTo Target(polymorphic) for one-to-many relations
+         */
+        polymorphic?: boolean | {
+            discriminator: string;
+        };
     };
 }
 export interface BelongsToDefinition extends RelationDefinitionBase {
@@ -98,6 +116,16 @@ export interface BelongsToDefinition extends RelationDefinitionBase {
     targetsMany: false;
     keyFrom?: string;
     keyTo?: string;
+    /**
+     * The polymorphism of the target model. The discriminator is a key of source model.
+     * If the target model is not polymorphic, then the value should be left undefined or false;
+     * If the key on source model indicating the concrete class of the target instance is default
+     * i.e. camelCase(classNameOf(throughModelInstance)) + "Id"
+     * Then the discriminator field can be undefined
+     */
+    polymorphic?: boolean | {
+        discriminator: string;
+    };
 }
 export interface HasOneDefinition extends RelationDefinitionBase {
     type: RelationType.hasOne;
@@ -114,11 +142,34 @@ export interface HasOneDefinition extends RelationDefinitionBase {
      */
     keyTo?: string;
     keyFrom?: string;
+    /**
+     * The polymorphism of the target model. The discriminator is a key of source model.
+     * If the target model is not polymorphic, then the value should be left undefined or false;
+     * If the key on source model indicating the concrete class of the target instance is default
+     * i.e. camelCase(classNameOf(throughModelInstance)) + "Id"
+     * Then the discriminator field can be undefined
+     */
+    polymorphic?: boolean | {
+        discriminator: string;
+    };
+}
+export interface ReferencesManyDefinition extends RelationDefinitionBase {
+    type: RelationType.referencesMany;
+    targetsMany: true;
+    /**
+     * keyTo: The foreign key used by the target model for this relation.
+     * keyFrom: The source key used by the source model for this relation.
+     *
+     * TODO(bajtos) Add relation description.
+     *
+     */
+    keyTo?: string;
+    keyFrom?: string;
 }
 /**
  * A union type describing all possible Relation metadata objects.
  */
-export declare type RelationMetadata = HasManyDefinition | BelongsToDefinition | HasOneDefinition | RelationDefinitionBase;
+export type RelationMetadata = HasManyDefinition | BelongsToDefinition | HasOneDefinition | ReferencesManyDefinition | RelationDefinitionBase;
 export { Getter } from '@loopback/core';
 /**
  * @returns An array of resolved values, the items must be ordered in the same
@@ -127,7 +178,7 @@ export { Getter } from '@loopback/core';
  * - `Entity` for relations targeting a single model
  * - `Entity[]` for relations targeting multiple models
  */
-export declare type InclusionResolver<S extends Entity, T extends Entity> = (
+export type InclusionResolver<S extends Entity, T extends Entity> = (
 /**
  * List of source models as returned by the first database query.
  */

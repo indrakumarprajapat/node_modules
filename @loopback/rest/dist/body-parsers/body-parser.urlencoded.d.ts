@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Request, RequestBodyParserOptions } from '../types';
 import { BodyParser, RequestBody } from './types';
 export declare class UrlEncodedBodyParser implements BodyParser {

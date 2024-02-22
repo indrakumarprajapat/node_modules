@@ -12,6 +12,7 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -19,17 +20,16 @@ module.exports = {
       description: 'enforce a consistent format for rule report messages',
       category: 'Rules',
       recommended: false,
+      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/report-message-format.md',
     },
     fixable: null,
-    schema: [
-      { type: 'string' },
-    ],
+    schema: [{ type: 'string' }],
     messages: {
       noMatch: "Report message does not match the pattern '{{pattern}}'.",
     },
   },
 
-  create (context) {
+  create(context) {
     const pattern = new RegExp(context.options[0] || '');
     let contextIdentifiers;
 
@@ -38,11 +38,15 @@ module.exports = {
      * @param {ASTNode} message The message AST node
      * @returns {void}
      */
-    function processMessageNode (message) {
+    function processMessageNode(message) {
       const staticValue = getStaticValue(message, context.getScope());
       if (
-        (message.type === 'Literal' && typeof message.value === 'string' && !pattern.test(message.value)) ||
-        (message.type === 'TemplateLiteral' && message.quasis.length === 1 && !pattern.test(message.quasis[0].value.cooked)) ||
+        (message.type === 'Literal' &&
+          typeof message.value === 'string' &&
+          !pattern.test(message.value)) ||
+        (message.type === 'TemplateLiteral' &&
+          message.quasis.length === 1 &&
+          !pattern.test(message.quasis[0].value.cooked)) ||
         (staticValue && !pattern.test(staticValue.value))
       ) {
         context.report({
@@ -53,42 +57,71 @@ module.exports = {
       }
     }
 
+    const sourceCode = context.getSourceCode();
+    const ruleInfo = utils.getRuleInfo(sourceCode);
+    if (!ruleInfo) {
+      return {};
+    }
+
     // ----------------------------------------------------------------------
     // Public
     // ----------------------------------------------------------------------
 
     return {
-      Program (node) {
-        contextIdentifiers = utils.getContextIdentifiers(context, node);
-        const ruleInfo = utils.getRuleInfo(context.getSourceCode());
-        const messagesObject = ruleInfo &&
+      Program(ast) {
+        contextIdentifiers = utils.getContextIdentifiers(
+          sourceCode.scopeManager,
+          ast
+        );
+
+        const messagesObject =
+          ruleInfo &&
           ruleInfo.meta &&
           ruleInfo.meta.type === 'ObjectExpression' &&
-          ruleInfo.meta.properties.find(prop => prop.type === 'Property' && utils.getKeyName(prop) === 'messages');
+          ruleInfo.meta.properties.find(
+            (prop) =>
+              prop.type === 'Property' && utils.getKeyName(prop) === 'messages'
+          );
 
-        if (!messagesObject || messagesObject.value.type !== 'ObjectExpression') {
+        if (
+          !messagesObject ||
+          messagesObject.value.type !== 'ObjectExpression'
+        ) {
           return;
         }
 
         messagesObject.value.properties
-          .filter(prop => prop.type === 'Property')
-          .map(prop => prop.value)
+          .filter((prop) => prop.type === 'Property')
+          .map((prop) => prop.value)
           .forEach(processMessageNode);
       },
-      CallExpression (node) {
+      CallExpression(node) {
         if (
           node.callee.type === 'MemberExpression' &&
           contextIdentifiers.has(node.callee.object) &&
-          node.callee.property.type === 'Identifier' && node.callee.property.name === 'report'
+          node.callee.property.type === 'Identifier' &&
+          node.callee.property.name === 'report'
         ) {
           const reportInfo = utils.getReportInfo(node.arguments, context);
           const message = reportInfo && reportInfo.message;
+          const suggest = reportInfo && reportInfo.suggest;
 
-          if (!message) {
-            return;
+          if (message) {
+            processMessageNode(message);
           }
 
-          processMessageNode(message);
+          if (suggest && suggest.type === 'ArrayExpression') {
+            suggest.elements
+              .flatMap((obj) => obj.properties)
+              .filter(
+                (prop) =>
+                  prop.type === 'Property' &&
+                  prop.key.type === 'Identifier' &&
+                  prop.key.name === 'message'
+              )
+              .map((prop) => prop.value)
+              .forEach(processMessageNode);
+          }
         }
       },
     };

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/build
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -95,7 +95,7 @@ function stopRecordingAndReportProblems() {
   log(
     '\n=== ATTENTION - INVALID USAGE OF CONSOLE LOGS DETECTED ===',
     '\nLearn more at',
-    'https://github.com/strongloop/loopback-next/blob/master/packages/build/README.md#a-note-on-console-logs-printed-by-tests\n',
+    'https://github.com/loopbackio/loopback-next/blob/master/packages/build/README.md#a-note-on-console-logs-printed-by-tests\n',
   );
 
   for (const p of problems) {

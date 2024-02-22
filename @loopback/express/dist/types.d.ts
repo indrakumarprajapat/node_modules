@@ -12,7 +12,7 @@ export interface HandlerContext {
 /**
  * Type alias for Express RequestHandler
  */
-export declare type ExpressRequestHandler = RequestHandler;
+export type ExpressRequestHandler = RequestHandler;
 /**
  * A per-request Context for middleware to combine an IoC container with handler
  * context (request, response, etc.).
@@ -34,6 +34,12 @@ export declare class MiddlewareContext extends Context implements HandlerContext
     constructor(request: Request, response: Response, parent?: Context, name?: string);
     protected setupBindings(): void;
 }
+/**
+ * A helper function to retrieve the MiddlewareContext/RequestContext from the
+ * request object
+ * @param request - Express request object
+ */
+export declare function getMiddlewareContext<T extends MiddlewareContext = MiddlewareContext>(request?: Request): T | undefined;
 /**
  * Interface LoopBack 4 middleware to be executed within sequence of actions.
  * A middleware for LoopBack is basically a generic interceptor that uses
@@ -92,7 +98,7 @@ export declare class MiddlewareChain extends GenericInterceptorChain<MiddlewareC
 /**
  * A middleware function or binding key
  */
-export declare type MiddlewareOrKey = GenericInterceptorOrKey<MiddlewareContext>;
+export type MiddlewareOrKey = GenericInterceptorOrKey<MiddlewareContext>;
 /**
  * Default extension point name for middleware
  */
@@ -241,7 +247,8 @@ export interface ExpressMiddlewareFactory<C> {
     (middlewareConfig?: C): ExpressRequestHandler;
 }
 /**
- * A symbol to store `MiddlewareContext` on the request object
+ * A symbol to store `MiddlewareContext` on the request object.  This symbol
+ * can be referenced by name, before it is created.
  */
 export declare const MIDDLEWARE_CONTEXT: unique symbol;
 /**

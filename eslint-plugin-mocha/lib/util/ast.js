@@ -1,11 +1,6 @@
 'use strict';
 
-const complement = require('ramda/src/complement');
-const both = require('ramda/src/both');
-const isNil = require('ramda/src/isNil');
-const propEq = require('ramda/src/propEq');
-const pathEq = require('ramda/src/pathEq');
-const find = require('ramda/src/find');
+const { complement, both, isNil, propEq, pathEq, find } = require('rambda');
 const { getTestCaseNames, getSuiteNames } = require('./names');
 const { getAddtionalNames } = require('./settings');
 
@@ -33,6 +28,9 @@ function getPropertyName(property) {
 }
 
 function getNodeName(node) {
+    if (node.type === 'ThisExpression') {
+        return 'this';
+    }
     if (node.type === 'MemberExpression') {
         return `${getNodeName(node.object)}.${getPropertyName(node.property)}`;
     }

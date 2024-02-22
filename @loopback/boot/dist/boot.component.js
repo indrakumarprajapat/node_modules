@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -41,9 +41,9 @@ let BootComponent = class BootComponent {
             .inScope(core_1.BindingScope.SINGLETON);
     }
 };
-BootComponent = (0, tslib_1.__decorate)([
-    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    (0, tslib_1.__metadata)("design:paramtypes", [core_1.Application])
+BootComponent = tslib_1.__decorate([
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__metadata("design:paramtypes", [core_1.Application])
 ], BootComponent);
 exports.BootComponent = BootComponent;
 //# sourceMappingURL=boot.component.js.map

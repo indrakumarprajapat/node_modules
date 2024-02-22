@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -13,7 +13,7 @@ const type_is_1 = require("type-is");
 const rest_http_error_1 = require("../rest-http-error");
 const body_parser_helpers_1 = require("./body-parser.helpers");
 const types_1 = require("./types");
-const debug = debug_1.default('loopback:rest:body-parser');
+const debug = (0, debug_1.default)('loopback:rest:body-parser');
 let RequestBodyParser = class RequestBodyParser {
     constructor(parsers, ctx) {
         this.ctx = ctx;
@@ -45,7 +45,7 @@ let RequestBodyParser = class RequestBodyParser {
         }
         catch (err) {
             debug('Request body parsing error', err);
-            throw body_parser_helpers_1.normalizeParsingError(err);
+            throw (0, body_parser_helpers_1.normalizeParsingError)(err);
         }
         throw rest_http_error_1.RestHttpErrors.unsupportedMediaType(matchedMediaType);
     }
@@ -59,11 +59,11 @@ let RequestBodyParser = class RequestBodyParser {
         };
         if (!operationSpec.requestBody)
             return { requestBody };
-        const contentType = (_a = body_parser_helpers_1.getContentType(request)) !== null && _a !== void 0 ? _a : 'application/json';
+        const contentType = (_a = (0, body_parser_helpers_1.getContentType)(request)) !== null && _a !== void 0 ? _a : 'application/json';
         debug('Loading request body with content type %j', contentType);
         // the type of `operationSpec.requestBody` could be `RequestBodyObject`
         // or `ReferenceObject`, resolving a `$ref` value is not supported yet.
-        if (openapi_v3_1.isReferenceObject(operationSpec.requestBody)) {
+        if ((0, openapi_v3_1.isReferenceObject)(operationSpec.requestBody)) {
             throw new Error('$ref requestBody is not supported yet.');
         }
         let content = operationSpec.requestBody.content || {};
@@ -79,7 +79,7 @@ let RequestBodyParser = class RequestBodyParser {
         let matchedMediaType = false;
         let customParser = undefined;
         for (const type in content) {
-            matchedMediaType = type_is_1.is(contentType, type);
+            matchedMediaType = (0, type_is_1.is)(contentType, type);
             if (matchedMediaType) {
                 debug('Matched media type: %s -> %s', type, contentType);
                 requestBody.mediaType = contentType;
@@ -125,7 +125,7 @@ let RequestBodyParser = class RequestBodyParser {
         else if (typeof customParser === 'function') {
             if (isBodyParserClass(customParser)) {
                 debug('Using custom parser class %s', customParser.name);
-                const parser = await core_1.instantiateClass(customParser, this.ctx);
+                const parser = await (0, core_1.instantiateClass)(customParser, this.ctx);
                 return parser.parse(request);
             }
             else {
@@ -137,7 +137,7 @@ let RequestBodyParser = class RequestBodyParser {
     }
 };
 RequestBodyParser = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(core_1.filterByTag(types_1.REQUEST_BODY_PARSER_TAG), { optional: true })),
+    tslib_1.__param(0, (0, core_1.inject)((0, core_1.filterByTag)(types_1.REQUEST_BODY_PARSER_TAG), { optional: true })),
     tslib_1.__param(1, core_1.inject.context()),
     tslib_1.__metadata("design:paramtypes", [Array, core_1.Context])
 ], RequestBodyParser);
@@ -154,6 +154,6 @@ function isBodyParserClass(fn) {
  * @param parsers
  */
 function sortParsers(parsers) {
-    return parsers.sort((a, b) => core_1.compareByOrder(a.name, b.name, body_parser_helpers_1.builtinParsers.names));
+    return parsers.sort((a, b) => (0, core_1.compareByOrder)(a.name, b.name, body_parser_helpers_1.builtinParsers.names));
 }
 //# sourceMappingURL=body-parser.js.map

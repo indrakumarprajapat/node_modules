@@ -5,10 +5,10 @@ import { Listener as ShotListener, RequestOptions as ShotRequestOptions, Respons
 declare const inject: (dispatchFunc: ShotListener, options: ShotRequestOptions) => Promise<ResponseObject>;
 export { inject, ShotRequestOptions };
 export declare function stubServerRequest(options: ShotRequestOptions): IncomingMessage;
-export declare type ShotCallback = (response: ResponseObject) => void;
-export declare type ShotResponseCtor = new (request: IncomingMessage, onEnd: ShotCallback) => ServerResponse;
+export type ShotCallback = (response: ResponseObject) => void;
+export type ShotResponseCtor = new (request: IncomingMessage, onEnd: ShotCallback) => ServerResponse;
 export declare function stubServerResponse(request: IncomingMessage, onEnd: ShotCallback): ServerResponse;
-export declare type ObservedResponse = ResponseObject;
+export type ObservedResponse = ResponseObject;
 export interface HandlerContextStub {
     request: IncomingMessage;
     response: ServerResponse;

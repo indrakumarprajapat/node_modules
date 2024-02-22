@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -47,14 +47,23 @@ export async function findByForeignKeys<
     value = fkValues;
   }
   let useScopeFilterGlobally = false;
+
+  // If its an include from a through model, fkValues will be an array.
+  // However, in this case we DO want to use the scope in the entire query, not
+  // on a per-fk basis
   if (options) {
     useScopeFilterGlobally = options.isThroughModelInclude;
-    //if its an include from a through model, fkValues will be an array
-    //however, in this case we DO want to use the scope in the entire query
-    //no in a per fk basis
   }
-  //This code is to keep backward compatability. See https://github.com/loopbackio/loopback-next/issues/6832
-  //for more info
+
+  // If `scope.limit` is not defined, there is no reason to apply the scope to
+  // each fk. This is to prevent unecessarily high database query counts.
+  // See: https://github.com/loopbackio/loopback-next/issues/8074
+  if (!scope?.limit) {
+    useScopeFilterGlobally = true;
+  }
+
+  // This code is to keep backward compatibility.
+  // See https://github.com/loopbackio/loopback-next/issues/6832 for more info.
   if (scope?.totalLimit) {
     scope.limit = scope.totalLimit;
     useScopeFilterGlobally = true;
@@ -63,7 +72,7 @@ export async function findByForeignKeys<
 
   const isScopeSet = scope && !_.isEmpty(scope);
   if (isScopeSet && Array.isArray(fkValues) && !useScopeFilterGlobally) {
-    // since there is a scope, there could be a where filter, a limit, an order
+    // Since there is a scope, there could be a where filter, a limit, an order
     // and we should run the scope in multiple queries so we can respect the
     // scope filter params
     const findPromises = fkValues.map(fk => {
@@ -112,8 +121,25 @@ export async function includeRelatedModels<
   include?: InclusionFilter[],
   options?: Options,
 ): Promise<(T & Relations)[]> {
-  entities = cloneDeep(entities);
-  include = cloneDeep(include);
+  if (options?.polymorphicType) {
+    include = include?.filter(inclusionFilter => {
+      if (typeof inclusionFilter === 'string') {
+        return true;
+      } else {
+        if (
+          inclusionFilter.targetType === undefined ||
+          inclusionFilter.targetType === options?.polymorphicType
+        ) {
+          return true;
+        }
+      }
+    });
+  } else {
+    include = cloneDeep(include);
+  }
+  if (include) {
+    entities = cloneDeep(entities);
+  }
   const result = entities as (T & Relations)[];
   if (!include) return result;
 
@@ -262,7 +288,7 @@ export function flattenMapByKeys<T>(
  * @param keyName - key name of the source
  * @param reducer - a strategy to reduce inputs to single item or array
  */
-export function buildLookupMap<Key, InType, OutType = InType>(
+export function buildLookupMap<Key, InType extends object, OutType = InType>(
   list: InType[],
   keyName: StringKeyOf<InType>,
   reducer: (accumulator: OutType | undefined, current: InType) => OutType,

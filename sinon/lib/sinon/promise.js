@@ -1,14 +1,14 @@
 "use strict";
 
-var fake = require("./fake");
-var isRestorable = require("./util/core/is-restorable");
+const fake = require("./fake");
+const isRestorable = require("./util/core/is-restorable");
 
-var STATUS_PENDING = "pending";
-var STATUS_RESOLVED = "resolved";
-var STATUS_REJECTED = "rejected";
+const STATUS_PENDING = "pending";
+const STATUS_RESOLVED = "resolved";
+const STATUS_REJECTED = "rejected";
 
 /**
- * Returns a fake for a given function or undefined. If no functino is given, a
+ * Returns a fake for a given function or undefined. If no function is given, a
  * new fake is returned. If the given function is already a fake, it is
  * returned as is. Otherwise the given function is wrapped in a new fake.
  *
@@ -34,8 +34,8 @@ function getFakeExecutor(executor) {
  * @returns {Promise}
  */
 function promise(executor) {
-    var fakeExecutor = getFakeExecutor(executor);
-    var sinonPromise = new Promise(fakeExecutor);
+    const fakeExecutor = getFakeExecutor(executor);
+    const sinonPromise = new Promise(fakeExecutor);
 
     sinonPromise.status = STATUS_PENDING;
     sinonPromise

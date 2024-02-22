@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Request } from '../types';
 import { BodyParser, RequestBody } from './types';
 /**

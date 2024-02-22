@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -91,14 +91,14 @@ export class BaseArtifactBooter implements Booter {
         : [this.options.extensions]
       : [];
 
-    const joinedDirs = this.dirs.join('|');
-    const joinedExts = this.extensions.join('|');
+    let joinedDirs = this.dirs.join(',');
+    if (this.dirs.length > 1) joinedDirs = `{${joinedDirs}}`;
+
+    const joinedExts = `@(${this.extensions.join('|')})`;
 
     this.glob = this.options.glob
       ? this.options.glob
-      : `/@(${joinedDirs})/${
-          this.options.nested ? '**/*' : '*'
-        }@(${joinedExts})`;
+      : `/${joinedDirs}/${this.options.nested ? '**/*' : '*'}${joinedExts}`;
   }
 
   /**

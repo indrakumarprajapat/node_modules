@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { ControllerSpec, PathObject } from '@loopback/openapi-v3';
 import { Request } from '../types';
 import { ControllerClass, ControllerFactory } from './controller-route';
@@ -17,7 +18,7 @@ export declare class RoutingTable {
      * @param controllerCtor
      * @param controllerFactory
      */
-    registerController<T>(spec: ControllerSpec, controllerCtor: ControllerClass<T>, controllerFactory?: ControllerFactory<T>): void;
+    registerController<T extends object>(spec: ControllerSpec, controllerCtor: ControllerClass<T>, controllerFactory?: ControllerFactory<T>): void;
     /**
      * Register a route
      * @param route - A route entry

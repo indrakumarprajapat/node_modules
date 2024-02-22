@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -83,7 +83,7 @@ function requestBody(requestBodySpec) {
         debug('  parameter index: %s', index);
         /* istanbul ignore if */
         if (debug.enabled)
-            debug('  options: %s', util_1.inspect(requestBodySpec, { depth: null }));
+            debug('  options: %s', (0, util_1.inspect)(requestBodySpec, { depth: null }));
         // Use 'application/json' as default content if `requestBody` is undefined
         requestBodySpec = { content: {}, ...requestBodySpec };
         if (lodash_1.default.isEmpty(requestBodySpec.content))
@@ -92,10 +92,10 @@ function requestBody(requestBodySpec) {
         const methodSig = core_1.MetadataInspector.getDesignTypeForMethod(target, member);
         const paramTypes = (methodSig === null || methodSig === void 0 ? void 0 : methodSig.parameterTypes) || [];
         const paramType = paramTypes[index];
-        const schema = generate_schema_1.resolveSchema(paramType);
+        const schema = (0, generate_schema_1.resolveSchema)(paramType);
         /* istanbul ignore if */
         if (debug.enabled)
-            debug('  inferred schema: %s', util_1.inspect(schema, { depth: null }));
+            debug('  inferred schema: %s', (0, util_1.inspect)(schema, { depth: null }));
         requestBodySpec.content = lodash_1.default.mapValues(requestBodySpec.content, c => {
             if (!c.schema) {
                 c.schema = schema;
@@ -104,7 +104,7 @@ function requestBody(requestBodySpec) {
         });
         /* istanbul ignore if */
         if (debug.enabled)
-            debug('  final spec: ', util_1.inspect(requestBodySpec, { depth: null }));
+            debug('  final spec: ', (0, util_1.inspect)(requestBodySpec, { depth: null }));
         core_1.ParameterDecoratorFactory.createDecorator(keys_1.OAI3Keys.REQUEST_BODY_KEY, requestBodySpec, { decoratorName: '@requestBody' })(target, member, index);
     };
 }

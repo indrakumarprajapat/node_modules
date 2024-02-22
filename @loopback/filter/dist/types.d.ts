@@ -1,4 +1,4 @@
 /**
  * Objects with open properties
  */
-export declare type AnyObject = Record<string, any>;
+export type AnyObject = Record<string, any>;

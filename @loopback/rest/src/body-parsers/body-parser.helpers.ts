@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -56,7 +56,7 @@ export function invokeBodyParserMiddleware(
   request: Request,
 ): Promise<any> {
   // A hack to fool TypeScript as we don't need `response`
-  const response = ({} as any) as Response;
+  const response = {} as any as Response;
   return new Promise<void>((resolve, reject) => {
     handle(request, response, err => {
       if (err) {

@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { OperationRetval, Response } from './types';
 /**
  * Writes the result from Application controller method

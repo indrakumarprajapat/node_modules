@@ -3,7 +3,7 @@ import { Filter, FilterExcludingWhere, InclusionFilter, Where } from '@loopback/
 import legacy from 'loopback-datasource-juggler';
 import { AnyObject, Command, Count, DataObject, NamedParameters, Options, PositionalParameters } from '../common-types';
 import { Entity, Model } from '../model';
-import { BelongsToAccessor, HasManyRepositoryFactory, HasManyThroughRepositoryFactory, HasOneRepositoryFactory, InclusionResolver } from '../relations';
+import { BelongsToAccessor, HasManyRepositoryFactory, HasManyThroughRepositoryFactory, HasOneRepositoryFactory, InclusionResolver, ReferencesManyAccessor } from '../relations';
 import { IsolationLevel, Transaction } from '../transaction';
 import { EntityCrudRepository, TransactionalEntityRepository } from './repository';
 export declare namespace juggler {
@@ -51,7 +51,7 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
     private ensurePersistedModel;
     /**
      * Creates a legacy persisted model class, attaches it to the datasource and
-     * returns it. This method can be overriden in sub-classes to acess methods
+     * returns it. This method can be overridden in sub-classes to acess methods
      * and properties in the generated model class.
      * @param entityClass - LB4 Entity constructor
      */
@@ -66,7 +66,7 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected _createHasManyRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasManyRepositoryFactory<Target, ForeignKeyType>;
+    protected _createHasManyRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasManyRepositoryFactory<Target, ForeignKeyType>;
     /**
      * Function to create a constrained relation repository factory
      *
@@ -95,7 +95,7 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected createHasManyRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasManyRepositoryFactory<Target, ForeignKeyType>;
+    protected createHasManyRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasManyRepositoryFactory<Target, ForeignKeyType>;
     /**
      * Function to create a constrained hasManyThrough relation repository factory
      *
@@ -126,7 +126,9 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param targetRepo - Target repository instance
      * @param throughRepo - Through repository instance
      */
-    protected createHasManyThroughRepositoryFactoryFor<Target extends Entity, TargetID, Through extends Entity, ThroughID, ForeignKeyType>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>, throughRepoGetter: Getter<EntityCrudRepository<Through, ThroughID>>): HasManyThroughRepositoryFactory<Target, TargetID, Through, ForeignKeyType>;
+    protected createHasManyThroughRepositoryFactoryFor<Target extends Entity, TargetID, Through extends Entity, ThroughID, ForeignKeyType>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>> | {
+        [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
+    }, throughRepositoryGetter: Getter<EntityCrudRepository<Through, ThroughID>>): HasManyThroughRepositoryFactory<Target, TargetID, Through, ForeignKeyType>;
     /**
      * @deprecated
      * Function to create a belongs to accessor
@@ -136,14 +138,18 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected _createBelongsToAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>): BelongsToAccessor<Target, ID>;
+    protected _createBelongsToAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetId>> | {
+        [repoType: string]: Getter<EntityCrudRepository<Target, TargetId>>;
+    }): BelongsToAccessor<Target, ID>;
     /**
      * Function to create a belongs to accessor
      *
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected createBelongsToAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>): BelongsToAccessor<Target, ID>;
+    protected createBelongsToAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetId>> | {
+        [repoType: string]: Getter<EntityCrudRepository<Target, TargetId>>;
+    }): BelongsToAccessor<Target, ID>;
     /**
      * @deprecated
      * Function to create a constrained hasOne relation repository factory
@@ -151,14 +157,35 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected _createHasOneRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasOneRepositoryFactory<Target, ForeignKeyType>;
+    protected _createHasOneRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>> | {
+        [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
+    }): HasOneRepositoryFactory<Target, ForeignKeyType>;
     /**
      * Function to create a constrained hasOne relation repository factory
      *
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    protected createHasOneRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetID>>): HasOneRepositoryFactory<Target, ForeignKeyType>;
+    protected createHasOneRepositoryFactoryFor<Target extends Entity, TargetID, ForeignKeyType>(relationName: string, targetRepositoryGetter: Getter<EntityCrudRepository<Target, TargetID>> | {
+        [repoType: string]: Getter<EntityCrudRepository<Target, TargetID>>;
+    }): HasOneRepositoryFactory<Target, ForeignKeyType>;
+    /**
+     * @deprecated
+     * Function to create a references many accessor
+     *
+     * Use `this.createReferencesManyAccessorFor()` instead
+     *
+     * @param relationName - Name of the relation defined on the source model
+     * @param targetRepo - Target repository instance
+     */
+    protected _createReferencesManyAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>): ReferencesManyAccessor<Target, ID>;
+    /**
+     * Function to create a references many accessor
+     *
+     * @param relationName - Name of the relation defined on the source model
+     * @param targetRepo - Target repository instance
+     */
+    protected createReferencesManyAccessorFor<Target extends Entity, TargetId>(relationName: string, targetRepoGetter: Getter<EntityCrudRepository<Target, TargetId>>): ReferencesManyAccessor<Target, ID>;
     create(entity: DataObject<T>, options?: Options): Promise<T>;
     createAll(entities: DataObject<T>[], options?: Options): Promise<T[]>;
     save(entity: T, options?: Options): Promise<T>;
@@ -279,7 +306,7 @@ export declare class DefaultCrudRepository<T extends Entity, ID, Relations exten
      * @param entity The entity passed from CRUD operations' caller.
      * @param options
      */
-    protected entityToData<R extends T>(entity: R | DataObject<R>, options?: {}): Promise<legacy.ModelData<legacy.PersistedModel>>;
+    protected entityToData<R extends T>(entity: R | DataObject<R>, options?: {}): legacy.ModelData<legacy.PersistedModel>;
     /** Converts an entity object to a JSON object to check if it contains navigational property.
      * Throws an error if `entity` contains navigational property.
      *

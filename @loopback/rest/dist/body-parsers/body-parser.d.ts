@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Context } from '@loopback/core';
 import { OperationObject } from '@loopback/openapi-v3';
 import { Request } from '../types';

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,7 +19,7 @@ let AuthenticationComponent = class AuthenticationComponent {
         };
     }
 };
-AuthenticationComponent = (0, tslib_1.__decorate)([
+AuthenticationComponent = tslib_1.__decorate([
     (0, core_1.injectable)({ tags: { [core_1.ContextTags.KEY]: keys_1.AuthenticationBindings.COMPONENT } })
 ], AuthenticationComponent);
 exports.AuthenticationComponent = AuthenticationComponent;

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -103,6 +103,20 @@ class ModelDefinition {
         return this.addRelation(meta);
     }
     /**
+     * Define a new referencesMany relation.
+     * @param name - The name of the referencesMany relation.
+     * @param definition - The definition of the referencesMany relation.
+     */
+    referencesMany(name, definition) {
+        const meta = {
+            ...definition,
+            name,
+            type: index_1.RelationType.referencesMany,
+            targetsMany: true,
+        };
+        return this.addRelation(meta);
+    }
+    /**
      * Get an array of names of ID properties, which are specified in
      * the model settings or properties with `id` attribute.
      *
@@ -171,9 +185,6 @@ function asObject(value, options) {
  * Base class for models
  */
 class Model {
-    constructor(data) {
-        Object.assign(this, data);
-    }
     static get modelName() {
         var _a;
         return ((_a = this.definition) === null || _a === void 0 ? void 0 : _a.name) || this.name;
@@ -250,6 +261,9 @@ class Model {
             obj[propertyName] = asObject(val, options);
         }
         return obj;
+    }
+    constructor(data) {
+        Object.assign(this, data);
     }
 }
 exports.Model = Model;

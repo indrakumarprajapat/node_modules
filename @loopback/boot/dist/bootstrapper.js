@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bootstrapper = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const path_1 = require("path");
 const keys_1 = require("./keys");
 const mixins_1 = require("./mixins");
@@ -100,11 +100,11 @@ let Bootstrapper = class Bootstrapper {
         return bootCtx;
     }
 };
-Bootstrapper = (0, tslib_1.__decorate)([
-    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
-    (0, tslib_1.__param)(2, (0, core_1.inject)(keys_1.BootBindings.BOOT_OPTIONS, { optional: true })),
-    (0, tslib_1.__metadata)("design:paramtypes", [Object, String, Object])
+Bootstrapper = tslib_1.__decorate([
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__param(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
+    tslib_1.__param(2, (0, core_1.inject)(keys_1.BootBindings.BOOT_OPTIONS, { optional: true })),
+    tslib_1.__metadata("design:paramtypes", [Object, String, Object])
 ], Bootstrapper);
 exports.Bootstrapper = Bootstrapper;
 //# sourceMappingURL=bootstrapper.js.map

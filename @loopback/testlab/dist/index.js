@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -25,15 +25,15 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-(0, tslib_1.__exportStar)(require("./client"), exports);
-(0, tslib_1.__exportStar)(require("./expect"), exports);
-(0, tslib_1.__exportStar)(require("./http-error-logger"), exports);
-(0, tslib_1.__exportStar)(require("./http-server-config"), exports);
-(0, tslib_1.__exportStar)(require("./request"), exports);
-(0, tslib_1.__exportStar)(require("./shot"), exports);
-(0, tslib_1.__exportStar)(require("./sinon"), exports);
-(0, tslib_1.__exportStar)(require("./skip"), exports);
-(0, tslib_1.__exportStar)(require("./test-sandbox"), exports);
-(0, tslib_1.__exportStar)(require("./to-json"), exports);
-(0, tslib_1.__exportStar)(require("./validate-api-spec"), exports);
+tslib_1.__exportStar(require("./client"), exports);
+tslib_1.__exportStar(require("./expect"), exports);
+tslib_1.__exportStar(require("./http-error-logger"), exports);
+tslib_1.__exportStar(require("./http-server-config"), exports);
+tslib_1.__exportStar(require("./request"), exports);
+tslib_1.__exportStar(require("./shot"), exports);
+tslib_1.__exportStar(require("./sinon"), exports);
+tslib_1.__exportStar(require("./skip"), exports);
+tslib_1.__exportStar(require("./test-sandbox"), exports);
+tslib_1.__exportStar(require("./to-json"), exports);
+tslib_1.__exportStar(require("./validate-api-spec"), exports);
 //# sourceMappingURL=index.js.map

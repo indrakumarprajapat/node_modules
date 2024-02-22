@@ -1,5 +1,5 @@
 import { OASEnhancer, OpenApiSpec, ReferenceObject, SecuritySchemeObject } from '@loopback/rest';
-export declare type SecuritySchemeObjects = {
+export type SecuritySchemeObjects = {
     [securityScheme: string]: SecuritySchemeObject | ReferenceObject;
 };
 export declare const OPERATION_SECURITY_SPEC: {

@@ -6,7 +6,7 @@ import { FindRoute, InvokeMethod, ParseParams, Reject, Send } from './types';
  * A sequence function is a function implementing a custom
  * sequence of actions to handle an incoming request.
  */
-export declare type SequenceFunction = (context: RequestContext, sequence: DefaultSequence) => ValueOrPromise<void>;
+export type SequenceFunction = (context: RequestContext, sequence: DefaultSequence) => ValueOrPromise<void>;
 /**
  * A sequence handler is a class implementing sequence of actions
  * required to handle an incoming request.

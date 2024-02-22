@@ -1,18 +1,18 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/http-server
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpServer = void 0;
 const tslib_1 = require("tslib");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const events_1 = require("events");
-const http_1 = (0, tslib_1.__importDefault)(require("http"));
-const https_1 = (0, tslib_1.__importDefault)(require("https"));
-const os_1 = (0, tslib_1.__importDefault)(require("os"));
-const stoppable_1 = (0, tslib_1.__importDefault)(require("stoppable"));
+const http_1 = tslib_1.__importDefault(require("http"));
+const https_1 = tslib_1.__importDefault(require("https"));
+const os_1 = tslib_1.__importDefault(require("os"));
+const stoppable_1 = tslib_1.__importDefault(require("stoppable"));
 const debug = (0, debug_1.default)('loopback:http-server');
 /**
  * HTTP / HTTPS server used by LoopBack's RestServer
@@ -137,7 +137,7 @@ class HttpServer {
             return `${this.protocol}+unix://${basePath}`;
         }
         let host = this.host;
-        if (this._address.family === 'IPv6') {
+        if ([6, 'IPv6'].includes(this._address.family)) {
             if (host === '::')
                 host = '::1';
             host = `[${host}]`;

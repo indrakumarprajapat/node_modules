@@ -9,6 +9,9 @@ import { BelongsToDefinition, Getter, InclusionResolver } from '../relation.type
  * Notice: scope field for inclusion is not supported yet
  *
  * @param meta - resolved BelongsToMetadata
- * @param getTargetRepo - target repository i.e where related instances are
+ * @param getTargetRepoDict - dictionary of target model type - target repository
+ * i.e where related instances for different types are
  */
-export declare function createBelongsToInclusionResolver<Target extends Entity, TargetID, TargetRelations extends object>(meta: BelongsToDefinition, getTargetRepo: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>): InclusionResolver<Entity, Target>;
+export declare function createBelongsToInclusionResolver<Target extends Entity, TargetID, TargetRelations extends object>(meta: BelongsToDefinition, getTargetRepoDict: {
+    [repoType: string]: Getter<EntityCrudRepository<Target, TargetID, TargetRelations>>;
+}): InclusionResolver<Entity, Target>;

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -9,9 +9,9 @@ const tslib_1 = require("tslib");
 /*
  * HTTP client utilities
  */
-const http_1 = (0, tslib_1.__importDefault)(require("http"));
-const supertest = require("supertest");
-exports.supertest = supertest;
+const http_1 = tslib_1.__importDefault(require("http"));
+const supertest_1 = tslib_1.__importDefault(require("supertest"));
+exports.supertest = supertest_1.default;
 /**
  * Create a SuperTest client connected to an HTTP server listening
  * on an ephemeral port and calling `handler` to handle incoming requests.
@@ -19,7 +19,7 @@ exports.supertest = supertest;
  */
 function createClientForHandler(handler) {
     const server = http_1.default.createServer(handler);
-    return supertest(server);
+    return (0, supertest_1.default)(server);
 }
 exports.createClientForHandler = createClientForHandler;
 /**
@@ -34,7 +34,7 @@ function createRestAppClient(app) {
     if (!url) {
         throw new Error(`Cannot create client for ${app.constructor.name}, it is not listening.`);
     }
-    return supertest(url);
+    return (0, supertest_1.default)(url);
 }
 exports.createRestAppClient = createRestAppClient;
 //# sourceMappingURL=client.js.map

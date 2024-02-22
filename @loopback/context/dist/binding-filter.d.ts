@@ -39,7 +39,7 @@ export interface BindingFilter {
 /**
  * Select binding(s) by key or a filter function
  */
-export declare type BindingSelector<ValueType = unknown> = BindingAddress<ValueType> | BindingFilter;
+export type BindingSelector<ValueType = unknown> = BindingAddress<ValueType> | BindingFilter;
 /**
  * Type guard for binding address
  * @param bindingSelector - Binding key or filter function

@@ -6,12 +6,12 @@ import { ValueOrPromise } from './value-promise';
  * Create the Promise type for `T`. If `T` extends `Promise`, the type is `T`,
  * otherwise the type is `ValueOrPromise<T>`.
  */
-export declare type AsValueOrPromise<T> = T extends Promise<unknown> ? T : ValueOrPromise<T>;
+export type AsValueOrPromise<T> = T extends Promise<unknown> ? T : ValueOrPromise<T>;
 /**
  * The intercepted variant of a function to return `ValueOrPromise<T>`.
  * If `T` is not a function, the type is `T`.
  */
-export declare type AsInterceptedFunction<T> = T extends (...args: InvocationArgs) => infer R ? (...args: Parameters<T>) => AsValueOrPromise<R> : T;
+export type AsInterceptedFunction<T> = T extends (...args: InvocationArgs) => infer R ? (...args: Parameters<T>) => AsValueOrPromise<R> : T;
 /**
  * The proxy type for `T`. The return type for any method of `T` with original
  * return type `R` becomes `ValueOrPromise<R>` if `R` does not extend `Promise`.
@@ -41,7 +41,7 @@ export declare type AsInterceptedFunction<T> = T extends (...args: InvocationArg
  * }
  * ```
  */
-export declare type AsyncProxy<T> = {
+export type AsyncProxy<T> = {
     [P in keyof T]: AsInterceptedFunction<T[P]>;
 };
 /**

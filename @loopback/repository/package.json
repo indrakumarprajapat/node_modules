@@ -1,19 +1,19 @@
 {
   "name": "@loopback/repository",
   "description": "Define and implement a common set of interfaces for interacting with databases",
-  "version": "3.7.3",
+  "version": "5.1.5",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "IBM Corp.",
-  "copyright.owner": "IBM Corp.",
+  "author": "IBM Corp. and LoopBack contributors",
+  "copyright.owner": "IBM Corp. and LoopBack contributors",
   "repository": {
     "type": "git",
     "url": "https://github.com/loopbackio/loopback-next.git",
     "directory": "packages/repository"
   },
   "engines": {
-    "node": "^10.16 || 12 || 14 || 16"
+    "node": "14 || 16 || 18 || 19"
   },
   "scripts": {
     "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
@@ -33,26 +33,26 @@
     "!*/__tests__"
   ],
   "peerDependencies": {
-    "@loopback/core": "^2.18.0"
+    "@loopback/core": "^4.0.10"
   },
   "dependencies": {
-    "@loopback/filter": "^1.5.4",
+    "@loopback/filter": "^3.0.10",
     "@types/debug": "^4.1.7",
-    "debug": "^4.3.2",
+    "debug": "^4.3.4",
     "lodash": "^4.17.21",
-    "loopback-datasource-juggler": "^4.26.0",
-    "tslib": "^2.3.1"
+    "loopback-datasource-juggler": "^4.28.3",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@loopback/build": "^7.0.2",
-    "@loopback/core": "^2.18.0",
-    "@loopback/eslint-config": "^11.0.2",
-    "@loopback/testlab": "^3.4.4",
+    "@loopback/build": "^9.0.10",
+    "@loopback/core": "^4.0.10",
+    "@loopback/eslint-config": "^13.0.10",
+    "@loopback/testlab": "^5.0.10",
     "@types/bson": "^4.0.5",
-    "@types/json-schema": "^7.0.9",
-    "@types/lodash": "^4.14.175",
-    "@types/node": "^10.17.60",
-    "bson": "4.5.3"
+    "@types/json-schema": "^7.0.11",
+    "@types/lodash": "^4.14.192",
+    "@types/node": "^14.18.42",
+    "bson": "5.2.0"
   },
-  "gitHead": "d9a29c85dbe38f12ba219d8c495cf6038bbc3590"
+  "gitHead": "3a98ded2622420d0f09dbc3c0fe961c0234b097f"
 }

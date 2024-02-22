@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,6 +12,12 @@ const path_1 = require("path");
  * sandbox folder in which you can perform operations for testing purposes.
  */
 class TestSandbox {
+    get path() {
+        if (!this._path) {
+            throw new Error(`TestSandbox instance was deleted. Create a new instance.`);
+        }
+        return this._path;
+    }
     /**
      * Will create a directory if it doesn't already exist. If it exists, you
      * still get an instance of the TestSandbox.
@@ -50,12 +56,6 @@ class TestSandbox {
             // See https://nodejs.org/api/fs.html#fs_fs_mkdtempsync_prefix_options
             this._path = (0, fs_extra_1.mkdtempSync)((0, path_1.join)(rootPath, `/${process.pid}`));
         }
-    }
-    get path() {
-        if (!this._path) {
-            throw new Error(`TestSandbox instance was deleted. Create a new instance.`);
-        }
-        return this._path;
     }
     /**
      * Resets the TestSandbox. (Remove all files in it).

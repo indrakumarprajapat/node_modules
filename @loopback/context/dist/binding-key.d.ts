@@ -1,4 +1,4 @@
-export declare type BindingAddress<T = unknown> = string | BindingKey<T>;
+export type BindingAddress<T = unknown> = string | BindingKey<T>;
 export declare class BindingKey<ValueType> {
     readonly key: string;
     readonly propertyPath?: string | undefined;

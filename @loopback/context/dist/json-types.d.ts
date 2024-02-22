@@ -8,14 +8,14 @@
  * - boolean
  * - null
  */
-export declare type JSONPrimitive = string | number | boolean | null;
+export type JSONPrimitive = string | number | boolean | null;
 /**
  * JSON values
  * - primitive
  * - object
  * - array
  */
-export declare type JSONValue = JSONPrimitive | JSONObject | JSONArray;
+export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
 /**
  * JSON object
  */

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,55 +11,61 @@ const debug_1 = tslib_1.__importDefault(require("debug"));
 const keys_1 = require("../keys");
 const middleware_1 = require("../middleware");
 const types_1 = require("../types");
-const debug = debug_1.default('loopback:rest:middleware');
+const debug = (0, debug_1.default)('loopback:rest:middleware');
 /**
  * Extension point for middleware to be run as part of the sequence actions
  */
 let InvokeMiddlewareProvider = class InvokeMiddlewareProvider {
-    constructor() {
-        /**
-         * Default options for invoking the middleware chain
-         */
-        this.defaultOptions = {
-            chain: types_1.DEFAULT_MIDDLEWARE_CHAIN,
-            orderedGroups: ['cors', 'apiSpec', keys_1.DEFAULT_MIDDLEWARE_GROUP],
-        };
-    }
-    value() {
-        debug('Binding', this.binding);
-        return (middlewareCtx, optionsOrHandlers) => {
-            var _a, _b;
+    static value(
+    /**
+     * Inject the binding so that we can access `extensionPoint` tag
+     */
+    binding, 
+    /**
+     * Default options for invoking the middleware chain
+     */
+    defaultOptions = {
+        chain: types_1.DEFAULT_MIDDLEWARE_CHAIN,
+        orderedGroups: ['cors', 'apiSpec', keys_1.DEFAULT_MIDDLEWARE_GROUP],
+    }) {
+        debug('Binding', binding);
+        debug('Default options', defaultOptions);
+        const invokeMiddlewareFn = (middlewareCtx, optionsOrHandlers) => {
+            var _a;
             if (Array.isArray(optionsOrHandlers)) {
                 return this.action(middlewareCtx, optionsOrHandlers);
             }
             const options = optionsOrHandlers;
             let chain = options === null || options === void 0 ? void 0 : options.chain;
             const orderedGroups = options === null || options === void 0 ? void 0 : options.orderedGroups;
-            chain = (_b = chain !== null && chain !== void 0 ? chain : (_a = this.binding) === null || _a === void 0 ? void 0 : _a.tagMap[core_1.CoreTags.EXTENSION_POINT]) !== null && _b !== void 0 ? _b : this.defaultOptions.chain;
-            return this.action(middlewareCtx, {
+            chain =
+                (_a = chain !== null && chain !== void 0 ? chain : binding === null || binding === void 0 ? void 0 : binding.tagMap[core_1.CoreTags.EXTENSION_POINT]) !== null && _a !== void 0 ? _a : defaultOptions.chain;
+            const middlewareOptions = {
                 ...options,
                 chain,
-                orderedGroups: orderedGroups !== null && orderedGroups !== void 0 ? orderedGroups : this.defaultOptions.orderedGroups,
-            });
+                orderedGroups: orderedGroups !== null && orderedGroups !== void 0 ? orderedGroups : defaultOptions.orderedGroups,
+            };
+            debug('Invoke middleware with', middlewareOptions);
+            return this.action(middlewareCtx, middlewareOptions);
         };
+        return invokeMiddlewareFn;
     }
-    async action(middlewareCtx, optionsOrHandlers) {
+    static async action(middlewareCtx, optionsOrHandlers) {
         if (Array.isArray(optionsOrHandlers)) {
-            return middleware_1.invokeExpressMiddleware(middlewareCtx, ...optionsOrHandlers);
+            return (0, middleware_1.invokeExpressMiddleware)(middlewareCtx, ...optionsOrHandlers);
         }
-        return middleware_1.invokeMiddleware(middlewareCtx, optionsOrHandlers);
+        return (0, middleware_1.invokeMiddleware)(middlewareCtx, optionsOrHandlers);
     }
 };
 tslib_1.__decorate([
-    core_1.inject.binding(),
-    tslib_1.__metadata("design:type", core_1.Binding)
-], InvokeMiddlewareProvider.prototype, "binding", void 0);
-tslib_1.__decorate([
-    core_1.config(),
-    tslib_1.__metadata("design:type", Object)
-], InvokeMiddlewareProvider.prototype, "defaultOptions", void 0);
+    tslib_1.__param(0, core_1.inject.binding()),
+    tslib_1.__param(1, (0, core_1.config)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [core_1.Binding, Object]),
+    tslib_1.__metadata("design:returntype", Function)
+], InvokeMiddlewareProvider, "value", null);
 InvokeMiddlewareProvider = tslib_1.__decorate([
-    core_1.extensionPoint(types_1.DEFAULT_MIDDLEWARE_CHAIN)
+    (0, core_1.extensionPoint)(types_1.DEFAULT_MIDDLEWARE_CHAIN)
 ], InvokeMiddlewareProvider);
 exports.InvokeMiddlewareProvider = InvokeMiddlewareProvider;
 //# sourceMappingURL=invoke-middleware.provider.js.map

@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolveBelongsToMetadata = void 0;
 const tslib_1 = require("tslib");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const lodash_1 = require("lodash");
 const errors_1 = require("../../errors");
 const type_resolver_1 = require("../../type-resolver");
@@ -29,7 +29,7 @@ function resolveBelongsToMetadata(relationMeta) {
         throw new errors_1.InvalidRelationError(reason, relationMeta);
     }
     const sourceModel = relationMeta.source;
-    if (!sourceModel || !sourceModel.modelName) {
+    if (!(sourceModel === null || sourceModel === void 0 ? void 0 : sourceModel.modelName)) {
         const reason = 'source model must be defined';
         throw new errors_1.InvalidRelationError(reason, relationMeta);
     }
@@ -46,18 +46,42 @@ function resolveBelongsToMetadata(relationMeta) {
     }
     const targetProperties = targetModel.definition.properties;
     debug('relation metadata from %o: %o', targetName, targetProperties);
+    let keyTo;
     if (relationMeta.keyTo && targetProperties[relationMeta.keyTo]) {
         // The explicit cast is needed because of a limitation of type inference
-        return Object.assign(relationMeta, {
-            keyFrom,
-        });
+        keyTo = relationMeta.keyTo;
     }
-    const targetPrimaryKey = targetModel.definition.idProperties()[0];
-    if (!targetPrimaryKey) {
-        const reason = `${targetName} does not have any primary key (id property)`;
-        throw new errors_1.InvalidRelationError(reason, relationMeta);
+    else {
+        keyTo = targetModel.definition.idProperties()[0];
+        if (!keyTo) {
+            const reason = `${targetName} does not have any primary key (id property)`;
+            throw new errors_1.InvalidRelationError(reason, relationMeta);
+        }
     }
-    return Object.assign(relationMeta, { keyFrom, keyTo: targetPrimaryKey });
+    let polymorphic;
+    if (relationMeta.polymorphic === undefined ||
+        relationMeta.polymorphic === false ||
+        !relationMeta.polymorphic) {
+        const polymorphicFalse = false;
+        polymorphic = polymorphicFalse;
+    }
+    else {
+        if (relationMeta.polymorphic === true) {
+            const polymorphicObject = {
+                discriminator: (0, lodash_1.camelCase)(relationMeta.target().name + '_type'),
+            };
+            polymorphic = polymorphicObject;
+        }
+        else {
+            const polymorphicObject = relationMeta.polymorphic;
+            polymorphic = polymorphicObject;
+        }
+    }
+    return Object.assign(relationMeta, {
+        keyFrom,
+        keyTo: keyTo,
+        polymorphic: polymorphic,
+    });
 }
 exports.resolveBelongsToMetadata = resolveBelongsToMetadata;
 //# sourceMappingURL=belongs-to.helpers.js.map

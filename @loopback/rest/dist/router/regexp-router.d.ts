@@ -1,7 +1,7 @@
+import { Key } from 'path-to-regexp';
 import { RestRouterOptions } from './rest-router';
 import { ResolvedRoute, RouteEntry } from './route-entry';
 import { BaseRouter } from './router-base';
-import { Key } from 'path-to-regexp';
 /**
  * Route entry with path-to-regexp
  */

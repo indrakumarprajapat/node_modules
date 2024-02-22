@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,10 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LifeCycleObserverRegistry = exports.DEFAULT_ORDERED_GROUPS = void 0;
 const tslib_1 = require("tslib");
 const context_1 = require("@loopback/context");
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const keys_1 = require("./keys");
 const lifecycle_1 = require("./lifecycle");
-const debugFactory = require("debug");
-const debug = debugFactory('loopback:core:lifecycle');
+const debug = (0, debug_1.default)('loopback:core:lifecycle');
 exports.DEFAULT_ORDERED_GROUPS = ['server'];
 /**
  * A context-based registry for life cycle observers
@@ -180,11 +180,11 @@ let LifeCycleObserverRegistry = class LifeCycleObserverRegistry {
         await this.notifyGroups(['stop'], groups, true);
     }
 };
-LifeCycleObserverRegistry = (0, tslib_1.__decorate)([
-    (0, tslib_1.__param)(0, context_1.inject.context()),
-    (0, tslib_1.__param)(1, context_1.inject.view(lifecycle_1.lifeCycleObserverFilter)),
-    (0, tslib_1.__param)(2, (0, context_1.inject)(keys_1.CoreBindings.LIFE_CYCLE_OBSERVER_OPTIONS, { optional: true })),
-    (0, tslib_1.__metadata)("design:paramtypes", [context_1.Context,
+LifeCycleObserverRegistry = tslib_1.__decorate([
+    tslib_1.__param(0, context_1.inject.context()),
+    tslib_1.__param(1, context_1.inject.view(lifecycle_1.lifeCycleObserverFilter)),
+    tslib_1.__param(2, (0, context_1.inject)(keys_1.CoreBindings.LIFE_CYCLE_OBSERVER_OPTIONS, { optional: true })),
+    tslib_1.__metadata("design:paramtypes", [context_1.Context,
         context_1.ContextView, Object])
 ], LifeCycleObserverRegistry);
 exports.LifeCycleObserverRegistry = LifeCycleObserverRegistry;

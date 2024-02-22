@@ -1,6 +1,7 @@
+/// <reference types="express" />
 import { Request } from '../types';
-import { ResolvedRoute, RouteEntry } from './route-entry';
 import { RestRouter, RestRouterOptions } from './rest-router';
+import { ResolvedRoute, RouteEntry } from './route-entry';
 /**
  * Base router implementation that only handles path without variables
  */

@@ -11,22 +11,26 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'disallow invalid RuleTester test cases where the `output` matches the `code`',
+      description:
+        'disallow invalid RuleTester test cases where the `output` matches the `code`',
       category: 'Tests',
-      recommended: false,
+      recommended: true,
+      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/prefer-output-null.md',
     },
     fixable: 'code',
     schema: [],
     messages: {
-      useOutputNull: 'Use `output: null` to assert that a test case is not autofixed.',
+      useOutputNull:
+        'Use `output: null` to assert that a test case is not autofixed.',
     },
   },
 
-  create (context) {
+  create(context) {
     // ----------------------------------------------------------------------
     // Public
     // ----------------------------------------------------------------------
@@ -34,30 +38,33 @@ module.exports = {
     const sourceCode = context.getSourceCode();
 
     return {
-      Program (ast) {
-        utils.getTestInfo(context, ast).forEach(testRun => {
-          testRun.invalid.forEach(test => {
+      Program(ast) {
+        utils.getTestInfo(context, ast).forEach((testRun) => {
+          testRun.invalid.forEach((test) => {
             /**
-            * Get a test case's giving keyname node.
-            * @param {string} the keyname to find.
-            * @returns {Node} found node; if not found, return null;
-            */
-            function getTestInfo (key) {
+             * Get a test case's giving keyname node.
+             * @param {string} the keyname to find.
+             * @returns {Node} found node; if not found, return null;
+             */
+            function getTestInfo(key) {
               if (test.type === 'ObjectExpression') {
-                const res = test.properties.filter(item => item.key.name === key);
-                return res.length > 0 ? res[res.length - 1] : null;
+                return test.properties.find((item) => item.key.name === key);
               }
-              return key === 'code' ? test : null;
+              return null;
             }
 
             const code = getTestInfo('code');
             const output = getTestInfo('output');
 
-            if (output && sourceCode.getText(output.value) === sourceCode.getText(code.value)) {
+            if (
+              output &&
+              sourceCode.getText(output.value) ===
+                sourceCode.getText(code.value)
+            ) {
               context.report({
                 node: output,
                 messageId: 'useOutputNull',
-                fix: fixer => fixer.replaceText(output.value, 'null'),
+                fix: (fixer) => fixer.replaceText(output.value, 'null'),
               });
             }
           });

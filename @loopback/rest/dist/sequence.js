@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@ const core_1 = require("@loopback/core");
 const express_1 = require("@loopback/express");
 const debug_1 = tslib_1.__importDefault(require("debug"));
 const keys_1 = require("./keys");
-const debug = debug_1.default('loopback:rest:sequence');
+const debug = (0, debug_1.default)('loopback:rest:sequence');
 const SequenceActions = keys_1.RestBindings.SequenceActions;
 /**
  * The default implementation of SequenceHandler.
@@ -97,15 +97,15 @@ let DefaultSequence = class DefaultSequence {
     }
 };
 tslib_1.__decorate([
-    core_1.inject(SequenceActions.INVOKE_MIDDLEWARE, { optional: true }),
+    (0, core_1.inject)(SequenceActions.INVOKE_MIDDLEWARE, { optional: true }),
     tslib_1.__metadata("design:type", Function)
 ], DefaultSequence.prototype, "invokeMiddleware", void 0);
 DefaultSequence = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(SequenceActions.FIND_ROUTE)),
-    tslib_1.__param(1, core_1.inject(SequenceActions.PARSE_PARAMS)),
-    tslib_1.__param(2, core_1.inject(SequenceActions.INVOKE_METHOD)),
-    tslib_1.__param(3, core_1.inject(SequenceActions.SEND)),
-    tslib_1.__param(4, core_1.inject(SequenceActions.REJECT)),
+    tslib_1.__param(0, (0, core_1.inject)(SequenceActions.FIND_ROUTE)),
+    tslib_1.__param(1, (0, core_1.inject)(SequenceActions.PARSE_PARAMS)),
+    tslib_1.__param(2, (0, core_1.inject)(SequenceActions.INVOKE_METHOD)),
+    tslib_1.__param(3, (0, core_1.inject)(SequenceActions.SEND)),
+    tslib_1.__param(4, (0, core_1.inject)(SequenceActions.REJECT)),
     tslib_1.__metadata("design:paramtypes", [Function, Function, Function, Function, Function])
 ], DefaultSequence);
 exports.DefaultSequence = DefaultSequence;
@@ -232,10 +232,10 @@ MiddlewareSequence.defaultOptions = {
     },
 };
 MiddlewareSequence = MiddlewareSequence_1 = tslib_1.__decorate([
-    core_1.injectable({ scope: core_1.BindingScope.SINGLETON }),
+    (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON }),
     tslib_1.__param(0, core_1.inject.context()),
-    tslib_1.__param(1, core_1.inject(keys_1.RestBindings.INVOKE_MIDDLEWARE_SERVICE)),
-    tslib_1.__param(2, core_1.config()),
+    tslib_1.__param(1, (0, core_1.inject)(keys_1.RestBindings.INVOKE_MIDDLEWARE_SERVICE)),
+    tslib_1.__param(2, (0, core_1.config)()),
     tslib_1.__metadata("design:paramtypes", [core_1.Context, Function, Object])
 ], MiddlewareSequence);
 exports.MiddlewareSequence = MiddlewareSequence;

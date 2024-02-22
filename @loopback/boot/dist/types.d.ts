@@ -3,7 +3,7 @@ import { Binding, BindingSpec, Constructor } from '@loopback/core';
  * Type definition for ArtifactOptions. These are the options supported by
  * this Booter.
  */
-export declare type ArtifactOptions = {
+export type ArtifactOptions = {
     /**
      * Array of directories to check for artifacts.
      * Paths must be relative. Defaults to ['controllers']
@@ -55,7 +55,7 @@ export declare const BOOTER_PHASES: string[];
 /**
  * Options to configure `Bootstrapper`
  */
-export declare type BootOptions = {
+export type BootOptions = {
     controllers?: ArtifactOptions;
     repositories?: ArtifactOptions;
     /**
@@ -66,7 +66,7 @@ export declare type BootOptions = {
 /**
  * Options for boot() execution
  */
-export declare type BootExecutionOptions = {
+export type BootExecutionOptions = {
     /**
      * Optional array of Booter Classes to bind to the application before running bootstrapper.
      */

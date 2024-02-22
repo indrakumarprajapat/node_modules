@@ -142,7 +142,7 @@ export declare class RestApplication extends Application implements HttpServerLi
      * @param controllerFactory - A factory function to create controller instance
      * @param methodName - The name of the controller method
      */
-    route<T>(verb: string, path: string, spec: OperationObject, controllerCtor: ControllerClass<T>, controllerFactory: ControllerFactory<T>, methodName: string): Binding;
+    route<T extends object>(verb: string, path: string, spec: OperationObject, controllerCtor: ControllerClass<T>, controllerFactory: ControllerFactory<T>, methodName: string): Binding;
     /**
      * Register a new route invoking a handler function.
      *
@@ -238,8 +238,5 @@ export declare class RestApplication extends Application implements HttpServerLi
      * written to the console using the `log` function.
      * @param log - Log function, default to `console.log`
      */
-    exportOpenApiSpec(outFile?: string, log?: {
-        (...data: any[]): void;
-        (message?: any, ...optionalParams: any[]): void;
-    }): Promise<void>;
+    exportOpenApiSpec(outFile?: string, log?: (message?: any, ...optionalParams: any[]) => void): Promise<void>;
 }

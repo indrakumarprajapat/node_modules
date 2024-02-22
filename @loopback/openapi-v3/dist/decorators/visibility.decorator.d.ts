@@ -33,4 +33,4 @@ import { OperationVisibility } from '../types';
  * }
  * ```
  */
-export declare function visibility(visibilityType: OperationVisibility): (target: any, method?: string | undefined, methodDescriptor?: TypedPropertyDescriptor<any> | undefined) => any;
+export declare function visibility(visibilityType: OperationVisibility): (target: any, method?: string, methodDescriptor?: TypedPropertyDescriptor<any>) => any;

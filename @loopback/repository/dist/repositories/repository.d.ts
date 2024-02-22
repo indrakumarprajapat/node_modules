@@ -20,7 +20,7 @@ export interface ExecutableRepository<T extends Model> extends Repository<T> {
  * A type for CRUD repositories that are backed by IDs and support
  * Transactions
  */
-export declare type TransactionalEntityRepository<T extends Entity, ID, Relations extends object = {}> = TransactionalRepository<T> & EntityCrudRepository<T, ID>;
+export type TransactionalEntityRepository<T extends Entity, ID, Relations extends object = {}> = TransactionalRepository<T> & EntityCrudRepository<T, ID>;
 /**
  * Repository Interface for Repositories that support Transactions
  *

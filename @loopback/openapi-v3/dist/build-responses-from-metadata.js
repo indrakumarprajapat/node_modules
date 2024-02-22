@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -9,7 +9,9 @@ const core_1 = require("@loopback/core");
 const repository_1 = require("@loopback/repository");
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isModel(c) {
-    return (c === null || c === void 0 ? void 0 : c.prototype) instanceof repository_1.Model;
+    return ((c === null || c === void 0 ? void 0 : c.prototype) instanceof repository_1.Model ||
+        // Allowing classes decorated with `@model` but not extending from `Model`
+        core_1.MetadataInspector.getClassMetadata(repository_1.MODEL_KEY, c) != null);
 }
 /**
  * Reducer which builds the operation responses

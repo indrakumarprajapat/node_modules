@@ -1,13 +1,13 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultTransactionalRepository = exports.DefaultCrudRepository = exports.ensurePromise = exports.bindModel = exports.juggler = void 0;
 const tslib_1 = require("tslib");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
-const loopback_datasource_juggler_1 = (0, tslib_1.__importDefault)(require("loopback-datasource-juggler"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
+const loopback_datasource_juggler_1 = tslib_1.__importDefault(require("loopback-datasource-juggler"));
 const errors_1 = require("../errors");
 const model_1 = require("../model");
 const relations_1 = require("../relations");
@@ -90,7 +90,7 @@ class DefaultCrudRepository {
     }
     /**
      * Creates a legacy persisted model class, attaches it to the datasource and
-     * returns it. This method can be overriden in sub-classes to acess methods
+     * returns it. This method can be overridden in sub-classes to acess methods
      * and properties in the generated model class.
      * @param entityClass - LB4 Entity constructor
      */
@@ -146,8 +146,8 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    _createHasManyRepositoryFactoryFor(relationName, targetRepoGetter) {
-        return this.createHasManyRepositoryFactoryFor(relationName, targetRepoGetter);
+    _createHasManyRepositoryFactoryFor(relationName, targetRepositoryGetter) {
+        return this.createHasManyRepositoryFactoryFor(relationName, targetRepositoryGetter);
     }
     /**
      * Function to create a constrained relation repository factory
@@ -177,9 +177,9 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    createHasManyRepositoryFactoryFor(relationName, targetRepoGetter) {
+    createHasManyRepositoryFactoryFor(relationName, targetRepositoryGetter) {
         const meta = this.entityClass.definition.relations[relationName];
-        return (0, relations_1.createHasManyRepositoryFactory)(meta, targetRepoGetter);
+        return (0, relations_1.createHasManyRepositoryFactory)(meta, targetRepositoryGetter);
     }
     /**
      * Function to create a constrained hasManyThrough relation repository factory
@@ -211,9 +211,9 @@ class DefaultCrudRepository {
      * @param targetRepo - Target repository instance
      * @param throughRepo - Through repository instance
      */
-    createHasManyThroughRepositoryFactoryFor(relationName, targetRepoGetter, throughRepoGetter) {
+    createHasManyThroughRepositoryFactoryFor(relationName, targetRepositoryGetter, throughRepositoryGetter) {
         const meta = this.entityClass.definition.relations[relationName];
-        return (0, relations_1.createHasManyThroughRepositoryFactory)(meta, targetRepoGetter, throughRepoGetter);
+        return (0, relations_1.createHasManyThroughRepositoryFactory)(meta, targetRepositoryGetter, throughRepositoryGetter);
     }
     /**
      * @deprecated
@@ -224,8 +224,8 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    _createBelongsToAccessorFor(relationName, targetRepoGetter) {
-        return this.createBelongsToAccessorFor(relationName, targetRepoGetter);
+    _createBelongsToAccessorFor(relationName, targetRepositoryGetter) {
+        return this.createBelongsToAccessorFor(relationName, targetRepositoryGetter);
     }
     /**
      * Function to create a belongs to accessor
@@ -233,9 +233,9 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    createBelongsToAccessorFor(relationName, targetRepoGetter) {
+    createBelongsToAccessorFor(relationName, targetRepositoryGetter) {
         const meta = this.entityClass.definition.relations[relationName];
-        return (0, relations_1.createBelongsToAccessor)(meta, targetRepoGetter, this);
+        return (0, relations_1.createBelongsToAccessor)(meta, targetRepositoryGetter, this);
     }
     /**
      * @deprecated
@@ -244,8 +244,8 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    _createHasOneRepositoryFactoryFor(relationName, targetRepoGetter) {
-        return this.createHasOneRepositoryFactoryFor(relationName, targetRepoGetter);
+    _createHasOneRepositoryFactoryFor(relationName, targetRepositoryGetter) {
+        return this.createHasOneRepositoryFactoryFor(relationName, targetRepositoryGetter);
     }
     /**
      * Function to create a constrained hasOne relation repository factory
@@ -253,20 +253,42 @@ class DefaultCrudRepository {
      * @param relationName - Name of the relation defined on the source model
      * @param targetRepo - Target repository instance
      */
-    createHasOneRepositoryFactoryFor(relationName, targetRepoGetter) {
+    createHasOneRepositoryFactoryFor(relationName, targetRepositoryGetter) {
         const meta = this.entityClass.definition.relations[relationName];
-        return (0, relations_1.createHasOneRepositoryFactory)(meta, targetRepoGetter);
+        return (0, relations_1.createHasOneRepositoryFactory)(meta, targetRepositoryGetter);
+    }
+    /**
+     * @deprecated
+     * Function to create a references many accessor
+     *
+     * Use `this.createReferencesManyAccessorFor()` instead
+     *
+     * @param relationName - Name of the relation defined on the source model
+     * @param targetRepo - Target repository instance
+     */
+    _createReferencesManyAccessorFor(relationName, targetRepoGetter) {
+        return this.createReferencesManyAccessorFor(relationName, targetRepoGetter);
+    }
+    /**
+     * Function to create a references many accessor
+     *
+     * @param relationName - Name of the relation defined on the source model
+     * @param targetRepo - Target repository instance
+     */
+    createReferencesManyAccessorFor(relationName, targetRepoGetter) {
+        const meta = this.entityClass.definition.relations[relationName];
+        return (0, relations_1.createReferencesManyAccessor)(meta, targetRepoGetter, this);
     }
     async create(entity, options) {
         // perform persist hook
-        const data = await this.entityToData(entity, options);
+        const data = this.entityToData(entity, options);
         const model = await ensurePromise(this.modelClass.create(data, options));
         return this.toEntity(model);
     }
     async createAll(entities, options) {
         // perform persist hook
-        const data = await Promise.all(entities.map(e => this.entityToData(e, options)));
-        const models = await ensurePromise(this.modelClass.create(data, options));
+        const data = entities.map(e => this.entityToData(e, options));
+        const models = await ensurePromise(this.modelClass.createAll(data, options));
         return this.toEntities(models);
     }
     async save(entity, options) {
@@ -309,12 +331,12 @@ class DefaultCrudRepository {
     }
     async delete(entity, options) {
         // perform persist hook
-        await this.entityToData(entity, options);
+        this.entityToData(entity, options);
         return this.deleteById(entity.getId(), options);
     }
     async updateAll(data, where, options) {
         where = where !== null && where !== void 0 ? where : {};
-        const persistedData = await this.entityToData(data, options);
+        const persistedData = this.entityToData(data, options);
         const result = await ensurePromise(this.modelClass.updateAll(where, persistedData, options));
         return { count: result.count };
     }
@@ -332,7 +354,7 @@ class DefaultCrudRepository {
     }
     async replaceById(id, data, options) {
         try {
-            const payload = await this.entityToData(data, options);
+            const payload = this.entityToData(data, options);
             await ensurePromise(this.modelClass.replaceById(id, payload, options));
         }
         catch (err) {
@@ -399,7 +421,7 @@ class DefaultCrudRepository {
      * @param entity The entity passed from CRUD operations' caller.
      * @param options
      */
-    async entityToData(entity, options = {}) {
+    entityToData(entity, options = {}) {
         return this.ensurePersistable(entity, options);
     }
     /** Converts an entity object to a JSON object to check if it contains navigational property.

@@ -1,9 +1,10 @@
+/// <reference types="express" />
 import { ReferenceObject, SchemaObject } from '@loopback/openapi-v3';
 import { Request } from '../types';
 /**
  * Request body with metadata
  */
-export declare type RequestBody = {
+export type RequestBody = {
     /**
      * Parsed value of the request body
      */
@@ -44,7 +45,7 @@ export interface BodyParser {
 /**
  * Plain function for body parsing
  */
-export declare type BodyParserFunction = (request: Request) => Promise<RequestBody>;
+export type BodyParserFunction = (request: Request) => Promise<RequestBody>;
 /**
  * Binding tag for request body parser extensions
  */

@@ -6,7 +6,7 @@ import { AuthenticationMetadata } from '../types';
  * @param strategies - The names of the authentication strategies to use
  * or authentication metadata objects.
  */
-export declare function authenticate(...strategies: (string | AuthenticationMetadata)[]): (target: any, method?: string | undefined, methodDescriptor?: TypedPropertyDescriptor<any> | undefined) => any;
+export declare function authenticate(...strategies: (string | AuthenticationMetadata)[]): (target: any, method?: string, methodDescriptor?: TypedPropertyDescriptor<any>) => any;
 export declare namespace authenticate {
     /**
      * `@authenticate.skip()` - a sugar decorator to skip authentication

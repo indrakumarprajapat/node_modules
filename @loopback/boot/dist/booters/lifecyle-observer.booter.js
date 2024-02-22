@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/boot
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,8 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LifeCycleObserverDefaults = exports.LifeCycleObserverBooter = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
-const core_2 = require("@loopback/core");
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const keys_1 = require("../keys");
 const types_1 = require("../types");
 const base_artifact_booter_1 = require("./base-artifact.booter");
@@ -36,7 +35,7 @@ let LifeCycleObserverBooter = class LifeCycleObserverBooter extends base_artifac
      */
     async load() {
         await super.load();
-        this.observers = this.classes.filter(core_2.isLifeCycleObserverClass);
+        this.observers = this.classes.filter(core_1.isLifeCycleObserverClass);
         for (const observer of this.observers) {
             debug('Bind life cycle observer: %s', observer.name);
             const binding = this.app.lifeCycleObserver(observer);
@@ -44,12 +43,12 @@ let LifeCycleObserverBooter = class LifeCycleObserverBooter extends base_artifac
         }
     }
 };
-LifeCycleObserverBooter = (0, tslib_1.__decorate)([
+LifeCycleObserverBooter = tslib_1.__decorate([
     (0, types_1.booter)('observers'),
-    (0, tslib_1.__param)(0, (0, core_1.inject)(core_2.CoreBindings.APPLICATION_INSTANCE)),
-    (0, tslib_1.__param)(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
-    (0, tslib_1.__param)(2, (0, core_1.config)()),
-    (0, tslib_1.__metadata)("design:paramtypes", [core_2.Application, String, Object])
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__param(1, (0, core_1.inject)(keys_1.BootBindings.PROJECT_ROOT)),
+    tslib_1.__param(2, (0, core_1.config)()),
+    tslib_1.__metadata("design:paramtypes", [core_1.Application, String, Object])
 ], LifeCycleObserverBooter);
 exports.LifeCycleObserverBooter = LifeCycleObserverBooter;
 /**

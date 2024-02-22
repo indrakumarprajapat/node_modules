@@ -1,6 +1,6 @@
 import { Model } from '@loopback/repository';
 import { OpenAPIObject, ReferenceObject, ResponseObject, SchemaObject } from 'openapi3-ts';
-export declare type OpenApiSpec = OpenAPIObject;
+export type OpenApiSpec = OpenAPIObject;
 export * from 'openapi3-ts';
 export declare const DEFAULT_OPENAPI_SPEC_INFO: {
     title: string;
@@ -19,11 +19,11 @@ export declare enum OperationVisibility {
     DOCUMENTED = "documented",
     UNDOCUMENTED = "undocumented"
 }
-export declare type ResponseModelOrSpec = typeof Model | SchemaObject | ResponseObject | ReferenceObject;
+export type ResponseModelOrSpec = typeof Model | SchemaObject | ResponseObject | ReferenceObject;
 export interface ResponseDecoratorMetadataItem {
     responseCode: number;
     contentType: string;
     responseModelOrSpec: ResponseModelOrSpec;
     description: string;
 }
-export declare type ResponseDecoratorMetadata = ResponseDecoratorMetadataItem[];
+export type ResponseDecoratorMetadata = ResponseDecoratorMetadataItem[];

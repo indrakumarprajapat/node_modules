@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,7 +12,7 @@ const util_1 = tslib_1.__importDefault(require("util"));
 const __1 = require("..");
 const ajv_factory_provider_1 = require("./ajv-factory.provider");
 const toJsonSchema = require('@openapi-contrib/openapi-schema-to-json-schema');
-const debug = debug_1.default('loopback:rest:validation');
+const debug = (0, debug_1.default)('loopback:rest:validation');
 /**
  * Check whether the request body is valid according to the provided OpenAPI schema.
  * The JSON schema is generated from the OpenAPI schema which is typically defined
@@ -32,12 +32,14 @@ async function validateRequestBody(body, requestBodySpec, globalSchemas = {}, op
         });
         throw err;
     }
+    if (!required && !body.value)
+        return;
     const schema = body.schema;
     /* istanbul ignore if */
     if (debug.enabled) {
         debug('Request body schema:', util_1.default.inspect(schema, { depth: null }));
         if (schema &&
-            openapi_v3_1.isReferenceObject(schema) &&
+            (0, openapi_v3_1.isReferenceObject)(schema) &&
             schema.$ref.startsWith('#/components/schemas/')) {
             const ref = schema.$ref.slice('#/components/schemas/'.length);
             debug('  referencing:', util_1.default.inspect(globalSchemas[ref], { depth: null }));
@@ -113,9 +115,9 @@ value, schema, globalSchemas = {}, options = {}) {
     }
     let validationErrors = [];
     try {
-        const validationResult = await validate(value);
+        const validationResult = validate(value);
         debug(`Value from ${options.source} passed AJV validation.`, validationResult);
-        return validationResult;
+        return await validationResult;
     }
     catch (error) {
         validationErrors = error.errors;
@@ -143,7 +145,7 @@ function buildErrorDetails(validationErrors) {
     return validationErrors.map((e) => {
         var _a;
         return {
-            path: e.dataPath,
+            path: e.instancePath,
             code: e.keyword,
             message: (_a = e.message) !== null && _a !== void 0 ? _a : `must pass validation rule ${e.keyword}`,
             info: e.params,
@@ -161,11 +163,11 @@ function createValidator(schema, globalSchemas = {}, ajvInst) {
     // Clone global schemas to set `$async: true` flag
     const schemas = {};
     for (const name in globalSchemas) {
-        // See https://github.com/strongloop/loopback-next/issues/4939
+        // See https://github.com/loopbackio/loopback-next/issues/4939
         schemas[name] = { ...globalSchemas[name], $async: true };
     }
     const schemaWithRef = { components: { schemas }, ...jsonSchema };
-    // See https://ajv.js.org/#asynchronous-validation for async validation
+    // See https://js.org/#asynchronous-validation for async validation
     schemaWithRef.$async = true;
     return ajvInst.compile(schemaWithRef);
 }

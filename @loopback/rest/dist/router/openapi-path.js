@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -20,7 +20,7 @@ const VALID_VARNAME_PATTERN = /^[A-Za-z0-9_]+$/;
  * modifier, custom pattern, or unnamed parameter is allowed.
  */
 function validateApiPath(path = '/') {
-    const tokens = path_to_regexp_1.parse(path);
+    const tokens = (0, path_to_regexp_1.parse)(path);
     for (const token of tokens) {
         if (typeof token === 'string')
             continue;

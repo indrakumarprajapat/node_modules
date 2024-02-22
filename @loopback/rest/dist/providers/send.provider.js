@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -19,12 +19,12 @@ const writer_1 = require("../writer");
  * response with operation results.
  */
 let SendProvider = class SendProvider {
-    value() {
+    static value() {
         return writer_1.writeResultToResponse;
     }
 };
 SendProvider = tslib_1.__decorate([
-    core_1.injectable({ scope: core_1.BindingScope.SINGLETON })
+    (0, core_1.injectable)({ scope: core_1.BindingScope.SINGLETON })
 ], SendProvider);
 exports.SendProvider = SendProvider;
 let SendResponseMiddlewareProvider = class SendResponseMiddlewareProvider {
@@ -52,7 +52,7 @@ let SendResponseMiddlewareProvider = class SendResponseMiddlewareProvider {
     }
 };
 SendResponseMiddlewareProvider = tslib_1.__decorate([
-    core_1.injectable(express_1.asMiddleware({
+    (0, core_1.injectable)((0, express_1.asMiddleware)({
         group: sequence_1.RestMiddlewareGroups.SEND_RESPONSE,
         downstreamGroups: [
             sequence_1.RestMiddlewareGroups.CORS,

@@ -11,6 +11,7 @@ const { knownKeywords, schemaVersions, knownVocabularies } = require('./known-ke
 const { initTracing, andDelta, orDelta, applyDelta, isDynamic, inProperties } = require('./tracing')
 
 const noopRegExps = new Set(['^[\\s\\S]*$', '^[\\S\\s]*$', '^[^]*$', '', '.*', '^', '$'])
+const primitiveTypes = ['null', 'boolean', 'number', 'integer', 'string']
 
 // for checking schema parts in consume()
 const schemaTypes = new Map(
@@ -25,6 +26,8 @@ const schemaTypes = new Map(
   })
 )
 const isPlainObject = schemaTypes.get('object')
+const isSchemaish = (arg) => isPlainObject(arg) || typeof arg === 'boolean'
+const deltaEmpty = (delta) => functions.deepEqual(delta, { type: [] })
 
 const schemaIsOlderThan = ($schema, ver) =>
   schemaVersions.indexOf($schema) > schemaVersions.indexOf(`https://json-schema.org/${ver}/schema`)
@@ -53,8 +56,11 @@ const generateMeta = (root, $schema, enforce, requireSchema) => {
     rootMeta.set(root, {
       exclusiveRefs: schemaIsOlderThan(version, 'draft/2019-09'),
       contentValidation: schemaIsOlderThan(version, 'draft/2019-09'),
+      dependentUnsupported: schemaIsOlderThan(version, 'draft/2019-09'),
       newItemsSyntax: !schemaIsOlderThan(version, 'draft/2020-12'),
       containsEvaluates: !schemaIsOlderThan(version, 'draft/2020-12'),
+      objectContains: !schemaIsOlderThan(version, 'draft/next'),
+      bookending: schemaIsOlderThan(version, 'draft/next'),
     })
   } else {
     enforce(!requireSchema, '[requireSchema] $schema is required')
@@ -248,8 +254,9 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
     }
 
     const unused = new Set(Object.keys(node))
+    const multiConsumable = new Set()
     const consume = (prop, ...ruleTypes) => {
-      enforce(unused.has(prop), 'Unexpected double consumption:', prop)
+      enforce(multiConsumable.has(prop) || unused.has(prop), 'Unexpected double consumption:', prop)
       enforce(functions.hasOwn(node, prop), 'Is not an own property:', prop)
       enforce(ruleTypes.every((t) => schemaTypes.has(t)), 'Invalid type used in consume')
       enforce(ruleTypes.some((t) => schemaTypes.get(t)(node[prop])), 'Unexpected type for', prop)
@@ -281,7 +288,13 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       })
     } else if (!getMeta()) saveMeta(root.$schema)
 
+    if (getMeta().objectContains) {
+      // When object contains is enabled, contains-related keywords can be consumed two times: in object branch and in array branch
+      for (const prop of ['contains', 'minContains', 'maxContains']) multiConsumable.add(prop)
+    }
+
     handle('examples', ['array'], null) // unused, meta-only
+    handle('example', ['jsonval'], null) // unused, meta-only, OpenAPI
     for (const ignore of ['title', 'description', '$comment']) handle(ignore, ['string'], null) // unused, meta-only strings
     for (const ignore of ['deprecated', 'readOnly', 'writeOnly']) handle(ignore, ['boolean'], null) // unused, meta-only flags
 
@@ -290,19 +303,24 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
     const compileSub = (sub, subR, path) =>
       sub === schema ? safe('validate') : getref(sub) || compileSchema(sub, subR, opts, scope, path)
     const basePath = () => (basePathStack.length > 0 ? basePathStack[basePathStack.length - 1] : '')
+    const basePathStackLength = basePathStack.length // to restore at exit
     const setId = ($id) => {
       basePathStack.push(joinPath(basePath(), $id))
       return null
     }
-    handle('$id', ['string'], setId) || handle('id', ['string'], setId)
-    handle('$anchor', ['string'], null) // $anchor is used only for ref resolution, on usage
-    handle('$dynamicAnchor', ['string'], null) // handled separately and on ref resolution
 
-    if (node.$recursiveAnchor || !forbidNoopValues) {
-      handle('$recursiveAnchor', ['boolean'], (isRecursive) => {
-        if (isRecursive) recursiveLog.push([node, root, basePath()])
-        return null
-      })
+    // None of the below should be handled if an exlusive pre-2019-09 $ref is present
+    if (!getMeta().exclusiveRefs || !node.$ref) {
+      handle('$id', ['string'], setId) || handle('id', ['string'], setId)
+      handle('$anchor', ['string'], null) // $anchor is used only for ref resolution, on usage
+      handle('$dynamicAnchor', ['string'], null) // handled separately and on ref resolution
+
+      if (node.$recursiveAnchor || !forbidNoopValues) {
+        handle('$recursiveAnchor', ['boolean'], (isRecursive) => {
+          if (isRecursive) recursiveLog.push([node, root, basePath()])
+          return null
+        })
+      }
     }
 
     // handle schema-wide dynamic anchors
@@ -339,14 +357,15 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       if (dyn.item && delta.item && stat.items !== Infinity)
         fun.write('%s.push(%s)', dyn.item, delta.item)
       if (dyn.items && delta.items > stat.items) fun.write('%s.push(%d)', dyn.items, delta.items)
-      if (dyn.props && delta.properties.includes(true) && !stat.properties.includes(true)) {
+      if (dyn.props && (delta.properties || []).includes(true) && !stat.properties.includes(true)) {
         fun.write('%s[0].push(true)', dyn.props)
       } else if (dyn.props) {
         const inStat = (properties, patterns) => inProperties(stat, { properties, patterns })
-        const properties = delta.properties.filter((x) => !inStat([x], []))
-        const patterns = delta.patterns.filter((x) => !inStat([], [x]))
+        const properties = (delta.properties || []).filter((x) => !inStat([x], []))
+        const patterns = (delta.patterns || []).filter((x) => !inStat([], [x]))
         if (properties.length > 0) fun.write('%s[0].push(...%j)', dyn.props, properties)
         if (patterns.length > 0) fun.write('%s[1].push(...%j)', dyn.props, patterns)
+        for (const sym of delta.propertiesVars || []) fun.write('%s[0].push(%s)', dyn.props, sym)
       }
     }
     const applyDynamicToDynamic = (target, item, items, props) => {
@@ -448,9 +467,19 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
     }
 
     // Extracted single additional(Items/Properties) rules, for reuse with unevaluated(Items/Properties)
+    const willRemoveAdditional = () => {
+      if (!removeAdditional) return false
+      if (removeAdditional === true) return true
+      if (removeAdditional === 'keyword') {
+        if (!node.removeAdditional) return false
+        consume('removeAdditional', 'boolean')
+        return true
+      }
+      throw new Error(`Invalid removeAdditional: ${removeAdditional}`)
+    }
     const additionalItems = (rulePath, limit, extra) => {
       const handled = handle(rulePath, ['object', 'boolean'], (ruleValue) => {
-        if (ruleValue === false && removeAdditional) {
+        if (ruleValue === false && willRemoveAdditional()) {
           fun.write('if (%s.length > %s) %s.length = %s', name, limit, name, limit)
           return null
         }
@@ -467,7 +496,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       const handled = handle(rulePath, ['object', 'boolean'], (ruleValue) => {
         forObjectKeys(current, (sub, key) => {
           fun.if(condition(key), () => {
-            if (ruleValue === false && removeAdditional) fun.write('delete %s[%s]', name, key)
+            if (ruleValue === false && willRemoveAdditional()) fun.write('delete %s[%s]', name, key)
             else rule(sub, ruleValue, subPath(rulePath))
           })
         })
@@ -480,6 +509,12 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         ...properties.map((p) => format('%s !== %j', key, p)),
         ...patternProperties.map((p) => safenot(patternTest(p, key)))
       )
+    const lintRequired = (properties, patterns) => {
+      const regexps = patterns.map((p) => new RegExp(p, 'u'))
+      const known = (key) => properties.includes(key) || regexps.some((r) => r.test(key))
+      for (const key of stat.required) enforce(known(key), `Unknown required property:`, key)
+    }
+    const finalLint = []
 
     /* Checks inside blocks are independent, they are happening on the same code depth */
 
@@ -507,7 +542,8 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       const multipleOf = node.multipleOf === undefined ? 'divisibleBy' : 'multipleOf' // draft3 support
       handle(multipleOf, ['finite'], (value) => {
         enforce(value > 0, `Invalid ${multipleOf}:`, value)
-        const [frac, exp] = `${value}.`.split('.')[1].split('e-')
+        const [part, exp] = `${value}`.split('e-')
+        const frac = `${part}.`.split('.')[1]
         const e = frac.length + (exp ? Number(exp) : 0)
         if (Number.isInteger(value * 2 ** e)) return format('%s %% %d !== 0', name, value) // exact
         scope.isMultipleOf = functions.isMultipleOf
@@ -634,30 +670,13 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         // As a result, omitting .items is not allowed by default, only in allowUnusedKeywords mode
       }
 
-      handle('contains', ['object', 'boolean'], () => {
-        uncertain('contains')
-        const passes = gensym('passes')
-        fun.write('let %s = 0', passes)
-
-        const suberr = suberror()
+      checkContains((run) => {
         forArray(current, format('0'), (prop, i) => {
-          const { sub } = subrule(suberr, prop, node.contains, subPath('contains'))
-          fun.if(sub, () => {
-            fun.write('%s++', passes)
-            if (getMeta().containsEvaluates) {
-              enforce(!removeAdditional, 'Can\'t use removeAdditional with draft2020+ "contains"')
-              evaluateDelta({ dyn: { item: true } })
-              evaluateDeltaDynamic({ item: i, items: [], properties: [], patterns: [] })
-            }
+          run(prop, () => {
+            evaluateDelta({ dyn: { item: true } })
+            evaluateDeltaDynamic({ item: i })
           })
         })
-
-        if (!handle('minContains', ['natural'], (mn) => format('%s < %d', passes, mn), { suberr }))
-          errorIf(format('%s < 1', passes), { path: ['contains'], suberr })
-
-        handle('maxContains', ['natural'], (max) => format('%s > %d', passes, max))
-        enforceMinMax('minContains', 'maxContains')
-        return null
       })
 
       const itemsSimple = (ischema) => {
@@ -665,7 +684,6 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         if (ischema.enum || functions.hasOwn(ischema, 'const')) return true
         if (ischema.type) {
           const itemTypes = Array.isArray(ischema.type) ? ischema.type : [ischema.type]
-          const primitiveTypes = ['null', 'boolean', 'number', 'integer', 'string']
           if (itemTypes.every((itemType) => primitiveTypes.includes(itemType))) return true
         }
         if (ischema.$ref) {
@@ -723,6 +741,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       })
 
       for (const dependencies of ['dependencies', 'dependentRequired', 'dependentSchemas']) {
+        if (dependencies !== 'dependencies' && getMeta().dependentUnsupported) continue
         handle(dependencies, ['object'], (value) => {
           for (const key of Object.keys(value)) {
             const deps = typeof value[key] === 'string' ? [value[key]] : value[key]
@@ -739,11 +758,8 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
               } else {
                 errorIf(safeand(present(item), condition), errorArgs)
               }
-            } else if (
-              ((typeof deps === 'object' && !Array.isArray(deps)) || typeof deps === 'boolean') &&
-              dependencies !== 'dependentRequired'
-            ) {
-              uncertain(dependencies)
+            } else if (isSchemaish(deps) && dependencies !== 'dependentRequired') {
+              uncertain(dependencies) // TODO: we don't always need this, remove when no uncertainity?
               fun.if(item.checked ? true : present(item), () => {
                 const delta = rule(current, deps, subPath(dependencies, key), dyn)
                 evaluateDelta(orDelta({}, delta))
@@ -754,6 +770,27 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
           return null
         })
       }
+
+      handle('propertyDependencies', ['object'], (propertyDependencies) => {
+        for (const [key, variants] of Object.entries(propertyDependencies)) {
+          enforce(isPlainObject(variants), 'propertyDependencies must be an object')
+          uncertain('propertyDependencies') // TODO: we don't always need this, remove when no uncertainity?
+          const item = currPropImm(key, checked(key))
+          // NOTE: would it be useful to also check if it's a string?
+          fun.if(item.checked ? true : present(item), () => {
+            for (const [val, deps] of Object.entries(variants)) {
+              enforce(isSchemaish(deps), 'propertyDependencies must contain schemas')
+              fun.if(compare(buildName(item), val), () => {
+                // TODO: we already know that we have an object here, optimize?
+                const delta = rule(current, deps, subPath('propertyDependencies', key, val), dyn)
+                evaluateDelta(orDelta({}, delta))
+                evaluateDeltaDynamic(delta)
+              })
+            }
+          })
+        }
+        return null
+      })
 
       handle('properties', ['object'], (properties) => {
         for (const p of Object.keys(properties)) {
@@ -780,10 +817,25 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         if (node.additionalProperties || node.additionalProperties === false) {
           const properties = Object.keys(node.properties || {})
           const patternProperties = Object.keys(node.patternProperties || {})
+          if (node.additionalProperties === false) {
+            // Postpone the check to the end when all nested .required are collected
+            finalLint.push(() => lintRequired(properties, patternProperties))
+          }
           const condition = (key) => additionalCondition(key, properties, patternProperties)
           additionalProperties('additionalProperties', condition)
         }
       })
+
+      if (getMeta().objectContains) {
+        checkContains((run) => {
+          forObjectKeys(current, (prop, i) => {
+            run(prop, () => {
+              evaluateDelta({ dyn: { properties: [true] } })
+              evaluateDeltaDynamic({ propertiesVars: [i] })
+            })
+          })
+        })
+      }
     }
 
     const checkConst = () => {
@@ -795,6 +847,39 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         return safenotor(...[...primitive, ...objects].map((value) => compare(name, value)))
       })
       return handledConst || handledEnum
+    }
+
+    const checkContains = (iterate) => {
+      // This can be called two times, 'object' and 'array' separately
+      handle('contains', ['object', 'boolean'], () => {
+        uncertain('contains')
+
+        if (getMeta().objectContains && typeApplicable('array') && typeApplicable('object')) {
+          enforceValidation("possible type confusion in 'contains',", "forbid 'object' or 'array'")
+        }
+
+        const passes = gensym('passes')
+        fun.write('let %s = 0', passes)
+
+        const suberr = suberror()
+        iterate((prop, evaluate) => {
+          const { sub } = subrule(suberr, prop, node.contains, subPath('contains'))
+          fun.if(sub, () => {
+            fun.write('%s++', passes)
+            if (getMeta().containsEvaluates) {
+              enforce(!removeAdditional, 'Can\'t use removeAdditional with draft2020+ "contains"')
+              evaluate()
+            }
+          })
+        })
+
+        if (!handle('minContains', ['natural'], (mn) => format('%s < %d', passes, mn), { suberr }))
+          errorIf(format('%s < 1', passes), { path: ['contains'], suberr })
+
+        handle('maxContains', ['natural'], (max) => format('%s > %d', passes, max))
+        enforceMinMax('minContains', 'maxContains')
+        return null
+      })
     }
 
     const checkGeneric = () => {
@@ -823,6 +908,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
             }
             return null
           })
+          if (!handleThen && !deltaEmpty(deltaIf)) handleThen = () => evaluateDeltaDynamic(deltaIf)
           fun.if(sub, handleThen, handleElse)
           evaluateDelta(orDelta(deltaElse || {}, andDelta(deltaIf, deltaThen || {})))
           return null
@@ -899,34 +985,65 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         return null
       })
 
+      // Mark the schema as uncertain if the path taken is not determined solely by the branch type
+      const uncertainBranchTypes = (key, arr) => {
+        // In general, { const: [] } can interfere with other { type: 'array' }
+        // Same for { const: {} } and { type: 'object' }
+        // So this check doesn't treat those as non-conflicting, and instead labels those as uncertain conflicts
+        const btypes = arr.map((x) => x.type || (Array.isArray(x.const) ? 'array' : typeof x.const)) // typeof can be 'undefined', but we don't care
+        const maybeObj = btypes.filter((x) => !primitiveTypes.includes(x) && x !== 'array').length
+        const maybeArr = btypes.filter((x) => !primitiveTypes.includes(x) && x !== 'object').length
+        if (maybeObj > 1 || maybeArr > 1) uncertain(`${key}, use discriminator to make it certain`)
+      }
+
       handle('anyOf', ['array'], (anyOf) => {
         enforce(anyOf.length > 0, 'anyOf cannot be empty')
         if (anyOf.length === 1) return performAllOf(anyOf)
         if (handleDiscriminator) return handleDiscriminator(anyOf, 'anyOf')
-        uncertain('anyOf, use discriminator to make it certain')
         const suberr = suberror()
         if (!canSkipDynamic()) {
+          uncertainBranchTypes('anyOf', anyOf) // const sorting for removeAdditional is not supported in dynamic mode
           // In this case, all have to be checked to gather evaluated properties
           const entries = Object.entries(anyOf).map(([key, sch]) =>
             subrule(suberr, current, sch, subPath('anyOf', key), dyn)
           )
-          evaluateDelta(entries.reduce((acc, cur) => orDelta(acc, cur.delta), {}))
-          const condition = safenotor(...entries.map(({ sub }) => sub))
-          errorIf(condition, { path: ['anyOf'], suberr })
+          evaluateDelta(entries.map((x) => x.delta).reduce((acc, cur) => orDelta(acc, cur)))
+          errorIf(safenotor(...entries.map(({ sub }) => sub)), { path: ['anyOf'], suberr })
           for (const { delta, sub } of entries) fun.if(sub, () => evaluateDeltaDynamic(delta))
           return null
         }
+        // We sort the variants to perform const comparisons first, then primitives/array/object/unknown
+        // This way, we can be sure that array/object + removeAdditional do not affect const evaluation
+        // Note that this _might_ e.g. remove all elements of an array in a 2nd branch _and_ fail with `const: []` in the 1st, but that's expected behavior
+        // This can be done because we can stop on the first match in anyOf if we don't need dynamic evaluation
+        const constBlocks = anyOf.filter((x) => functions.hasOwn(x, 'const'))
+        const otherBlocks = anyOf.filter((x) => !functions.hasOwn(x, 'const'))
+        uncertainBranchTypes('anyOf', otherBlocks)
+        const blocks = [...constBlocks, ...otherBlocks]
         let delta
-        let body = () => error({ path: ['anyOf'], suberr })
-        for (const [key, sch] of Object.entries(anyOf).reverse()) {
-          const oldBody = body
-          body = () => {
-            const { sub, delta: deltaVar } = subrule(suberr, current, sch, subPath('anyOf', key))
-            fun.if(safenot(sub), oldBody)
-            delta = delta ? orDelta(delta, deltaVar) : deltaVar
+
+        if (!getMeta().exclusiveRefs) {
+          // Under unevaluated* support, we can't optimize out branches using simple rules, see below
+          const entries = Object.entries(anyOf).map(([key, sch]) =>
+            subrule(suberr, current, sch, subPath('anyOf', key), dyn)
+          )
+          delta = entries.map((x) => x.delta).reduce((acc, cur) => orDelta(acc, cur))
+          errorIf(safenotor(...entries.map(({ sub }) => sub)), { path: ['anyOf'], suberr })
+        } else {
+          // Optimization logic below isn't stable under unevaluated* presence, as branches can be the sole reason of
+          // causing dynamic evaluation, and optimizing them out can miss the `if (!canSkipDynamic()) {` check above
+          let body = () => error({ path: ['anyOf'], suberr })
+          for (const [key, sch] of Object.entries(blocks).reverse()) {
+            const oldBody = body
+            body = () => {
+              const { sub, delta: deltaVar } = subrule(suberr, current, sch, subPath('anyOf', key))
+              fun.if(safenot(sub), oldBody) // this can exclude branches, see note above
+              delta = delta ? orDelta(delta, deltaVar) : deltaVar
+            }
           }
+          body()
         }
-        body()
+
         evaluateDelta(delta)
         return null
       })
@@ -935,7 +1052,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         enforce(oneOf.length > 0, 'oneOf cannot be empty')
         if (oneOf.length === 1) return performAllOf(oneOf)
         if (handleDiscriminator) return handleDiscriminator(oneOf, 'oneOf')
-        uncertain('oneOf, use discriminator to make it certain')
+        uncertainBranchTypes('oneOf', oneOf)
         const passes = gensym('passes')
         fun.write('let %s = 0', passes)
         const suberr = suberror()
@@ -994,6 +1111,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
             const condition = (key) => safeand(notStatic(key), notDynamic(key))
             additionalProperties('unevaluatedProperties', condition)
           } else {
+            if (node.unevaluatedProperties === false) lintRequired(stat.properties, stat.patterns)
             additionalProperties('unevaluatedProperties', notStatic)
           }
         }
@@ -1017,11 +1135,14 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       typeWrap(checkStrings, ['string'], types.get('string')(name))
       typeWrap(checkArrays, ['array'], types.get('array')(name))
       typeWrap(checkObjects, ['object'], types.get('object')(name))
+
       checkGeneric()
 
       // evaluated: apply static + dynamic
       typeWrap(checkArraysFinal, ['array'], types.get('array')(name))
       typeWrap(checkObjectsFinal, ['object'], types.get('object')(name))
+
+      for (const lint of finalLint) lint()
 
       // evaluated: propagate dynamic to parent dynamic (aka trace)
       // static to parent is merged via return value
@@ -1051,9 +1172,9 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         }
         return applyRef(compileSub(sub, subRoot, path), { path: ['$ref'] })
       })
-      if (node.$ref && getMeta().exclusiveRefs) {
+      if (getMeta().exclusiveRefs) {
         enforce(!opts[optDynamic], 'unevaluated* is supported only on draft2019-09 and above')
-        return // ref overrides any sibling keywords for older schemas
+        if (node.$ref) return // ref overrides any sibling keywords for older schemas
       }
       handle('$recursiveRef', ['string'], ($recursiveRef) => {
         if (!opts[optRecAnchors]) throw new Error('Recursive anchors are not enabled')
@@ -1069,9 +1190,20 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       })
       handle('$dynamicRef', ['string'], ($dynamicRef) => {
         if (!opts[optDynAnchors]) throw new Error('Dynamic anchors are not enabled')
-        enforce(/^[^#]*#[a-zA-Z0-9_-]+$/.test($dynamicRef), 'Unsupported $dynamicRef format')
+        laxMode(/^[^#]*#[a-zA-Z0-9_-]+$/.test($dynamicRef), 'Unsupported $dynamicRef format')
         const dynamicTail = $dynamicRef.replace(/^[^#]+/, '')
         const resolved = resolveReference(root, schemas, $dynamicRef, basePath())
+        if (!resolved[0] && !getMeta().bookending) {
+          // TODO: this is draft/next only atm, recheck if dynamicResolve() can fail in runtime and what should happen
+          // We have this allowed in lax mode only for now
+          // Ref: https://github.com/json-schema-org/json-schema-spec/issues/1064#issuecomment-947223332
+          // Ref: https://github.com/json-schema-org/json-schema-spec/pull/1139
+          // Ref: https://github.com/json-schema-org/json-schema-spec/issues/1140 (unresolved)
+          laxMode(false, '$dynamicRef bookending resolution failed (even though not required)')
+          scope.dynamicResolve = functions.dynamicResolve
+          const nrec = format('dynamicResolve(dynAnchors || [], %j)', dynamicTail)
+          return applyRef(nrec, { path: ['$dynamicRef'] })
+        }
         enforce(resolved[0], '$dynamicRef bookending resolution failed', $dynamicRef)
         const [sub, subRoot, path] = resolved[0]
         const ok = sub.$dynamicAnchor && `#${sub.$dynamicAnchor}` === dynamicTail
@@ -1079,7 +1211,7 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
         const n = compileSub(sub, subRoot, path)
         scope.dynamicResolve = functions.dynamicResolve
         const nrec = ok ? format('(dynamicResolve(dynAnchors || [], %j) || %s)', dynamicTail, n) : n
-        return applyRef(nrec, { path: ['$recursiveRef'] })
+        return applyRef(nrec, { path: ['$dynamicRef'] })
       })
 
       // typecheck
@@ -1123,6 +1255,8 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       fun.if(definitelyPresent ? true : present(current), writeMain)
     }
 
+    basePathStack.length = basePathStackLength // restore basePath
+
     // restore recursiveAnchor history if it's not empty and ends with current node
     if (recursiveLog[0] && recursiveLog[recursiveLog.length - 1][0] === node) recursiveLog.pop()
     if (isDynScope && node !== schema) fun.write('dynLocal.shift()') // restore dynamic scope, no need on top-level
@@ -1133,8 +1267,9 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
       const logicalOp = ['not', 'if', 'then', 'else'].includes(schemaPath[schemaPath.length - 1])
       const branchOp = ['oneOf', 'anyOf', 'allOf'].includes(schemaPath[schemaPath.length - 2])
       const depOp = ['dependencies', 'dependentSchemas'].includes(schemaPath[schemaPath.length - 2])
+      const propDepOp = ['propertyDependencies'].includes(schemaPath[schemaPath.length - 3])
       // Coherence check, unreachable, double-check that we came from expected path
-      enforce(logicalOp || branchOp || depOp, 'Unexpected')
+      enforce(logicalOp || branchOp || depOp || propDepOp, 'Unexpected logical path')
     } else if (!schemaPath.includes('not')) {
       // 'not' does not mark anything as evaluated (unlike even if/then/else), so it's safe to exclude from these
       // checks, as we are sure that everything will be checked without it. It can be viewed as a pure add-on.
@@ -1177,20 +1312,22 @@ const compileSchema = (schema, root, opts, scope, basePathRoot = '') => {
   return funname
 }
 
-const compile = (schema, opts) => {
+const compile = (schemas, opts) => {
+  if (!Array.isArray(schemas)) throw new Error('Expected an array of schemas')
   try {
     const scope = Object.create(null)
-    return { scope, ref: compileSchema(schema, schema, opts, scope) }
+    const { getref } = scopeMethods(scope)
+    return { scope, refs: schemas.map((s) => getref(s) || compileSchema(s, s, opts, scope)) }
   } catch (e) {
     // For performance, we try to build the schema without dynamic tracing first, then re-run with
     // it enabled if needed. Enabling it without need can give up to about 40% performance drop.
     if (!opts[optDynamic] && e.message === 'Dynamic unevaluated tracing is not enabled')
-      return compile(schema, { ...opts, [optDynamic]: true })
+      return compile(schemas, { ...opts, [optDynamic]: true })
     // Also enable dynamic and recursive refs only if needed
     if (!opts[optDynAnchors] && e.message === 'Dynamic anchors are not enabled')
-      return compile(schema, { ...opts, [optDynAnchors]: true })
+      return compile(schemas, { ...opts, [optDynAnchors]: true })
     if (!opts[optRecAnchors] && e.message === 'Recursive anchors are not enabled')
-      return compile(schema, { ...opts, [optRecAnchors]: true })
+      return compile(schemas, { ...opts, [optRecAnchors]: true })
     throw e
   }
 }

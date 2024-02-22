@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,12 +12,6 @@ const keys_1 = require("./keys");
  * (request, response, etc.).
  */
 class RequestContext extends express_1.MiddlewareContext {
-    constructor(request, response, parent, serverConfig, name) {
-        super(request, response, parent, name);
-        this.request = request;
-        this.response = response;
-        this.serverConfig = serverConfig;
-    }
     /**
      * Get the protocol used by the client to make the request.
      * Please note this protocol may be different from what we are observing
@@ -83,6 +77,12 @@ class RequestContext extends express_1.MiddlewareContext {
         // add port number of present
         host += port !== '' ? ':' + port : '';
         return protocol + '://' + host + this.basePath;
+    }
+    constructor(request, response, parent, serverConfig, name) {
+        super(request, response, parent, name);
+        this.request = request;
+        this.response = response;
+        this.serverConfig = serverConfig;
     }
     setupBindings() {
         super.setupBindings();

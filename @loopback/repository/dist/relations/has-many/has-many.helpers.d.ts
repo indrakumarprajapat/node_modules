@@ -3,7 +3,7 @@ import { HasManyDefinition } from '../relation.types';
  * Relation definition with optional metadata (e.g. `keyTo`) filled in.
  * @internal
  */
-export declare type HasManyResolvedDefinition = HasManyDefinition & {
+export type HasManyResolvedDefinition = HasManyDefinition & {
     keyFrom: string;
     keyTo: string;
 };

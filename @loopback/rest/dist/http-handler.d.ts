@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Context } from '@loopback/core';
 import { ComponentsObject, ControllerSpec, PathObject, ReferenceObject, SchemaObject, SchemasObject } from '@loopback/openapi-v3';
 import { RestServerResolvedConfig } from './rest.server';
@@ -13,7 +14,7 @@ export declare class HttpHandler {
     protected _openApiComponents: ComponentsObject;
     handleRequest: (request: Request, response: Response) => Promise<void>;
     constructor(_rootContext: Context, _serverConfig: RestServerResolvedConfig, _routes?: RoutingTable);
-    registerController<T>(spec: ControllerSpec, controllerCtor: ControllerClass<T>, controllerFactory?: ControllerFactory<T>): void;
+    registerController<T extends object>(spec: ControllerSpec, controllerCtor: ControllerClass<T>, controllerFactory?: ControllerFactory<T>): void;
     registerRoute(route: RouteEntry): void;
     /**
      * @deprecated Use `registerApiComponents`

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -9,6 +9,7 @@ import {
   HasManyDefinition,
   HasOneDefinition,
   JsonSchema,
+  ReferencesManyDefinition,
   RelationMetadata,
   RelationType,
 } from './index';
@@ -235,6 +236,24 @@ export class ModelDefinition {
       ...definition,
       name,
       type: RelationType.hasMany,
+      targetsMany: true,
+    };
+    return this.addRelation(meta);
+  }
+
+  /**
+   * Define a new referencesMany relation.
+   * @param name - The name of the referencesMany relation.
+   * @param definition - The definition of the referencesMany relation.
+   */
+  referencesMany(
+    name: string,
+    definition: Omit<ReferencesManyDefinition, 'name' | 'type' | 'targetsMany'>,
+  ): this {
+    const meta: ReferencesManyDefinition = {
+      ...definition,
+      name,
+      type: RelationType.referencesMany,
       targetsMany: true,
     };
     return this.addRelation(meta);

@@ -120,7 +120,7 @@ export declare namespace param {
          * @param name - Parameter name
          * @param schema - Optional OpenAPI Schema describing the object value.
          */
-        object: (name: string, schema?: SchemaObject | ReferenceObject, spec?: Partial<ParameterObject> | undefined) => (target: object, member: string, index: number) => void;
+        object: (name: string, schema?: SchemaObject | ReferenceObject, spec?: Partial<ParameterObject>) => (target: object, member: string, index: number) => void;
     };
     /**
      * Header parameter decorator

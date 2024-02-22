@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -37,7 +37,7 @@ let JWTAuthenticationStrategy = class JWTAuthenticationStrategy {
     }
 };
 JWTAuthenticationStrategy = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(keys_1.TokenServiceBindings.TOKEN_SERVICE)),
+    tslib_1.__param(0, (0, core_1.inject)(keys_1.TokenServiceBindings.TOKEN_SERVICE)),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], JWTAuthenticationStrategy);
 exports.JWTAuthenticationStrategy = JWTAuthenticationStrategy;

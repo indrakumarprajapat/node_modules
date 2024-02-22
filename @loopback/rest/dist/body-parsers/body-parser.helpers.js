@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.builtinParsers = exports.getParserOptions = exports.DEFAULT_LIMIT = exports.invokeBodyParserMiddleware = exports.normalizeParsingError = exports.getContentType = void 0;
 const tslib_1 = require("tslib");
 const debug_1 = tslib_1.__importDefault(require("debug"));
-const debug = debug_1.default('loopback:rest:body-parser');
+const debug = (0, debug_1.default)('loopback:rest:body-parser');
 /**
  * Get the content-type header value from the request
  * @param req - Http request

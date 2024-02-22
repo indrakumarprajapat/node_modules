@@ -76,13 +76,13 @@ export interface Injection<ValueType = BoundValue> {
  * @param resolve - Optional function to resolve the injection
  *
  */
-export declare function inject(bindingSelector: BindingSelector, metadata?: InjectionMetadata, resolve?: ResolverFunction): (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+export declare function inject(bindingSelector: BindingSelector, metadata?: InjectionMetadata, resolve?: ResolverFunction): (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: TypedPropertyDescriptor<BoundValue> | number) => void;
 /**
  * The function injected by `@inject.getter(bindingSelector)`. It can be used
  * to fetch bound value(s) from the underlying binding(s). The return value will
  * be an array if the `bindingSelector` is a `BindingFilter` function.
  */
-export declare type Getter<T> = () => Promise<T>;
+export type Getter<T> = () => Promise<T>;
 export declare namespace Getter {
     /**
      * Convert a value into a Getter returning that value.
@@ -101,7 +101,7 @@ export declare namespace Getter {
  * ```
  * @param value - The value for the underlying binding
  */
-export declare type Setter<T> = (value: T) => void;
+export type Setter<T> = (value: T) => void;
 /**
  * Metadata for `@inject.binding`
  */
@@ -126,7 +126,7 @@ export declare namespace inject {
      * value(s) from.
      * @param metadata - Optional metadata to help the injection
      */
-    const getter: (bindingSelector: BindingSelector<unknown>, metadata?: InjectionMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const getter: (bindingSelector: BindingSelector<unknown>, metadata?: InjectionMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * Inject a function for setting (binding) the given key to a given
      * value. (Only static/constant values are supported, it's not possible
@@ -140,7 +140,7 @@ export declare namespace inject {
      * @param bindingKey - The key of the value we want to set.
      * @param metadata - Optional metadata to help the injection
      */
-    const setter: (bindingKey: BindingAddress, metadata?: InjectBindingMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const setter: (bindingKey: BindingAddress, metadata?: InjectBindingMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * Inject the binding object for the given key. This is useful if a binding
      * needs to be set up beyond just a constant value allowed by
@@ -166,7 +166,7 @@ export declare namespace inject {
      * @param bindingKey - Binding key
      * @param metadata - Metadata for the injection
      */
-    const binding: (bindingKey?: string | BindingKey<unknown> | undefined, metadata?: InjectBindingMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const binding: (bindingKey?: string | BindingKey<unknown>, metadata?: InjectBindingMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * Inject an array of values by a tag pattern string or regexp
      *
@@ -181,7 +181,7 @@ export declare namespace inject {
      * @param bindingTag - Tag name, regex or object
      * @param metadata - Optional metadata to help the injection
      */
-    const tag: (bindingTag: BindingTag | RegExp, metadata?: InjectionMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const tag: (bindingTag: BindingTag | RegExp, metadata?: InjectionMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * Inject matching bound values by the filter function
      *
@@ -195,7 +195,7 @@ export declare namespace inject {
      * @param bindingFilter - A binding filter function
      * @param metadata
      */
-    const view: (bindingFilter: BindingFilter, metadata?: InjectionMetadata | undefined) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
+    const view: (bindingFilter: BindingFilter, metadata?: InjectionMetadata) => (target: Object, member: string | undefined, methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<any> | undefined) => void;
     /**
      * Inject the context object.
      *

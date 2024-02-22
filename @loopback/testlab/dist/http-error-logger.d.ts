@@ -5,5 +5,5 @@ import { Request } from 'express';
  * @param expectedStatusCode - HTTP status code that is expected
  */
 export declare function createUnexpectedHttpErrorLogger(expectedStatusCode?: number): LogError;
-declare type LogError = (err: Error, statusCode: number, request: Request) => void;
+type LogError = (err: Error, statusCode: number, request: Request) => void;
 export {};

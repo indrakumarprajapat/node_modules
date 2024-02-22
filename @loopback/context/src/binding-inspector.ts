@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -108,7 +108,7 @@ export function asClassOrProvider<T>(
         [ContextTags.TYPE]: ContextTags.DYNAMIC_VALUE_PROVIDER,
       });
     } else {
-      binding.toClass(target as Constructor<T>);
+      binding.toClass(target as Constructor<T & object>);
     }
   };
 }

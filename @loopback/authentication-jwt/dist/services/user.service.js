@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -27,7 +27,7 @@ let MyUserService = class MyUserService {
         if (!credentialsFound) {
             throw new rest_1.HttpErrors.Unauthorized(invalidCredentialsError);
         }
-        const passwordMatched = await bcryptjs_1.compare(credentials.password, credentialsFound.password);
+        const passwordMatched = await (0, bcryptjs_1.compare)(credentials.password, credentialsFound.password);
         if (!passwordMatched) {
             throw new rest_1.HttpErrors.Unauthorized(invalidCredentialsError);
         }
@@ -54,7 +54,7 @@ let MyUserService = class MyUserService {
     }
 };
 MyUserService = tslib_1.__decorate([
-    tslib_1.__param(0, repository_1.repository(repositories_1.UserRepository)),
+    tslib_1.__param(0, (0, repository_1.repository)(repositories_1.UserRepository)),
     tslib_1.__metadata("design:paramtypes", [repositories_1.UserRepository])
 ], MyUserService);
 exports.MyUserService = MyUserService;

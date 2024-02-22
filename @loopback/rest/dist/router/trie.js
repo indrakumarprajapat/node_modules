@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -165,9 +165,9 @@ function createNode(keys, index, value, parent) {
         child.value = value;
     }
     // Check if the key has variables such as `{var}`
-    const path = openapi_path_1.toExpressPath(key);
+    const path = (0, openapi_path_1.toExpressPath)(key);
     const params = [];
-    const re = path_to_regexp_1.pathToRegexp(path, params);
+    const re = (0, path_to_regexp_1.pathToRegexp)(path, params);
     if (params.length) {
         child.names = params.map(p => `${p.name}`);
         child.regexp = re;

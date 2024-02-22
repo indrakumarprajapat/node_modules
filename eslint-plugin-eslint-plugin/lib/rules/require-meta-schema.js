@@ -7,14 +7,17 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
     docs: {
       description: 'require rules to implement a `meta.schema` property',
       category: 'Rules',
-      recommended: false, // TODO: enable it in a major release.
+      recommended: true,
+      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/require-meta-schema.md',
     },
+    hasSuggestions: true,
     schema: [
       {
         type: 'object',
@@ -29,39 +32,43 @@ module.exports = {
     ],
     messages: {
       addEmptySchema: 'Add empty schema indicating the rule has no options.',
-      foundOptionsUsage: '`meta.schema` has no schema defined but rule has options.',
+      foundOptionsUsage:
+        '`meta.schema` has no schema defined but rule has options.',
       missing: '`meta.schema` is required (use [] if rule has no schema).',
-      wrongType: '`meta.schema` should be an array or object (use [] if rule has no schema).',
+      wrongType:
+        '`meta.schema` should be an array or object (use [] if rule has no schema).',
     },
-    hasSuggestions: true,
   },
 
-  create (context) {
+  create(context) {
     const sourceCode = context.getSourceCode();
     const { scopeManager } = sourceCode;
-    const info = utils.getRuleInfo(sourceCode);
-    if (info === null || info.meta === null) {
+    const ruleInfo = utils.getRuleInfo(sourceCode);
+    if (!ruleInfo) {
       return {};
     }
 
     let contextIdentifiers;
-    const metaNode = info.meta;
+    const metaNode = ruleInfo.meta;
     let schemaNode;
 
     // Options
-    const requireSchemaPropertyWhenOptionless = !context.options[0] || context.options[0].requireSchemaPropertyWhenOptionless;
+    const requireSchemaPropertyWhenOptionless =
+      !context.options[0] ||
+      context.options[0].requireSchemaPropertyWhenOptionless;
 
     let hasEmptySchema = false;
     let isUsingOptions = false;
 
     return {
-      Program (ast) {
-        contextIdentifiers = utils.getContextIdentifiers(context, ast);
+      Program(ast) {
+        contextIdentifiers = utils.getContextIdentifiers(scopeManager, ast);
 
-        schemaNode =
-          metaNode &&
-          metaNode.properties &&
-          metaNode.properties.find(p => p.type === 'Property' && utils.getKeyName(p) === 'schema');
+        schemaNode = utils
+          .evaluateObjectProperties(metaNode, scopeManager)
+          .find(
+            (p) => p.type === 'Property' && utils.getKeyName(p) === 'schema'
+          );
 
         if (!schemaNode) {
           return;
@@ -97,29 +104,42 @@ module.exports = {
           hasEmptySchema = true;
         }
 
-        if (!['ArrayExpression', 'ObjectExpression'].includes(value.type)) {
+        if (
+          value.type === 'Literal' ||
+          (value.type === 'Identifier' && value.name === 'undefined')
+        ) {
           context.report({ node: value, messageId: 'wrongType' });
         }
       },
 
-      'Program:exit' () {
+      'Program:exit'() {
         if (!schemaNode && requireSchemaPropertyWhenOptionless) {
           context.report({
-            node: metaNode,
+            node: metaNode || ruleInfo.create,
             messageId: 'missing',
-            suggest: isUsingOptions ? [] : [
-              {
-                messageId: 'addEmptySchema',
-                fix (fixer) {
-                  return utils.insertProperty(fixer, metaNode, 'schema: []', sourceCode);
-                },
-              },
-            ],
+            suggest:
+              !isUsingOptions &&
+              metaNode &&
+              metaNode.type === 'ObjectExpression'
+                ? [
+                    {
+                      messageId: 'addEmptySchema',
+                      fix(fixer) {
+                        return utils.insertProperty(
+                          fixer,
+                          metaNode,
+                          'schema: []',
+                          sourceCode
+                        );
+                      },
+                    },
+                  ]
+                : [],
           });
         }
       },
 
-      MemberExpression (node) {
+      MemberExpression(node) {
         // Check if `context.options` was used when no options were defined in `meta.schema`.
         if (
           (hasEmptySchema || !schemaNode) &&
@@ -129,7 +149,10 @@ module.exports = {
           node.property.name === 'options'
         ) {
           isUsingOptions = true;
-          context.report({ node: schemaNode || metaNode, messageId: 'foundOptionsUsage' });
+          context.report({
+            node: schemaNode || metaNode || ruleInfo.create,
+            messageId: 'foundOptionsUsage',
+          });
         }
       },
     };

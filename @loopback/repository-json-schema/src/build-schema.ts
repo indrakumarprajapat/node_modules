@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository-json-schema
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -120,7 +120,9 @@ export function getJsonSchema<T extends object>(
 ): JsonSchema {
   // In the near future the metadata will be an object with
   // different titles as keys
-  const cached = MetadataInspector.getClassMetadata(JSON_SCHEMA_KEY, ctor);
+  const cached = MetadataInspector.getClassMetadata(JSON_SCHEMA_KEY, ctor, {
+    ownMetadataOnly: true,
+  });
   const key = buildModelCacheKey(options);
   let schema = cached?.[key];
 
@@ -395,11 +397,11 @@ function getDescriptionSuffix<T extends object>(
     tsType = `Partial<${tsType}>`;
   }
   if (options.exclude) {
-    const excludedProps = options.exclude.map(p => `'${p}'`);
+    const excludedProps = options.exclude.map(p => `'${String(p)}'`);
     tsType = `Omit<${tsType}, ${excludedProps.join(' | ')}>`;
   }
   if (options.optional) {
-    const optionalProps = options.optional.map(p => `'${p}'`);
+    const optionalProps = options.optional.map(p => `'${String(p)}'`);
     tsType = `@loopback/repository-json-schema#Optional<${tsType}, ${optionalProps.join(
       ' | ',
     )}>`;
@@ -500,7 +502,9 @@ export function modelToJsonSchema<T extends object>(
     const referenceType = isArrayType(resolvedType)
       ? // shimks: ugly type casting; this should be replaced by logic to throw
         // error if itemType/type is not a string or a function
-        resolveType(metaProperty.itemType as string | Function)
+        typeof metaProperty.itemType === 'string'
+        ? resolveType(metaProperty.itemType)
+        : resolveType(metaProperty.itemType)
       : resolvedType;
 
     if (typeof referenceType !== 'function' || isBuiltinType(referenceType)) {
@@ -512,10 +516,16 @@ export function modelToJsonSchema<T extends object>(
       // Do not cascade `partial` to nested properties
       delete propOptions.partial;
     }
+    if (propOptions.includeRelations === true) {
+      // Do not cascade `includeRelations` to nested properties
+      delete propOptions.includeRelations;
+    }
     // `title` is the unique identity of a schema,
     // it should be removed from the `options`
     // when generating the relation or property schemas
     delete propOptions.title;
+    // Do not cascade `exclude` to nested properties.
+    delete propOptions.exclude;
 
     const propSchema = getJsonSchema(referenceType, propOptions);
 

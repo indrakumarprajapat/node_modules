@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/openapi-v3
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -101,7 +101,7 @@ function resolveControllerSpec(constructor) {
         const decoratedResponses = core_1.MetadataInspector.getMethodMetadata(keys_1.OAI3Keys.RESPONSE_METHOD_KEY, constructor.prototype, op);
         if (!operationSpec) {
             if (decoratedResponses) {
-                operationSpec = build_responses_from_metadata_1.buildResponsesFromMetadata(decoratedResponses);
+                operationSpec = (0, build_responses_from_metadata_1.buildResponsesFromMetadata)(decoratedResponses);
             }
             else {
                 // The operation was defined via @operation(verb, path) with no spec
@@ -112,7 +112,7 @@ function resolveControllerSpec(constructor) {
             endpoint.spec = operationSpec;
         }
         else if (decoratedResponses) {
-            operationSpec = build_responses_from_metadata_1.buildResponsesFromMetadata(decoratedResponses, operationSpec);
+            operationSpec.responses = (0, build_responses_from_metadata_1.buildResponsesFromMetadata)(decoratedResponses, operationSpec).responses;
         }
         if (classTags && !operationSpec.tags) {
             operationSpec.tags = classTags.tags;
@@ -139,7 +139,7 @@ function resolveControllerSpec(constructor) {
         }
         for (const code in operationSpec.responses) {
             const responseObject = operationSpec.responses[code];
-            if (types_1.isReferenceObject(responseObject))
+            if ((0, types_1.isReferenceObject)(responseObject))
                 continue;
             const content = (_g = responseObject.content) !== null && _g !== void 0 ? _g : {};
             for (const c in content) {
@@ -236,11 +236,11 @@ function resolveControllerSpec(constructor) {
             debug(`  Overriding ${endpointName} - endpoint was already defined`);
         }
         debug(`  adding ${endpointName}`, operationSpec);
-        spec.paths[path][verb] = operationSpec;
+        spec.paths[path][verb] = { ...endpoint.spec, ...operationSpec };
         debug(`  inferring schema object for method %s`, op);
         const opMetadata = core_1.MetadataInspector.getDesignTypeForMethod(constructor.prototype, op);
         const paramTypes = (_h = opMetadata === null || opMetadata === void 0 ? void 0 : opMetadata.parameterTypes) !== null && _h !== void 0 ? _h : [];
-        const isComplexType = (ctor) => !lodash_1.includes([String, Number, Boolean, Array, Object], ctor);
+        const isComplexType = (ctor) => !(0, lodash_1.includes)([String, Number, Boolean, Array, Object], ctor);
         for (const p of paramTypes) {
             if (isComplexType(p)) {
                 generateOpenAPISchema(spec, p);
@@ -286,12 +286,12 @@ function processSchemaExtensions(spec, schema) {
         });
     }
     else {
-        if (types_1.isReferenceObject(schema))
+        if ((0, types_1.isReferenceObject)(schema))
             return;
         const tsType = schema[exports.TS_TYPE_KEY];
         debug('  %s => %o', exports.TS_TYPE_KEY, tsType);
         if (tsType) {
-            schema = generate_schema_1.resolveSchema(tsType, schema);
+            schema = (0, generate_schema_1.resolveSchema)(tsType, schema);
             if (schema.$ref)
                 generateOpenAPISchema(spec, tsType);
             // We don't want a Function type in the final spec.
@@ -324,8 +324,8 @@ function generateOpenAPISchema(spec, tsType) {
         debug('    skipping type %j as already defined', tsType.name || tsType);
         return;
     }
-    const jsonSchema = repository_json_schema_1.getJsonSchema(tsType);
-    const openapiSchema = json_to_schema_1.jsonToSchemaObject(jsonSchema);
+    const jsonSchema = (0, repository_json_schema_1.getJsonSchema)(tsType);
+    const openapiSchema = (0, json_to_schema_1.jsonToSchemaObject)(jsonSchema);
     assignRelatedSchemas(spec, openapiSchema.definitions);
     delete openapiSchema.definitions;
     debug('    defining schema for %j: %j', tsType.name, openapiSchema);
@@ -390,8 +390,8 @@ exports.getControllerSpec = getControllerSpec;
  * @param options - Additional options
  */
 function getModelSchemaRef(modelCtor, options) {
-    const jsonSchema = repository_json_schema_1.getJsonSchemaRef(modelCtor, options);
-    return json_to_schema_1.jsonToSchemaObject(jsonSchema);
+    const jsonSchema = (0, repository_json_schema_1.getJsonSchemaRef)(modelCtor, options);
+    return (0, json_to_schema_1.jsonToSchemaObject)(jsonSchema);
 }
 exports.getModelSchemaRef = getModelSchemaRef;
 //# sourceMappingURL=controller-spec.js.map

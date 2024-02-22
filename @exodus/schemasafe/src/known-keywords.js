@@ -13,18 +13,21 @@ const knownKeywords = [
   ...['maxLength', 'minLength', 'format', 'pattern'], // strings
   ...['contentEncoding', 'contentMediaType', 'contentSchema'], // strings content
   ...['properties', 'maxProperties', 'minProperties', 'additionalProperties', 'patternProperties'], // objects
-  ...['propertyNames', 'dependencies', 'dependentRequired', 'dependentSchemas'], // objects
+  ...['propertyNames'], // objects
+  ...['dependencies', 'dependentRequired', 'dependentSchemas', 'propertyDependencies'], // objects (dependencies)
   ...['unevaluatedProperties', 'unevaluatedItems'], // see-through
   // Unused meta keywords not affecting validation (annotations and comments)
   // https://json-schema.org/understanding-json-schema/reference/generic.html
   // https://json-schema.org/draft/2019-09/json-schema-validation.html#rfc.section.9
   ...['title', 'description', 'deprecated', 'readOnly', 'writeOnly', 'examples', '$comment'], // unused meta
+  ...['example'], // unused meta, OpenAPI
   'discriminator', // optimization hint and error filtering only, does not affect validation result
+  'removeAdditional', // optional keyword for { removeAdditional: 'keyword' } config, to target specific objects
 ]
 
 // Order is important, newer first!
 const schemaDrafts = [
-  ...['draft/future'], // not recommended to use, might change / break in an unexpected way
+  ...['draft/next'], // not recommended to use, might change / break in an unexpected way
   ...['draft/2020-12', 'draft/2019-09'], // new
   ...['draft-07', 'draft-06', 'draft-04', 'draft-03'], // historic
 ]
@@ -33,7 +36,7 @@ const schemaVersions = schemaDrafts.map((draft) => `https://json-schema.org/${dr
 const vocab2019 = ['core', 'applicator', 'validation', 'meta-data', 'format', 'content']
 const vocab2020 = [
   ...['core', 'applicator', 'unevaluated', 'validation'],
-  ...['meta-data', 'format-annotation', 'content'],
+  ...['meta-data', 'format-annotation', 'format-assertion', 'content'],
 ]
 const knownVocabularies = [
   ...vocab2019.map((v) => `https://json-schema.org/draft/2019-09/vocab/${v}`),

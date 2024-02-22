@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,7 +8,6 @@ exports.config = void 0;
 const binding_key_1 = require("./binding-key");
 const context_view_1 = require("./context-view");
 const inject_1 = require("./inject");
-const resolution_session_1 = require("./resolution-session");
 const value_promise_1 = require("./value-promise");
 /**
  * Inject a property from `config` of the current binding. If no corresponding
@@ -128,15 +127,16 @@ function resolveFromConfig(ctx, injection, session) {
 function resolveAsGetterFromConfig(ctx, injection, session) {
     (0, inject_1.assertTargetType)(injection, Function, 'Getter function');
     const bindingKey = getTargetBindingKey(injection, session);
-    // We need to clone the session for the getter as it will be resolved later
-    const forkedSession = resolution_session_1.ResolutionSession.fork(session);
     const meta = injection.metadata;
     return async function getter() {
         // Return `undefined` if no current binding is present
         if (!bindingKey)
             return undefined;
         return ctx.getConfigAsValueOrPromise(bindingKey, meta.propertyPath, {
-            session: forkedSession,
+            // https://github.com/loopbackio/loopback-next/issues/9041
+            // We should start with a new session for `getter` resolution to avoid
+            // possible circular dependencies
+            session: undefined,
             optional: meta.optional,
         });
     };

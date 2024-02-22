@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -7,8 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.invokeMethod = exports.InvocationContext = void 0;
 const tslib_1 = require("tslib");
 const metadata_1 = require("@loopback/metadata");
-const assert_1 = (0, tslib_1.__importDefault)(require("assert"));
-const debug_1 = (0, tslib_1.__importDefault)(require("debug"));
+const assert_1 = tslib_1.__importDefault(require("assert"));
+const debug_1 = tslib_1.__importDefault(require("debug"));
 const context_1 = require("./context");
 const interceptor_1 = require("./interceptor");
 const resolver_1 = require("./resolver");

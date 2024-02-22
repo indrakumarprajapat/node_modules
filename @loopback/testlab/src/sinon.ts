@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/testlab
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -30,7 +30,7 @@ export type StubbedInstanceWithSinonAccessor<T> = T & {
  * @returns A stubbed version of the constructor, with an extra property `stubs`
  * providing access to stub API for individual methods.
  */
-export function createStubInstance<TType>(
+export function createStubInstance<TType extends object>(
   constructor: sinon.StubbableType<TType>,
 ): StubbedInstanceWithSinonAccessor<TType> {
   const stub = sinon.createStubInstance(constructor);

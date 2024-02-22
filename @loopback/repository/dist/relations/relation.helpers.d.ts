@@ -11,7 +11,7 @@ import { AnyObject, Entity, EntityCrudRepository, Filter, InclusionFilter, Optio
 export declare function findByForeignKeys<Target extends Entity, TargetRelations extends object, ForeignKey extends StringKeyOf<Target>>(targetRepository: EntityCrudRepository<Target, unknown, TargetRelations>, fkName: ForeignKey, fkValues: Target[ForeignKey][] | Target[ForeignKey], scope?: Filter<Target> & {
     totalLimit?: number;
 }, options?: Options): Promise<(Target & TargetRelations)[]>;
-export declare type StringKeyOf<T> = Extract<keyof T, string>;
+export type StringKeyOf<T> = Extract<keyof T, string>;
 /**
  * Returns model instances that include related models that have a registered
  * resolver.
@@ -59,7 +59,7 @@ export declare function flattenMapByKeys<T>(sourceIds: unknown[], targetMap: Map
  * @param keyName - key name of the source
  * @param reducer - a strategy to reduce inputs to single item or array
  */
-export declare function buildLookupMap<Key, InType, OutType = InType>(list: InType[], keyName: StringKeyOf<InType>, reducer: (accumulator: OutType | undefined, current: InType) => OutType): Map<Key, OutType>;
+export declare function buildLookupMap<Key, InType extends object, OutType = InType>(list: InType[], keyName: StringKeyOf<InType>, reducer: (accumulator: OutType | undefined, current: InType) => OutType): Map<Key, OutType>;
 /**
  * Returns value of a keyName. Aims to resolve ObjectId problem of Mongo.
  *

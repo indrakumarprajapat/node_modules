@@ -1,8 +1,8 @@
 /**
  * A class constructor accepting arbitrary arguments.
  */
-export declare type Constructor<T> = new (...args: any[]) => T;
-export declare type BoundValue = any;
+export type Constructor<T> = new (...args: any[]) => T;
+export type BoundValue = any;
 /**
  * Representing a value or promise. This type is used to represent results of
  * synchronous/asynchronous resolution of values.
@@ -12,8 +12,8 @@ export declare type BoundValue = any;
  * any Promise implementation (e.g. Bluebird) instead of native Promises
  * provided by JavaScript runtime.
  */
-export declare type ValueOrPromise<T> = T | PromiseLike<T>;
-export declare type MapObject<T> = Record<string, T>;
+export type ValueOrPromise<T> = T | PromiseLike<T>;
+export type MapObject<T> = Record<string, T>;
 /**
  * Check whether a value is a Promise-like instance.
  * Recognizes both native promises and third-party promise libraries.

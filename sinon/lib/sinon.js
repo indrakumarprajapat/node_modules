@@ -1,16 +1,15 @@
 "use strict";
 
-var behavior = require("./sinon/behavior");
-var createSandbox = require("./sinon/create-sandbox");
-var extend = require("./sinon/util/core/extend");
-var fakeTimers = require("./sinon/util/fake-timers");
-var format = require("./sinon/util/core/format");
-var nise = require("nise");
-var Sandbox = require("./sinon/sandbox");
-var stub = require("./sinon/stub");
-var promise = require("./sinon/promise");
+const behavior = require("./sinon/behavior");
+const createSandbox = require("./sinon/create-sandbox");
+const extend = require("./sinon/util/core/extend");
+const fakeTimers = require("./sinon/util/fake-timers");
+const nise = require("nise");
+const Sandbox = require("./sinon/sandbox");
+const stub = require("./sinon/stub");
+const promise = require("./sinon/promise");
 
-var apiMethods = {
+const apiMethods = {
     createSandbox: createSandbox,
     assert: require("./sinon/assert"),
     match: require("@sinonjs/samsam").createMatcher,
@@ -18,8 +17,6 @@ var apiMethods = {
 
     expectation: require("./sinon/mock-expectation"),
     defaultConfig: require("./sinon/util/core/default-config"),
-
-    setFormatter: format.setFormatter,
 
     // fake timers
     timers: fakeTimers.timers,
@@ -44,8 +41,8 @@ var apiMethods = {
     promise: promise,
 };
 
-var sandbox = new Sandbox();
+const sandbox = new Sandbox();
 
-var api = extend(sandbox, apiMethods);
+const api = extend(sandbox, apiMethods);
 
 module.exports = api;

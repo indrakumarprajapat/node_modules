@@ -10,13 +10,15 @@ const utils = require('../utils');
 // Rule Definition
 // ------------------------------------------------------------------------------
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'disallow rule exports where the export is a function',
+      description: 'disallow function-style rules',
       category: 'Rules',
-      recommended: false,
+      recommended: true,
+      url: 'https://github.com/eslint-community/eslint-plugin-eslint-plugin/tree/HEAD/docs/rules/prefer-object-rule.md',
     },
     fixable: 'code',
     schema: [],
@@ -25,31 +27,37 @@ module.exports = {
     },
   },
 
-  create (context) {
+  create(context) {
     // ----------------------------------------------------------------------
     // Public
     // ----------------------------------------------------------------------
 
     const sourceCode = context.getSourceCode();
     const ruleInfo = utils.getRuleInfo(sourceCode);
+    if (!ruleInfo) {
+      return {};
+    }
 
     return {
-      Program () {
-        if (!ruleInfo || ruleInfo.isNewStyle) {
+      Program() {
+        if (ruleInfo.isNewStyle) {
           return;
         }
 
         context.report({
           node: ruleInfo.create,
           messageId: 'preferObject',
-          *fix (fixer) {
+          *fix(fixer) {
             // note - we intentionally don't worry about formatting here, as otherwise we have
             //        to indent the function correctly
 
-            if (ruleInfo.create.type === 'FunctionExpression') {
+            if (
+              ruleInfo.create.type === 'FunctionExpression' ||
+              ruleInfo.create.type === 'FunctionDeclaration'
+            ) {
               const openParenToken = sourceCode.getFirstToken(
                 ruleInfo.create,
-                token => token.type === 'Punctuator' && token.value === '('
+                (token) => token.type === 'Punctuator' && token.value === '('
               );
 
               /* istanbul ignore if */

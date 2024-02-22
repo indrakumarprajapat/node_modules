@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -61,7 +61,7 @@ var RestBindings;
      * Binding key for setting and injecting Reject action's error handling
      * options.
      *
-     * See https://github.com/strongloop/strong-error-handler#options for
+     * See https://github.com/loopbackio/strong-error-handler#options for
      * the list of available options. Please note that the flag `log` is not used
      * by `@loopback/rest`.
      */

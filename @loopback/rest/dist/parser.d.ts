@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { RequestBodyParser } from './body-parsers';
 import { ResolvedRoute } from './router';
 import { OperationArgs, Request, ValidationOptions } from './types';

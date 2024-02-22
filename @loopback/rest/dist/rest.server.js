@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -25,7 +25,7 @@ const request_context_1 = require("./request-context");
 const router_1 = require("./router");
 const router_spec_1 = require("./router/router-spec");
 const sequence_1 = require("./sequence");
-const debug = debug_1.default('loopback:rest:server');
+const debug = (0, debug_1.default)('loopback:rest:server');
 const SequenceActions = keys_1.RestBindings.SequenceActions;
 /**
  * A REST API server for use with Loopback.
@@ -55,6 +55,47 @@ const SequenceActions = keys_1.RestBindings.SequenceActions;
  * ```
  */
 let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    get OASEnhancer() {
+        this._setupOASEnhancerIfNeeded();
+        return this.oasEnhancerService;
+    }
+    get requestHandler() {
+        if (this._requestHandler == null) {
+            this._setupRequestHandlerIfNeeded();
+        }
+        return this._requestHandler;
+    }
+    get httpHandler() {
+        this._setupHandlerIfNeeded();
+        return this._httpHandler;
+    }
+    get listening() {
+        return this._httpServer ? this._httpServer.listening : false;
+    }
+    get httpServer() {
+        return this._httpServer;
+    }
+    /**
+     * The base url for the server, including the basePath if set. For example,
+     * the value will be 'http://localhost:3000/api' if `basePath` is set to
+     * '/api'.
+     */
+    get url() {
+        let serverUrl = this.rootUrl;
+        if (!serverUrl)
+            return serverUrl;
+        serverUrl = serverUrl + (this._basePath || '');
+        return serverUrl;
+    }
+    /**
+     * The root url for the server without the basePath. For example, the value
+     * will be 'http://localhost:3000' regardless of the `basePath`.
+     */
+    get rootUrl() {
+        var _a;
+        return (_a = this._httpServer) === null || _a === void 0 ? void 0 : _a.url;
+    }
     /**
      *
      * Creates an instance of RestServer.
@@ -95,59 +136,18 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
         this.bind(keys_1.RestBindings.BASE_PATH).toDynamicValue(() => this._basePath);
         this.bind(keys_1.RestBindings.HANDLER).toDynamicValue(() => this.httpHandler);
     }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    get OASEnhancer() {
-        this._setupOASEnhancerIfNeeded();
-        return this._OASEnhancer;
-    }
-    get requestHandler() {
-        if (this._requestHandler == null) {
-            this._setupRequestHandlerIfNeeded();
-        }
-        return this._requestHandler;
-    }
-    get httpHandler() {
-        this._setupHandlerIfNeeded();
-        return this._httpHandler;
-    }
-    get listening() {
-        return this._httpServer ? this._httpServer.listening : false;
-    }
-    get httpServer() {
-        return this._httpServer;
-    }
-    /**
-     * The base url for the server, including the basePath if set. For example,
-     * the value will be 'http://localhost:3000/api' if `basePath` is set to
-     * '/api'.
-     */
-    get url() {
-        let serverUrl = this.rootUrl;
-        if (!serverUrl)
-            return serverUrl;
-        serverUrl = serverUrl + (this._basePath || '');
-        return serverUrl;
-    }
-    /**
-     * The root url for the server without the basePath. For example, the value
-     * will be 'http://localhost:3000' regardless of the `basePath`.
-     */
-    get rootUrl() {
-        var _a;
-        return (_a = this._httpServer) === null || _a === void 0 ? void 0 : _a.url;
-    }
     _setupOASEnhancerIfNeeded() {
-        if (this._OASEnhancer != null)
+        if (this.oasEnhancerService != null)
             return;
-        this.add(core_1.createBindingFromClass(openapi_v3_1.OASEnhancerService, {
+        this.add((0, core_1.createBindingFromClass)(openapi_v3_1.OASEnhancerService, {
             key: openapi_v3_1.OASEnhancerBindings.OAS_ENHANCER_SERVICE,
         }));
-        this._OASEnhancer = this.getSync(openapi_v3_1.OASEnhancerBindings.OAS_ENHANCER_SERVICE);
+        this.oasEnhancerService = this.getSync(openapi_v3_1.OASEnhancerBindings.OAS_ENHANCER_SERVICE);
     }
     _setupRequestHandlerIfNeeded() {
         if (this._expressApp != null)
             return;
-        this._expressApp = express_2.default();
+        this._expressApp = (0, express_2.default)();
         this._applyExpressSettings();
         this._requestHandler = this._expressApp;
         // Allow CORS support for all endpoints so that users
@@ -156,7 +156,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
             injectConfiguration: false,
             key: 'middleware.cors',
             group: sequence_1.RestMiddlewareGroups.CORS,
-        }).apply(core_1.extensionFor(keys_1.RestTags.REST_MIDDLEWARE_CHAIN, keys_1.RestTags.ACTION_MIDDLEWARE_CHAIN));
+        }).apply((0, core_1.extensionFor)(keys_1.RestTags.REST_MIDDLEWARE_CHAIN, keys_1.RestTags.ACTION_MIDDLEWARE_CHAIN));
         // Set up endpoints for OpenAPI spec/ui
         this._setupOpenApiSpecEndpoints();
         // Mount our router & request handler
@@ -181,7 +181,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
                     return reject({ request: req, response: res }, err);
                 }
                 // Use strong-error handler directly
-                strong_error_handler_1.writeErrorToResponse(err, req, res);
+                (0, strong_error_handler_1.writeErrorToResponse)(err, req, res);
             })
                 .catch(unexpectedErr => next(unexpectedErr));
         };
@@ -219,7 +219,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
         this.expressMiddleware('middleware.apiSpec.defaults', router, {
             group: sequence_1.RestMiddlewareGroups.API_SPEC,
             upstreamGroups: sequence_1.RestMiddlewareGroups.CORS,
-        }).apply(core_1.extensionFor(keys_1.RestTags.REST_MIDDLEWARE_CHAIN, keys_1.RestTags.ACTION_MIDDLEWARE_CHAIN));
+        }).apply((0, core_1.extensionFor)(keys_1.RestTags.REST_MIDDLEWARE_CHAIN, keys_1.RestTags.ACTION_MIDDLEWARE_CHAIN));
     }
     /**
      * Add a new non-controller endpoint hosting a form of the OpenAPI spec.
@@ -252,12 +252,12 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
         if (this._httpHandler)
             return;
         // Watch for binding events
-        // See https://github.com/strongloop/loopback-next/issues/433
+        // See https://github.com/loopbackio/loopback-next/issues/433
         const routesObserver = {
-            filter: binding => core_1.filterByKey(keys_1.RestBindings.API_SPEC.key)(binding) ||
-                (core_1.filterByKey(/^(controllers|routes)\..+/)(binding) &&
+            filter: binding => (0, core_1.filterByKey)(keys_1.RestBindings.API_SPEC.key)(binding) ||
+                ((0, core_1.filterByKey)(/^(controllers|routes)\..+/)(binding) &&
                     // Exclude controller routes to avoid circular events
-                    !core_1.filterByTag(keys_1.RestTags.CONTROLLER_ROUTE)(binding)),
+                    !(0, core_1.filterByTag)(keys_1.RestTags.CONTROLLER_ROUTE)(binding)),
             observe: () => {
                 // Rebuild the HttpHandler instance whenever a controller/route was
                 // added/deleted.
@@ -287,7 +287,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
             if (!ctor) {
                 throw new Error(`The controller ${controllerName} was not bound via .toClass()`);
             }
-            const apiSpec = openapi_v3_1.getControllerSpec(ctor);
+            const apiSpec = (0, openapi_v3_1.getControllerSpec)(ctor);
             if (!apiSpec) {
                 // controller methods are specified through app.api() spec
                 debug('Skipping controller %s - no API spec provided', controllerName);
@@ -297,8 +297,8 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
             if (apiSpec.components) {
                 this._httpHandler.registerApiComponents(apiSpec.components);
             }
-            const controllerFactory = router_1.createControllerFactoryForBinding(b.key);
-            const routes = router_1.createRoutesForController(apiSpec, ctor, controllerFactory);
+            const controllerFactory = (0, router_1.createControllerFactoryForBinding)(b.key);
+            const routes = (0, router_1.createRoutesForController)(apiSpec, ctor, controllerFactory);
             for (const route of routes) {
                 const binding = this.bindRoute(route);
                 binding
@@ -347,7 +347,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
             if (!ctor) {
                 throw new Error(`The controller ${controllerName} was not bound via .toClass()`);
             }
-            const controllerFactory = router_1.createControllerFactoryForBinding(b.key);
+            const controllerFactory = (0, router_1.createControllerFactoryForBinding)(b.key);
             const route = new router_1.ControllerRoute(verb, path, spec, ctor, controllerFactory);
             this._httpHandler.registerRoute(route);
             return;
@@ -364,7 +364,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
             response.end(spec, 'utf-8');
         }
         else {
-            const yaml = js_yaml_1.safeDump(specObj, {});
+            const yaml = (0, js_yaml_1.dump)(specObj, {});
             response.setHeader('content-type', 'text/yaml; charset=utf-8');
             response.end(yaml, 'utf-8');
         }
@@ -515,17 +515,17 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
      */
     async getApiSpec(requestContext) {
         let spec = await this.get(keys_1.RestBindings.API_SPEC);
-        spec = lodash_1.cloneDeep(spec);
+        spec = (0, lodash_1.cloneDeep)(spec);
         const components = this.httpHandler.getApiComponents();
         // Apply deep clone to prevent getApiSpec() callers from
         // accidentally modifying our internal routing data
-        const paths = lodash_1.cloneDeep(this.httpHandler.describeApiPaths());
+        const paths = (0, lodash_1.cloneDeep)(this.httpHandler.describeApiPaths());
         spec.paths = { ...paths, ...spec.paths };
         if (components) {
-            const defs = lodash_1.cloneDeep(components);
+            const defs = (0, lodash_1.cloneDeep)(components);
             spec.components = { ...spec.components, ...defs };
         }
-        router_spec_1.assignRouterSpec(spec, this._externalRoutes.routerSpec);
+        (0, router_spec_1.assignRouterSpec)(spec, this._externalRoutes.routerSpec);
         if (requestContext) {
             spec = this.updateSpecFromRequest(spec, requestContext);
         }
@@ -578,7 +578,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
      * @param sequenceClass - The sequence class to invoke for each incoming request.
      */
     sequence(sequenceClass) {
-        const sequenceBinding = core_1.createBindingFromClass(sequenceClass, {
+        const sequenceBinding = (0, core_1.createBindingFromClass)(sequenceClass, {
             key: keys_1.RestBindings.SEQUENCE,
         });
         this.add(sequenceBinding);
@@ -698,7 +698,7 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
         }
         const fileName = outFile.toLowerCase();
         if (fileName.endsWith('.yaml') || fileName.endsWith('.yml')) {
-            const yaml = js_yaml_1.safeDump(spec);
+            const yaml = (0, js_yaml_1.dump)(spec);
             fs_1.default.writeFileSync(outFile, yaml, 'utf-8');
         }
         else {
@@ -709,8 +709,8 @@ let RestServer = class RestServer extends express_1.BaseMiddlewareRegistry {
     }
 };
 RestServer = tslib_1.__decorate([
-    tslib_1.__param(0, core_1.inject(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    tslib_1.__param(1, core_1.inject(keys_1.RestBindings.CONFIG, { optional: true })),
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__param(1, (0, core_1.inject)(keys_1.RestBindings.CONFIG, { optional: true })),
     tslib_1.__metadata("design:paramtypes", [core_1.Application, Object])
 ], RestServer);
 exports.RestServer = RestServer;
@@ -721,7 +721,7 @@ exports.RestServer = RestServer;
  * @param name - Name of the value
  */
 function assertExists(val, name) {
-    assert_1.default(val != null, `The value of ${name} cannot be null or undefined`);
+    (0, assert_1.default)(val != null, `The value of ${name} cannot be null or undefined`);
 }
 /**
  * Create a binding for the given body parser class
@@ -757,7 +757,7 @@ const DEFAULT_CONFIG = {
     listenOnStart: true,
 };
 function resolveRestServerConfig(config) {
-    const result = Object.assign(lodash_1.cloneDeep(DEFAULT_CONFIG), config);
+    const result = Object.assign((0, lodash_1.cloneDeep)(DEFAULT_CONFIG), config);
     // Can't check falsiness, 0 is a valid port.
     if (result.port == null) {
         result.port = 3000;
@@ -769,7 +769,7 @@ function resolveRestServerConfig(config) {
     if (!result.openApiSpec.endpointMapping) {
         // mapping may be mutated by addOpenApiSpecEndpoint, be sure that doesn't
         // pollute the default mapping configuration
-        result.openApiSpec.endpointMapping = lodash_1.cloneDeep(OPENAPI_SPEC_MAPPING);
+        result.openApiSpec.endpointMapping = (0, lodash_1.cloneDeep)(OPENAPI_SPEC_MAPPING);
     }
     result.apiExplorer = normalizeApiExplorerConfig(config.apiExplorer);
     if (result.openApiSpec.disabled) {
@@ -782,7 +782,8 @@ function normalizeApiExplorerConfig(input) {
     var _a, _b, _c;
     const config = input !== null && input !== void 0 ? input : {};
     const url = (_a = config.url) !== null && _a !== void 0 ? _a : 'https://explorer.loopback.io';
-    config.httpUrl = (_c = (_b = config.httpUrl) !== null && _b !== void 0 ? _b : config.url) !== null && _c !== void 0 ? _c : 'http://explorer.loopback.io';
+    config.httpUrl =
+        (_c = (_b = config.httpUrl) !== null && _b !== void 0 ? _b : config.url) !== null && _c !== void 0 ? _c : 'http://explorer.loopback.io';
     config.url = url;
     return config;
 }

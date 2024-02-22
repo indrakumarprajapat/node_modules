@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -12,8 +12,8 @@ const debug_1 = tslib_1.__importDefault(require("debug"));
 const on_finished_1 = tslib_1.__importDefault(require("on-finished"));
 const util_1 = require("util");
 const keys_1 = require("./keys");
-const debug = debug_1.default('loopback:middleware');
-const onFinishedAsync = util_1.promisify(on_finished_1.default);
+const debug = (0, debug_1.default)('loopback:middleware');
+const onFinishedAsync = (0, util_1.promisify)(on_finished_1.default);
 /**
  * Execute an Express-style callback-based request handler.
  *
@@ -161,7 +161,8 @@ class ExpressMiddlewareInterceptorProvider {
             var _a;
             // Get the latest configuration
             if (this.middlewareConfigView != null) {
-                this.middlewareConfig = (_a = (await this.middlewareConfigView.singleValue())) !== null && _a !== void 0 ? _a : this.middlewareConfig;
+                this.middlewareConfig =
+                    (_a = (await this.middlewareConfigView.singleValue())) !== null && _a !== void 0 ? _a : this.middlewareConfig;
             }
             if (this.interceptor == null) {
                 // Create a new interceptor for the first time or recreate it if it
@@ -190,7 +191,7 @@ exports.ExpressMiddlewareInterceptorProvider = ExpressMiddlewareInterceptorProvi
 function defineInterceptorProvider(middlewareFactory, defaultMiddlewareConfig, options) {
     let className = options === null || options === void 0 ? void 0 : options.providerClassName;
     className = buildName(middlewareFactory, className);
-    assert_1.default(className, 'className is missing and it cannot be inferred.');
+    (0, assert_1.default)(className, 'className is missing and it cannot be inferred.');
     const defineNamedClass = new Function('middlewareFactory', 'defaultMiddlewareConfig', 'MiddlewareInterceptorProvider', 'createInterceptor', `return class ${className} extends MiddlewareInterceptorProvider {
        constructor(middlewareConfig) {
          super(
@@ -210,7 +211,7 @@ function defineInterceptorProvider(middlewareFactory, defaultMiddlewareConfig, o
     }
     else {
         // Inject the config
-        core_1.config()(cls, '', 0);
+        (0, core_1.config)()(cls, '', 0);
     }
     return cls;
 }
@@ -263,7 +264,7 @@ function registerExpressMiddlewareInterceptor(ctx, middlewareFactory, middleware
             .to(createInterceptor(middlewareFactory, middlewareConfig));
         if (options.global) {
             binding.tag({ [core_1.ContextTags.GLOBAL_INTERCEPTOR_SOURCE]: 'route' });
-            binding.apply(core_1.asGlobalInterceptor(options.group));
+            binding.apply((0, core_1.asGlobalInterceptor)(options.group));
         }
         return binding;
     }
@@ -289,13 +290,13 @@ function createMiddlewareInterceptorBinding(middlewareProviderClass, options = {
     const namespace = options.global
         ? keys_1.GLOBAL_MIDDLEWARE_INTERCEPTOR_NAMESPACE
         : keys_1.MIDDLEWARE_INTERCEPTOR_NAMESPACE;
-    const binding = core_1.createBindingFromClass(middlewareProviderClass, {
+    const binding = (0, core_1.createBindingFromClass)(middlewareProviderClass, {
         defaultScope: core_1.BindingScope.SINGLETON,
         namespace,
     });
     if (options.global) {
         binding.tag({ [core_1.ContextTags.GLOBAL_INTERCEPTOR_SOURCE]: 'route' });
-        binding.apply(core_1.asGlobalInterceptor(options.group));
+        binding.apply((0, core_1.asGlobalInterceptor)(options.group));
     }
     return binding;
 }

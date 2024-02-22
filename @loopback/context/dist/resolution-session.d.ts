@@ -6,7 +6,7 @@ import { BoundValue, ValueOrPromise } from './value-promise';
 /**
  * A function to be executed with the resolution session
  */
-export declare type ResolutionAction = (session: ResolutionSession) => ValueOrPromise<BoundValue>;
+export type ResolutionAction = (session: ResolutionSession) => ValueOrPromise<BoundValue>;
 /**
  * Wrapper for bindings tracked by resolution sessions
  */
@@ -29,7 +29,7 @@ export interface InjectionDescriptor {
 /**
  * Binding or injection elements tracked by resolution sessions
  */
-export declare type ResolutionElement = BindingElement | InjectionElement;
+export type ResolutionElement = BindingElement | InjectionElement;
 /**
  * Object to keep states for a session to resolve bindings and their
  * dependencies within a context
@@ -140,7 +140,7 @@ export interface ResolutionOptions {
 /**
  * Resolution options or session
  */
-export declare type ResolutionOptionsOrSession = ResolutionOptions | ResolutionSession;
+export type ResolutionOptionsOrSession = ResolutionOptions | ResolutionSession;
 /**
  * Normalize ResolutionOptionsOrSession to ResolutionOptions
  * @param optionsOrSession - resolution options or session

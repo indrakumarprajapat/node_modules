@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest-explorer
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -35,11 +35,11 @@ let RestExplorerComponent = class RestExplorerComponent {
         }, rest_explorer_controller_1.ExplorerController, (0, rest_1.createControllerFactoryForClass)(rest_explorer_controller_1.ExplorerController), methodName);
     }
 };
-RestExplorerComponent = (0, tslib_1.__decorate)([
+RestExplorerComponent = tslib_1.__decorate([
     (0, core_1.injectable)({ tags: { [core_1.ContextTags.KEY]: rest_explorer_keys_1.RestExplorerBindings.COMPONENT.key } }),
-    (0, tslib_1.__param)(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
-    (0, tslib_1.__param)(1, (0, core_1.config)()),
-    (0, tslib_1.__metadata)("design:paramtypes", [rest_1.RestApplication, Object])
+    tslib_1.__param(0, (0, core_1.inject)(core_1.CoreBindings.APPLICATION_INSTANCE)),
+    tslib_1.__param(1, (0, core_1.config)()),
+    tslib_1.__metadata("design:paramtypes", [rest_1.RestApplication, Object])
 ], RestExplorerComponent);
 exports.RestExplorerComponent = RestExplorerComponent;
 //# sourceMappingURL=rest-explorer.component.js.map

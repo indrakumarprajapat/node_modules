@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -38,7 +38,7 @@ import {PathParams} from 'express-serve-static-core';
 import fs from 'fs';
 import {IncomingMessage, ServerResponse} from 'http';
 import {ServerOptions} from 'https';
-import {safeDump} from 'js-yaml';
+import {dump} from 'js-yaml';
 import {cloneDeep} from 'lodash';
 import {ServeStaticOptions} from 'serve-static';
 import {writeErrorToResponse} from 'strong-error-handler';
@@ -113,7 +113,8 @@ const SequenceActions = RestBindings.SequenceActions;
  */
 export class RestServer
   extends BaseMiddlewareRegistry
-  implements Server, HttpServerLike {
+  implements Server, HttpServerLike
+{
   /**
    * Handle incoming HTTP(S) request by invoking the corresponding
    * Controller method via the configured Sequence.
@@ -134,11 +135,11 @@ export class RestServer
    * @param res - The response.
    */
 
-  protected _OASEnhancer: OASEnhancerService;
+  protected oasEnhancerService: OASEnhancerService;
   // eslint-disable-next-line @typescript-eslint/naming-convention
   public get OASEnhancer(): OASEnhancerService {
     this._setupOASEnhancerIfNeeded();
-    return this._OASEnhancer;
+    return this.oasEnhancerService;
   }
 
   protected _requestHandler: HttpRequestListener;
@@ -244,13 +245,15 @@ export class RestServer
   }
 
   protected _setupOASEnhancerIfNeeded() {
-    if (this._OASEnhancer != null) return;
+    if (this.oasEnhancerService != null) return;
     this.add(
       createBindingFromClass(OASEnhancerService, {
         key: OASEnhancerBindings.OAS_ENHANCER_SERVICE,
       }),
     );
-    this._OASEnhancer = this.getSync(OASEnhancerBindings.OAS_ENHANCER_SERVICE);
+    this.oasEnhancerService = this.getSync(
+      OASEnhancerBindings.OAS_ENHANCER_SERVICE,
+    );
   }
 
   protected _setupRequestHandlerIfNeeded() {
@@ -395,7 +398,7 @@ export class RestServer
     if (this._httpHandler) return;
 
     // Watch for binding events
-    // See https://github.com/strongloop/loopback-next/issues/433
+    // See https://github.com/loopbackio/loopback-next/issues/433
     const routesObserver: ContextObserver = {
       filter: binding =>
         filterByKey(RestBindings.API_SPEC.key)(binding) ||
@@ -449,7 +452,9 @@ export class RestServer
       if (apiSpec.components) {
         this._httpHandler.registerApiComponents(apiSpec.components);
       }
-      const controllerFactory = createControllerFactoryForBinding(b.key);
+      const controllerFactory = createControllerFactoryForBinding<object>(
+        b.key,
+      );
       const routes = createRoutesForController(
         apiSpec,
         ctor,
@@ -514,12 +519,14 @@ export class RestServer
         );
       }
 
-      const controllerFactory = createControllerFactoryForBinding(b.key);
+      const controllerFactory = createControllerFactoryForBinding<object>(
+        b.key,
+      );
       const route = new ControllerRoute(
         verb,
         path,
         spec,
-        ctor,
+        ctor as ControllerClass<object>,
         controllerFactory,
       );
       this._httpHandler.registerRoute(route);
@@ -551,7 +558,7 @@ export class RestServer
       response.setHeader('content-type', 'application/json; charset=utf-8');
       response.end(spec, 'utf-8');
     } else {
-      const yaml = safeDump(specObj, {});
+      const yaml = dump(specObj, {});
       response.setHeader('content-type', 'text/yaml; charset=utf-8');
       response.end(yaml, 'utf-8');
     }
@@ -626,7 +633,7 @@ export class RestServer
    * @param controllerFactory - A factory function to create controller instance
    * @param methodName - The name of the controller method
    */
-  route<I>(
+  route<I extends object>(
     verb: string,
     path: string,
     spec: OperationObject,
@@ -675,7 +682,7 @@ export class RestServer
    */
   route(route: RouteEntry): Binding;
 
-  route<T>(
+  route<T extends object>(
     routeOrVerb: RouteEntry | string,
     path?: string,
     spec?: OperationObject,
@@ -1043,7 +1050,7 @@ export class RestServer
     }
     const fileName = outFile.toLowerCase();
     if (fileName.endsWith('.yaml') || fileName.endsWith('.yml')) {
-      const yaml = safeDump(spec);
+      const yaml = dump(spec);
       fs.writeFileSync(outFile, yaml, 'utf-8');
     } else {
       const json = JSON.stringify(spec, null, 2);
@@ -1144,7 +1151,7 @@ export interface ApiExplorerOptions {
    * URL for the API explorer served over `http` protocol to deal with mixed
    * content security imposed by browsers as the spec is exposed over `http` by
    * default.
-   * See https://github.com/strongloop/loopback-next/issues/1603
+   * See https://github.com/loopbackio/loopback-next/issues/1603
    */
   httpUrl?: string;
 

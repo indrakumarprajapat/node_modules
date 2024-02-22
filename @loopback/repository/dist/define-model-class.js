@@ -1,12 +1,12 @@
 "use strict";
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineModelClass = void 0;
 const tslib_1 = require("tslib");
-const assert = (0, tslib_1.__importStar)(require("assert"));
+const assert = tslib_1.__importStar(require("assert"));
 const decorators_1 = require("./decorators");
 /**
  * Create (define) a new model class with the given name and definition.

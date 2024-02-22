@@ -26,7 +26,7 @@ export interface Node<T> {
      */
     names?: string[];
 }
-export declare type NodeWithValue<T> = Node<T> & {
+export type NodeWithValue<T> = Node<T> & {
     value: T;
 };
 export interface ResolvedNode<T> {

@@ -6,7 +6,7 @@ import { UserRepository } from '../repositories';
  * A pre-defined type for user credentials. It assumes a user logs in
  * using the email and password. You can modify it if your app has different credential fields
  */
-export declare type Credentials = {
+export type Credentials = {
     email: string;
     password: string;
 };

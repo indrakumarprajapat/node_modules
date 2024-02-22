@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2019. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2019. All Rights Reserved.
 // Node module: @loopback/rest
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -14,7 +14,7 @@ const ajv_factory_provider_1 = require("../validation/ajv-factory.provider");
 const utils_1 = require("./utils");
 const validator_1 = require("./validator");
 const isRFC3339 = require('validator/lib/isRFC3339');
-const debug = debug_1.default('loopback:rest:coercion');
+const debug = (0, debug_1.default)('loopback:rest:coercion');
 /**
  * Coerce the http raw data to a JavaScript type data of a parameter
  * according to its OpenAPI schema specification.
@@ -25,12 +25,12 @@ const debug = debug_1.default('loopback:rest:coercion');
  */
 async function coerceParameter(data, spec, options) {
     const schema = extractSchemaFromSpec(spec);
-    if (!schema || openapi_v3_1.isReferenceObject(schema)) {
+    if (!schema || (0, openapi_v3_1.isReferenceObject)(schema)) {
         debug('The parameter with schema %s is not coerced since schema' +
             'dereference is not supported yet.', schema);
         return data;
     }
-    const OAIType = utils_1.getOAIPrimitiveType(schema.type, schema.format);
+    const OAIType = (0, utils_1.getOAIPrimitiveType)(schema.type, schema.format);
     const validator = new validator_1.Validator({ parameterSpec: spec });
     validator.validateParamBeforeCoercion(data);
     if (data === undefined)
@@ -62,11 +62,14 @@ async function coerceParameter(data, spec, options) {
             result = coerceBoolean(data, spec);
             break;
         case 'object':
-            result = await coerceObject(data, spec);
+            result = await coerceObject(data, spec, options);
             break;
         case 'string':
         case 'password':
             result = coerceString(data, spec);
+            break;
+        case 'array':
+            result = coerceArray(data, spec);
             break;
     }
     if (result != null) {
@@ -92,10 +95,10 @@ function coerceBuffer(data, spec) {
     return Buffer.from(data, 'base64');
 }
 function coerceDatetime(data, spec, options) {
-    if (typeof data === 'object' || utils_1.isEmpty(data))
+    if (typeof data === 'object' || (0, utils_1.isEmpty)(data))
         throw __1.RestHttpErrors.invalidData(data, spec.name);
     if (options === null || options === void 0 ? void 0 : options.dateOnly) {
-        if (!utils_1.matchDateFormat(data))
+        if (!(0, utils_1.matchDateFormat)(data))
             throw __1.RestHttpErrors.invalidData(data, spec.name);
     }
     else {
@@ -103,12 +106,12 @@ function coerceDatetime(data, spec, options) {
             throw __1.RestHttpErrors.invalidData(data, spec.name);
     }
     const coercedDate = new Date(data);
-    if (!utils_1.isValidDateTime(coercedDate))
+    if (!(0, utils_1.isValidDateTime)(coercedDate))
         throw __1.RestHttpErrors.invalidData(data, spec.name);
     return coercedDate;
 }
 function coerceNumber(data, spec) {
-    if (typeof data === 'object' || utils_1.isEmpty(data))
+    if (typeof data === 'object' || (0, utils_1.isEmpty)(data))
         throw __1.RestHttpErrors.invalidData(data, spec.name);
     const coercedNum = Number(data);
     if (isNaN(coercedNum))
@@ -117,7 +120,7 @@ function coerceNumber(data, spec) {
     return coercedNum;
 }
 function coerceInteger(data, spec, options) {
-    if (typeof data === 'object' || utils_1.isEmpty(data))
+    if (typeof data === 'object' || (0, utils_1.isEmpty)(data))
         throw __1.RestHttpErrors.invalidData(data, spec.name);
     const coercedInt = Number(data);
     if (isNaN(coercedInt))
@@ -134,16 +137,16 @@ function coerceInteger(data, spec, options) {
     return coercedInt;
 }
 function coerceBoolean(data, spec) {
-    if (typeof data === 'object' || utils_1.isEmpty(data))
+    if (typeof data === 'object' || (0, utils_1.isEmpty)(data))
         throw __1.RestHttpErrors.invalidData(data, spec.name);
-    if (utils_1.isTrue(data))
+    if ((0, utils_1.isTrue)(data))
         return true;
-    if (utils_1.isFalse(data))
+    if ((0, utils_1.isFalse)(data))
         return false;
     throw __1.RestHttpErrors.invalidData(data, spec.name);
 }
-async function coerceObject(input, spec) {
-    const data = parseJsonIfNeeded(input, spec);
+async function coerceObject(input, spec, options) {
+    const data = parseJsonIfNeeded(input, spec, options);
     if (data == null) {
         // Skip any further checks and coercions, nothing we can do with `undefined`
         return data;
@@ -152,13 +155,21 @@ async function coerceObject(input, spec) {
         throw __1.RestHttpErrors.invalidData(input, spec.name);
     return data;
 }
+function coerceArray(data, spec) {
+    if (spec.in === 'query') {
+        if (data == null || Array.isArray(data))
+            return data;
+        return [data];
+    }
+    return data;
+}
 function validateParam(spec, 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 data, options = ajv_factory_provider_1.DEFAULT_AJV_VALIDATION_OPTIONS) {
     const schema = extractSchemaFromSpec(spec);
     if (schema) {
         // Apply coercion based on properties defined by spec.schema
-        return __1.validateValueAgainstSchema(data, schema, {}, { ...options, coerceTypes: true, source: 'parameter', name: spec.name });
+        return (0, __1.validateValueAgainstSchema)(data, schema, {}, { ...options, coerceTypes: true, source: 'parameter', name: spec.name });
     }
     return data;
 }
@@ -178,7 +189,7 @@ function extractSchemaFromSpec(spec) {
     }
     return schema;
 }
-function parseJsonIfNeeded(data, spec) {
+function parseJsonIfNeeded(data, spec, options) {
     if (typeof data !== 'string')
         return data;
     if (spec.in !== 'query' || (spec.in === 'query' && !spec.content)) {
@@ -190,7 +201,7 @@ function parseJsonIfNeeded(data, spec) {
         return undefined;
     }
     try {
-        const result = parse_json_1.parseJson(data);
+        const result = (0, parse_json_1.parseJson)(data, (0, parse_json_1.sanitizeJsonParse)(undefined, options === null || options === void 0 ? void 0 : options.prohibitedKeys));
         debug('Parsed parameter %s as %j', spec.name, result);
         return result;
     }

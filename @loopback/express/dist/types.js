@@ -1,10 +1,10 @@
 "use strict";
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MiddlewareGroups = exports.MIDDLEWARE_CONTEXT = exports.DEFAULT_MIDDLEWARE_CHAIN = exports.MiddlewareChain = exports.MiddlewareContext = exports.Router = void 0;
+exports.MiddlewareGroups = exports.MIDDLEWARE_CONTEXT = exports.DEFAULT_MIDDLEWARE_CHAIN = exports.MiddlewareChain = exports.getMiddlewareContext = exports.MiddlewareContext = exports.Router = void 0;
 const tslib_1 = require("tslib");
 const core_1 = require("@loopback/core");
 const on_finished_1 = tslib_1.__importDefault(require("on-finished"));
@@ -32,8 +32,12 @@ class MiddlewareContext extends core_1.Context {
          */
         this.responseFinished = false;
         this.scope = core_1.BindingScope.REQUEST;
+        // Set the request context as a property of Express request object so that
+        // downstream Express native integration can access `RequestContext`
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        request[exports.MIDDLEWARE_CONTEXT] = this;
         this.setupBindings();
-        on_finished_1.default(this.response, () => {
+        (0, on_finished_1.default)(this.response, () => {
             this.responseFinished = true;
             // Close the request context when the http response is finished so that
             // it can be recycled by GC
@@ -47,6 +51,18 @@ class MiddlewareContext extends core_1.Context {
 }
 exports.MiddlewareContext = MiddlewareContext;
 /**
+ * A helper function to retrieve the MiddlewareContext/RequestContext from the
+ * request object
+ * @param request - Express request object
+ */
+function getMiddlewareContext(request) {
+    if (request == null)
+        return undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return request[exports.MIDDLEWARE_CONTEXT];
+}
+exports.getMiddlewareContext = getMiddlewareContext;
+/**
  * An interceptor chain of middleware. This represents a list of cascading
  * middleware functions to be executed by the order of `group` names.
  */
@@ -58,9 +74,10 @@ exports.MiddlewareChain = MiddlewareChain;
  */
 exports.DEFAULT_MIDDLEWARE_CHAIN = 'middlewareChain.default';
 /**
- * A symbol to store `MiddlewareContext` on the request object
+ * A symbol to store `MiddlewareContext` on the request object.  This symbol
+ * can be referenced by name, before it is created.
  */
-exports.MIDDLEWARE_CONTEXT = Symbol('loopback.middleware.context');
+exports.MIDDLEWARE_CONTEXT = Symbol.for('loopback.middleware.context');
 /**
  * Constants for middleware groups
  */

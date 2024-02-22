@@ -5,7 +5,7 @@ import { ServiceOrProviderClass } from './application';
  * not have reflections at runtime. We use a string, a symbol or a Function as
  * the type for the service interface.
  */
-export declare type ServiceInterface = string | symbol | Function;
+export type ServiceInterface = string | symbol | Function;
 /**
  * Options to register a service binding
  */

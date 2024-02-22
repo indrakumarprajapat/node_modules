@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2019,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2019,2020. All Rights Reserved.
 // Node module: @loopback/core
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -61,7 +61,11 @@ function service(serviceInterface, metadata) {
             throw new Error('Service class cannot be inferred from design type. Use @service(ServiceClass).');
         }
         const view = new context_1.ContextView(ctx, filterByServiceInterface(serviceType));
-        const result = view.resolve(session);
+        const result = view.resolve({
+            optional: metadata === null || metadata === void 0 ? void 0 : metadata.optional,
+            asProxyWithInterceptors: metadata === null || metadata === void 0 ? void 0 : metadata.asProxyWithInterceptors,
+            session,
+        });
         const serviceTypeName = typeof serviceType === 'string'
             ? serviceType
             : typeof serviceType === 'symbol'

@@ -3,9 +3,12 @@ import { HasOneDefinition } from '../relation.types';
  * Relation definition with optional metadata (e.g. `keyTo`) filled in.
  * @internal
  */
-export declare type HasOneResolvedDefinition = HasOneDefinition & {
+export type HasOneResolvedDefinition = HasOneDefinition & {
     keyFrom: string;
     keyTo: string;
+    polymorphic: false | {
+        discriminator: string;
+    };
 };
 /**
  * Resolves given hasOne metadata if target is specified to be a resolver.

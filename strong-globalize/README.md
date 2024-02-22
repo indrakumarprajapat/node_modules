@@ -2,10 +2,6 @@
 
 This module is the runtime library for globalization.
 
-## Supported Node.js versions
-
-Node 10.x latest version and above are supported.
-
 ## Table of contents
 
 * [Architecture](#architecture)

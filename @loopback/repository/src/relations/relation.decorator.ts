@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/repository
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -74,17 +74,5 @@ export function referencesOne(definition?: Object) {
   const rel = Object.assign({type: RelationType.referencesOne}, definition);
   return PropertyDecoratorFactory.createDecorator(RELATIONS_KEY, rel, {
     decoratorName: '@referencesOne',
-  });
-}
-
-/**
- * Decorator for referencesMany
- * @param definition
- * @returns A property decorator
- */
-export function referencesMany(definition?: Object) {
-  const rel = Object.assign({type: RelationType.referencesMany}, definition);
-  return PropertyDecoratorFactory.createDecorator(RELATIONS_KEY, rel, {
-    decoratorName: '@referencesMany',
   });
 }

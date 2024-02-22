@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2018,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2018,2020. All Rights Reserved.
 // Node module: @loopback/context
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -8,10 +8,6 @@ exports.BindingKey = void 0;
 const unique_id_1 = require("./unique-id");
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 class BindingKey {
-    constructor(key, propertyPath) {
-        this.key = key;
-        this.propertyPath = propertyPath;
-    }
     /**
      * Create a new key for a binding bound to a value of type `ValueType`.
      *
@@ -36,6 +32,10 @@ class BindingKey {
             return new BindingKey(key, propertyPath);
         }
         return BindingKey.parseKeyWithPath(key);
+    }
+    constructor(key, propertyPath) {
+        this.key = key;
+        this.propertyPath = propertyPath;
     }
     toString() {
         return this.propertyPath
@@ -85,7 +85,7 @@ class BindingKey {
         if (index === -1) {
             return new BindingKey(keyWithPath);
         }
-        return BindingKey.create(keyWithPath.substr(0, index).trim(), keyWithPath.substr(index + 1));
+        return BindingKey.create(keyWithPath.slice(0, index).trim(), keyWithPath.slice(index + 1));
     }
     /**
      * Build a binding key for the configuration of the given binding.

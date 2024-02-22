@@ -90,19 +90,6 @@ describe('Memory connector with mocked discovery', function() {
     });
   });
 
-  it('should have jsonSchema: {nullable: true} in property for `available`', function(done) {
-    ds.discoverSchemas('INVENTORY', {}, function(err, schemas) {
-      if (err) return done(err);
-      schemas.should.have.property('STRONGLOOP.INVENTORY');
-      const s = schemas['STRONGLOOP.INVENTORY'];
-      s.name.should.be.eql('Inventory');
-      s.properties.available.should.have.property('jsonSchema');
-      s.properties.available.jsonSchema.should.have.property('nullable');
-      s.properties.available.jsonSchema.nullable.should.be.eql(true);
-      done();
-    });
-  });
-
   it('should keep the column names the same as database', function(done) {
     ds.discoverSchemas('INVENTORY', {disableCamelCase: true}, function(err, schemas) {
       if (err) return done(err);
@@ -224,9 +211,6 @@ describe('Memory connector with mocked discovery', function() {
         properties: {
           available: {
             length: null,
-            jsonSchema: {
-              nullable: true,
-            },
             memory: {
               columnName: 'AVAILABLE',
               dataLength: null,
@@ -244,9 +228,6 @@ describe('Memory connector with mocked discovery', function() {
           },
           locationId: {
             length: 20,
-            jsonSchema: {
-              nullable: false,
-            },
             memory: {
               columnName: 'LOCATION_ID',
               dataLength: 20,
@@ -264,9 +245,6 @@ describe('Memory connector with mocked discovery', function() {
           },
           productId: {
             length: 20,
-            jsonSchema: {
-              nullable: false,
-            },
             memory: {
               columnName: 'PRODUCT_ID',
               dataLength: 20,
@@ -284,9 +262,6 @@ describe('Memory connector with mocked discovery', function() {
           },
           total: {
             length: null,
-            jsonSchema: {
-              nullable: true,
-            },
             memory: {
               columnName: 'TOTAL',
               dataLength: null,

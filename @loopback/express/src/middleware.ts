@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2020. All Rights Reserved.
 // Node module: @loopback/express
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -38,7 +38,6 @@ import {
   MiddlewareBindingOptions,
   MiddlewareChain,
   MiddlewareContext,
-  MIDDLEWARE_CONTEXT,
 } from './types';
 
 const debug = debugFactory('loopback:middleware');
@@ -354,19 +353,23 @@ export function invokeExpressMiddleware(
  * @param ctx - Context object to discover registered middleware
  */
 export function toExpressMiddleware(ctx: Context): ExpressRequestHandler {
-  return async (req, res, next) => {
+  return (req, res, next) => {
     const middlewareCtx = new MiddlewareContext(req, res, ctx);
-    // Set the middleware context to `request` object
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (req as any)[MIDDLEWARE_CONTEXT] = middlewareCtx;
 
-    try {
-      const result = await invokeMiddleware(middlewareCtx);
-      if (result !== res) {
-        next();
-      }
-    } catch (err) {
-      next(err);
-    }
+    new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-void
+      void (async () => {
+        try {
+          const result = await invokeMiddleware(middlewareCtx);
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      })();
+    })
+      .then(result => {
+        if (result !== res) next();
+      })
+      .catch(next);
   };
 }

@@ -1,5 +1,5 @@
 "use strict";
-// Copyright IBM Corp. 2017,2020. All Rights Reserved.
+// Copyright IBM Corp. and LoopBack contributors 2017,2020. All Rights Reserved.
 // Node module: @loopback/authentication
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -21,10 +21,10 @@ const tslib_1 = require("tslib");
  *
  * @packageDocumentation
  */
-(0, tslib_1.__exportStar)(require("./authentication.component"), exports);
-(0, tslib_1.__exportStar)(require("./decorators"), exports);
-(0, tslib_1.__exportStar)(require("./keys"), exports);
-(0, tslib_1.__exportStar)(require("./providers"), exports);
-(0, tslib_1.__exportStar)(require("./services"), exports);
-(0, tslib_1.__exportStar)(require("./types"), exports);
+tslib_1.__exportStar(require("./authentication.component"), exports);
+tslib_1.__exportStar(require("./decorators"), exports);
+tslib_1.__exportStar(require("./keys"), exports);
+tslib_1.__exportStar(require("./providers"), exports);
+tslib_1.__exportStar(require("./services"), exports);
+tslib_1.__exportStar(require("./types"), exports);
 //# sourceMappingURL=index.js.map
